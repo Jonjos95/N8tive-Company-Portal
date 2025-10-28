@@ -154,9 +154,10 @@ function initializeCardInteractions() {
     });
 }
 
-// Advanced scroll-based animations
+// Advanced scroll-based animations with bidirectional support
 let ticking = false;
 let lastScrollPosition = 0;
+let scrollDirection = 'down'; // Track scroll direction
 
 function updateCardPositions(scrollPos) {
     const cards = document.querySelectorAll('.vertical-card');
@@ -190,18 +191,21 @@ function updateCardPositions(scrollPos) {
         const isInViewport = cardTop < (scrollPos + windowHeight) && (cardTop + card.offsetHeight) > scrollPos;
         
         if (isInViewport) {
+            // Bidirectional movement - adjust based on scroll direction
+            const directionMultiplier = scrollDirection === 'down' ? 1 : 1.1;
+            
             // Apply different movement patterns for each card
             switch(index) {
                 case 0: // Left card - moves right to left
-                    translateX = -cardNormalizedDistance * 30;
+                    translateX = -cardNormalizedDistance * 30 * directionMultiplier;
                     translateY = Math.abs(cardNormalizedDistance) * 15;
                     break;
                 case 1: // Middle card - vertical movement
-                    translateY = -cardNormalizedDistance * 40;
+                    translateY = -cardNormalizedDistance * 40 * directionMultiplier;
                     scale = 1 + (Math.abs(cardNormalizedDistance) * 0.05);
                     break;
                 case 2: // Right card - moves left to right
-                    translateX = cardNormalizedDistance * 30;
+                    translateX = cardNormalizedDistance * 30 * directionMultiplier;
                     translateY = Math.abs(cardNormalizedDistance) * 15;
                     break;
             }
@@ -209,6 +213,10 @@ function updateCardPositions(scrollPos) {
             // Fade based on distance from optimal viewing position
             const distanceFactor = Math.abs(cardNormalizedDistance);
             opacity = Math.max(0.4, 1 - (distanceFactor * 0.6));
+            
+            // Smooth easing based on direction
+            const transitionSpeed = scrollDirection === 'down' ? '0.5s' : '0.6s';
+            card.style.transition = `all ${transitionSpeed} cubic-bezier(0.16, 1, 0.3, 1)`;
             
             // Apply smooth transformation
             card.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
@@ -233,14 +241,88 @@ function updateCardPositions(scrollPos) {
 }
 
 function onScroll() {
-    lastScrollPosition = window.pageYOffset;
+    const currentScrollPosition = window.pageYOffset;
+    
+    // Determine scroll direction
+    if (currentScrollPosition > lastScrollPosition) {
+        scrollDirection = 'down';
+    } else if (currentScrollPosition < lastScrollPosition) {
+        scrollDirection = 'up';
+    }
+    
+    lastScrollPosition = currentScrollPosition;
     
     if (!ticking) {
         window.requestAnimationFrame(() => {
             updateCardPositions(lastScrollPosition);
+            updateDemoSection(lastScrollPosition, scrollDirection);
             ticking = false;
         });
         ticking = true;
+    }
+}
+
+// Bidirectional animation for demo section
+function updateDemoSection(scrollPos, direction) {
+    const demoSection = document.querySelector('#demo');
+    if (!demoSection) return;
+    
+    const sectionTop = demoSection.offsetTop;
+    const sectionHeight = demoSection.offsetHeight;
+    const windowHeight = window.innerHeight;
+    
+    // Check if demo section is in viewport
+    const isInView = scrollPos + windowHeight > sectionTop && scrollPos < sectionTop + sectionHeight;
+    
+    if (!isInView) return;
+    
+    // Calculate progress through section (0 to 1)
+    const progress = Math.max(0, Math.min(1, (scrollPos + windowHeight - sectionTop) / (sectionHeight + windowHeight)));
+    
+    // Animate demo cards based on scroll position and direction
+    const demoCards = document.querySelectorAll('.demo-card');
+    demoCards.forEach((card, index) => {
+        const delay = index * 0.1;
+        const cardProgress = Math.max(0, Math.min(1, progress - delay));
+        
+        if (direction === 'down') {
+            // Forward animation
+            const translateY = (1 - cardProgress) * 50;
+            const opacity = cardProgress;
+            const scale = 0.95 + (cardProgress * 0.05);
+            
+            card.style.transform = `translateY(${translateY}px) scale(${scale})`;
+            card.style.opacity = opacity;
+        } else {
+            // Reverse animation - smooth transition back
+            const translateY = (1 - cardProgress) * 50;
+            const opacity = cardProgress;
+            const scale = 0.95 + (cardProgress * 0.05);
+            
+            card.style.transform = `translateY(${translateY}px) scale(${scale})`;
+            card.style.opacity = opacity;
+        }
+    });
+    
+    // Animate showcase items
+    const showcaseItems = document.querySelectorAll('.showcase-item');
+    showcaseItems.forEach((item, index) => {
+        const itemProgress = Math.max(0, Math.min(1, (progress - 0.3 - (index * 0.2)) * 2));
+        
+        if (itemProgress > 0.5) {
+            item.classList.add('active');
+            item.classList.add(direction === 'down' ? 'scroll-forward' : 'scroll-backward');
+            item.classList.remove(direction === 'down' ? 'scroll-backward' : 'scroll-forward');
+        } else {
+            item.classList.remove('active', 'scroll-forward', 'scroll-backward');
+        }
+    });
+    
+    // Parallax effect for demo section background
+    const gridBg = demoSection.querySelector('.demo-grid-bg');
+    if (gridBg) {
+        const bgProgress = (scrollPos - sectionTop) * 0.3;
+        gridBg.style.transform = `translateY(${bgProgress}px)`;
     }
 }
 
