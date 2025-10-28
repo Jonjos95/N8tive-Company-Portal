@@ -335,8 +335,214 @@ section.visible {
     }
 }
 
+@keyframes slideRight {
+    0% { 
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    100% { 
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes numberCount {
+    0% { opacity: 0; transform: scale(0.5); }
+    50% { transform: scale(1.2); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes barPulse {
+    0%, 100% { 
+        transform: scaleY(1);
+        opacity: 0.8;
+    }
+    50% { 
+        transform: scaleY(1.1);
+        opacity: 1;
+    }
+}
+
 .demo-mockup .animate-pulse {
     animation: pulseGlow 2s ease-in-out infinite;
+}
+
+/* Animate automation mockup content */
+.demo-card:nth-child(1) .demo-mockup > div:first-child h-4 {
+    animation: slideRight 1s ease-out forwards;
+}
+
+.demo-card:nth-child(1) .demo-mockup .space-y-3 > div {
+    animation: slideRight 0.8s ease-out forwards;
+    opacity: 0;
+}
+
+.demo-card:nth-child(1) .demo-mockup .space-y-3 > div:nth-child(1) {
+    animation-delay: 0.5s;
+}
+
+.demo-card:nth-child(1) .demo-mockup .space-y-3 > div:nth-child(2) {
+    animation-delay: 0.7s;
+}
+
+.demo-card:nth-child(1) .demo-mockup .space-y-3 > div:nth-child(3) {
+    animation-delay: 0.9s;
+}
+
+.demo-card:nth-child(1) .demo-mockup .flex-1 {
+    animation: slideRight 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    opacity: 0;
+}
+
+.demo-card:nth-child(1) .demo-mockup .flex-1:first-child {
+    animation-delay: 1.2s;
+}
+
+.demo-card:nth-child(1) .demo-mockup .flex-1:last-child {
+    animation-delay: 1.4s;
+}
+
+/* Animate analytics mockup content */
+.demo-card:nth-child(2) .demo-mockup .grid > div {
+    animation: numberCount 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    opacity: 0;
+}
+
+.demo-card:nth-child(2) .demo-mockup .grid > div:nth-child(1) {
+    animation-delay: 0.5s;
+}
+
+.demo-card:nth-child(2) .demo-mockup .grid > div:nth-child(2) {
+    animation-delay: 0.6s;
+}
+
+.demo-card:nth-child(2) .demo-mockup .grid > div:nth-child(3) {
+    animation-delay: 0.7s;
+}
+
+/* Continuous bar pulse animation */
+.demo-card:nth-child(2) .demo-mockup .relative > div {
+    animation: barPulse 2s ease-in-out infinite;
+    transform-origin: bottom;
+}
+
+.demo-card:nth-child(2) .demo-mockup .relative > div:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.demo-card:nth-child(2) .demo-mockup .relative > div:nth-child(2) {
+    animation-delay: 0.3s;
+}
+
+.demo-card:nth-child(2) .demo-mockup .relative > div:nth-child(3) {
+    animation-delay: 0.6s;
+}
+
+.demo-card:nth-child(2) .demo-mockup .relative > div:nth-child(4) {
+    animation-delay: 0.9s;
+}
+
+.demo-card:nth-child(2) .demo-mockup .relative > div:nth-child(5) {
+    animation-delay: 1.2s;
+}
+
+.demo-card:nth-child(2) .demo-mockup .relative > div:nth-child(6) {
+    animation-delay: 1.5s;
+}
+
+/* Loading bar animation */
+@keyframes loadingBar {
+    0% {
+        background-position: -200px 0;
+    }
+    100% {
+        background-position: 200px 0;
+    }
+}
+
+.loading-bar {
+    background-size: 200px 100%;
+    animation: loadingBar 2s linear infinite;
+    position: relative;
+    overflow: hidden;
+}
+
+.loading-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(255,255,255,0.1), 
+        transparent
+    );
+    animation: shimmer 2s linear infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* Chart bar hover effects */
+.chart-bar {
+    position: relative;
+    overflow: hidden;
+}
+
+.chart-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(180deg, rgba(255,255,255,0.1), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.chart-bar:hover::after {
+    opacity: 1;
+}
+
+/* Metric card animations */
+.metric-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.metric-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.metric-card:hover::before {
+    opacity: 1;
+    animation: rotate 3s linear infinite;
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 /* Bar chart animation */

@@ -334,6 +334,53 @@ function updateDemoSection(scrollPos, direction) {
     }
 }
 
+// Animate metric numbers counting up
+function animateNumbers() {
+    const metricNumbers = document.querySelectorAll('.metric-number');
+    
+    metricNumbers.forEach((number, index) => {
+        const target = parseInt(number.getAttribute('data-target'));
+        const duration = 1500; // 1.5 seconds
+        const steps = 60;
+        const increment = target / steps;
+        let current = 0;
+        
+        setTimeout(() => {
+            const counter = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    number.textContent = target;
+                    clearInterval(counter);
+                } else {
+                    number.textContent = Math.floor(current);
+                }
+            }, duration / steps);
+        }, 500 + (index * 100)); // Stagger the animations
+    });
+}
+
+// Observe demo cards for animation trigger
+const demoCardsObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting && !entry.target.hasAttribute('data-animated')) {
+            entry.target.setAttribute('data-animated', 'true');
+            // Trigger number animations when cards are visible
+            if (entry.target.querySelector('.metric-number')) {
+                animateNumbers();
+            }
+        }
+    });
+}, {
+    threshold: 0.3
+});
+
+// Observe demo cards
+setTimeout(() => {
+    document.querySelectorAll('.demo-card').forEach(card => {
+        demoCardsObserver.observe(card);
+    });
+}, 100);
+
 // Initialize scroll animations
 window.addEventListener('scroll', onScroll);
 
