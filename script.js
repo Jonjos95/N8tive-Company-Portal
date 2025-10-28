@@ -662,110 +662,85 @@ document.addEventListener('DOMContentLoaded', () => {
     renderer.setSize(140, 140);
     renderer.setClearColor(0x000000, 0);
     
-    // Create hexagonal network structure
-    const hexGroup = new THREE.Group();
+    // Create cube with edge-center nodes structure
+    const cubeGroup = new THREE.Group();
     
-    const hexRadius = 0.65;
-    const hexDepth = 0.7; // Balanced proportions for cubic appearance
+    const cubeSize = 0.7;
+    const halfSize = cubeSize / 2;
     
-    // Generate hexagon vertices
-    function getHexagonVertices(z) {
-        const vertices = [];
-        for (let i = 0; i < 6; i++) {
-            const angle = (Math.PI / 3) * i + Math.PI / 6; // Start from top
-            vertices.push(new THREE.Vector3(
-                hexRadius * Math.cos(angle),
-                hexRadius * Math.sin(angle),
-                z
-            ));
-        }
-        return vertices;
-    }
+    // Define 8 cube corners
+    const corners = [
+        new THREE.Vector3(-halfSize, -halfSize, -halfSize), // 0
+        new THREE.Vector3( halfSize, -halfSize, -halfSize), // 1
+        new THREE.Vector3( halfSize,  halfSize, -halfSize), // 2
+        new THREE.Vector3(-halfSize,  halfSize, -halfSize), // 3
+        new THREE.Vector3(-halfSize, -halfSize,  halfSize), // 4
+        new THREE.Vector3( halfSize, -halfSize,  halfSize), // 5
+        new THREE.Vector3( halfSize,  halfSize,  halfSize), // 6
+        new THREE.Vector3(-halfSize,  halfSize,  halfSize)  // 7
+    ];
     
-    const frontVertices = getHexagonVertices(hexDepth / 2);
-    const backVertices = getHexagonVertices(-hexDepth / 2);
-    const centerFront = new THREE.Vector3(0, 0, hexDepth / 2);
-    const centerBack = new THREE.Vector3(0, 0, -hexDepth / 2);
+    // Define 12 edges of the cube (pairs of corner indices)
+    const edges = [
+        [0, 1], [1, 2], [2, 3], [3, 0], // Back face
+        [4, 5], [5, 6], [6, 7], [7, 4], // Front face
+        [0, 4], [1, 5], [2, 6], [3, 7]  // Connecting edges
+    ];
+    
+    // Calculate edge midpoints (where nodes will be placed)
+    const edgeMidpoints = edges.map(([i, j]) => {
+        return new THREE.Vector3(
+            (corners[i].x + corners[j].x) / 2,
+            (corners[i].y + corners[j].y) / 2,
+            (corners[i].z + corners[j].z) / 2
+        );
+    });
+    
+    // Center of cube
+    const center = new THREE.Vector3(0, 0, 0);
     
     // Material for lines
     const lineMaterial = new THREE.LineBasicMaterial({ color: 0x8b5cf6, linewidth: 2 });
     
-    // Draw front hexagon outline
-    const frontHexPoints = [...frontVertices, frontVertices[0]];
-    const frontHexGeometry = new THREE.BufferGeometry().setFromPoints(frontHexPoints);
-    const frontHexLine = new THREE.Line(frontHexGeometry, lineMaterial);
-    hexGroup.add(frontHexLine);
-    
-    // Draw back hexagon outline
-    const backHexPoints = [...backVertices, backVertices[0]];
-    const backHexGeometry = new THREE.BufferGeometry().setFromPoints(backHexPoints);
-    const backHexLine = new THREE.Line(backHexGeometry, lineMaterial);
-    hexGroup.add(backHexLine);
-    
-    // Draw connecting edges between front and back hexagons
-    for (let i = 0; i < 6; i++) {
-        const edgePoints = [frontVertices[i], backVertices[i]];
+    // Draw cube edges
+    edges.forEach(([i, j]) => {
+        const edgePoints = [corners[i], corners[j]];
         const edgeGeometry = new THREE.BufferGeometry().setFromPoints(edgePoints);
         const edgeLine = new THREE.Line(edgeGeometry, lineMaterial);
-        hexGroup.add(edgeLine);
-    }
-    
-    // Draw spokes from front center to front vertices
-    for (let i = 0; i < 6; i++) {
-        const spokePoints = [centerFront, frontVertices[i]];
-        const spokeGeometry = new THREE.BufferGeometry().setFromPoints(spokePoints);
-        const spokeLine = new THREE.Line(spokeGeometry, lineMaterial);
-        hexGroup.add(spokeLine);
-    }
-    
-    // Draw spokes from back center to back vertices
-    for (let i = 0; i < 6; i++) {
-        const spokePoints = [centerBack, backVertices[i]];
-        const spokeGeometry = new THREE.BufferGeometry().setFromPoints(spokePoints);
-        const spokeLine = new THREE.Line(spokeGeometry, lineMaterial);
-        hexGroup.add(spokeLine);
-    }
-    
-    // Draw connection between front and back centers
-    const centerConnection = new THREE.BufferGeometry().setFromPoints([centerFront, centerBack]);
-    const centerLine = new THREE.Line(centerConnection, lineMaterial);
-    hexGroup.add(centerLine);
-    
-    // Add vertex spheres
-    const vertexGeometry = new THREE.SphereGeometry(0.045, 16, 16);
-    const vertexMaterial = new THREE.MeshPhongMaterial({ color: 0x8b5cf6 });
-    
-    // Front vertices
-    frontVertices.forEach(vertex => {
-        const sphere = new THREE.Mesh(vertexGeometry, vertexMaterial);
-        sphere.position.copy(vertex);
-        hexGroup.add(sphere);
+        cubeGroup.add(edgeLine);
     });
     
-    // Back vertices
-    backVertices.forEach(vertex => {
-        const sphere = new THREE.Mesh(vertexGeometry, vertexMaterial);
-        sphere.position.copy(vertex);
-        hexGroup.add(sphere);
+    // Draw connections from center to each edge midpoint
+    edgeMidpoints.forEach(midpoint => {
+        const spokePoints = [center, midpoint];
+        const spokeGeometry = new THREE.BufferGeometry().setFromPoints(spokePoints);
+        const spokeLine = new THREE.Line(spokeGeometry, lineMaterial);
+        cubeGroup.add(spokeLine);
     });
     
-    // Center hubs
-    const hubGeometry = new THREE.SphereGeometry(0.09, 16, 16);
+    // Add edge midpoint spheres (nodes)
+    const nodeGeometry = new THREE.SphereGeometry(0.05, 16, 16);
+    const nodeMaterial = new THREE.MeshPhongMaterial({ color: 0x8b5cf6 });
+    
+    edgeMidpoints.forEach(midpoint => {
+        const sphere = new THREE.Mesh(nodeGeometry, nodeMaterial);
+        sphere.position.copy(midpoint);
+        cubeGroup.add(sphere);
+    });
+    
+    // Add central hub
+    const hubGeometry = new THREE.SphereGeometry(0.1, 16, 16);
     const hubMaterial = new THREE.MeshPhongMaterial({ 
         color: 0x6366f1,
         emissive: 0x3b82f6,
-        emissiveIntensity: 0.5
+        emissiveIntensity: 0.6
     });
     
-    const frontHub = new THREE.Mesh(hubGeometry, hubMaterial);
-    frontHub.position.copy(centerFront);
-    hexGroup.add(frontHub);
+    const centralHub = new THREE.Mesh(hubGeometry, hubMaterial);
+    centralHub.position.copy(center);
+    cubeGroup.add(centralHub);
     
-    const backHub = new THREE.Mesh(hubGeometry, hubMaterial);
-    backHub.position.copy(centerBack);
-    hexGroup.add(backHub);
-    
-    scene.add(hexGroup);
+    scene.add(cubeGroup);
     
     // Add lighting
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
@@ -784,8 +759,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Mouse interaction variables
     let isDragging = false;
     let previousMousePosition = { x: 0, y: 0 };
-    let rotation = { x: -0.2, y: 0.3 };
-    let targetRotation = { x: -0.2, y: 0.3 };
+    let rotation = { x: -0.5, y: 0.7 }; // Isometric-like view
+    let targetRotation = { x: -0.5, y: 0.7 };
     let autoRotate = true;
     
     // Mouse events for interaction
@@ -857,9 +832,9 @@ document.addEventListener('DOMContentLoaded', () => {
         rotation.x += (targetRotation.x - rotation.x) * 0.1;
         rotation.y += (targetRotation.y - rotation.y) * 0.1;
         
-        // Apply rotation to hexGroup
-        hexGroup.rotation.x = rotation.x;
-        hexGroup.rotation.y = rotation.y;
+        // Apply rotation to cubeGroup
+        cubeGroup.rotation.x = rotation.x;
+        cubeGroup.rotation.y = rotation.y;
         
         renderer.render(scene, camera);
     }
