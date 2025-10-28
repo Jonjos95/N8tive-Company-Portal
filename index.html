@@ -242,59 +242,59 @@
                             <!-- Advanced Workflow Diagram -->
                             <div class="workflow-diagram-advanced relative px-2">
                                 <!-- SVG Connection Overlay -->
-                                <svg class="absolute inset-0 w-full h-full pointer-events-none z-0" style="overflow: visible;">
+                                <svg class="absolute inset-0 w-full h-full pointer-events-none z-0" viewBox="0 0 390 290" preserveAspectRatio="xMidYMid meet">
                                     <defs>
                                         <linearGradient id="flow-gradient-1" x1="0%" y1="0%" x2="100%" y2="100%">
-                                            <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:0.6" />
-                                            <stop offset="100%" style="stop-color:#6366f1;stop-opacity:0.6" />
+                                            <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:0.7" />
+                                            <stop offset="100%" style="stop-color:#6366f1;stop-opacity:0.7" />
                                         </linearGradient>
                                         <linearGradient id="flow-gradient-2" x1="100%" y1="0%" x2="0%" y2="100%">
-                                            <stop offset="0%" style="stop-color:#a855f7;stop-opacity:0.6" />
-                                            <stop offset="100%" style="stop-color:#6366f1;stop-opacity:0.6" />
+                                            <stop offset="0%" style="stop-color:#a855f7;stop-opacity:0.7" />
+                                            <stop offset="100%" style="stop-color:#6366f1;stop-opacity:0.7" />
                                         </linearGradient>
                                         <linearGradient id="flow-gradient-3" x1="50%" y1="0%" x2="0%" y2="100%">
-                                            <stop offset="0%" style="stop-color:#6366f1;stop-opacity:0.6" />
-                                            <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:0.6" />
+                                            <stop offset="0%" style="stop-color:#6366f1;stop-opacity:0.7" />
+                                            <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:0.7" />
                                         </linearGradient>
                                         <linearGradient id="flow-gradient-4" x1="50%" y1="0%" x2="100%" y2="100%">
-                                            <stop offset="0%" style="stop-color:#6366f1;stop-opacity:0.6" />
-                                            <stop offset="100%" style="stop-color:#22c55e;stop-opacity:0.6" />
+                                            <stop offset="0%" style="stop-color:#6366f1;stop-opacity:0.7" />
+                                            <stop offset="100%" style="stop-color:#22c55e;stop-opacity:0.7" />
                                         </linearGradient>
                                     </defs>
                                     
                                     <!-- Trigger to Processing -->
-                                    <path class="workflow-connection" d="M 60 50 Q 120 90 190 130" stroke="url(#flow-gradient-1)" stroke-width="2" fill="none" stroke-dasharray="5,5">
+                                    <path class="workflow-connection" d="M 65 42 Q 115 85 195 135" stroke="url(#flow-gradient-1)" stroke-width="2.5" fill="none" stroke-dasharray="6,4" stroke-linecap="round">
                                         <animate attributeName="stroke-dashoffset" from="10" to="0" dur="1.5s" repeatCount="indefinite"/>
                                     </path>
-                                    <circle class="flow-dot" r="4" fill="#3b82f6">
-                                        <animateMotion dur="2s" repeatCount="indefinite" path="M 60 50 Q 120 90 190 130"/>
+                                    <circle class="flow-dot" r="5" fill="#3b82f6">
+                                        <animateMotion dur="2s" repeatCount="indefinite" path="M 65 42 Q 115 85 195 135"/>
                                         <animate attributeName="opacity" values="0;1;1;0" dur="2s" repeatCount="indefinite"/>
                                     </circle>
                                     
                                     <!-- Data to Processing -->
-                                    <path class="workflow-connection" d="M 330 50 Q 270 90 200 130" stroke="url(#flow-gradient-2)" stroke-width="2" fill="none" stroke-dasharray="5,5">
+                                    <path class="workflow-connection" d="M 325 42 Q 275 85 195 135" stroke="url(#flow-gradient-2)" stroke-width="2.5" fill="none" stroke-dasharray="6,4" stroke-linecap="round">
                                         <animate attributeName="stroke-dashoffset" from="10" to="0" dur="1.5s" repeatCount="indefinite"/>
                                     </path>
-                                    <circle class="flow-dot" r="4" fill="#a855f7">
-                                        <animateMotion dur="2s" repeatCount="indefinite" begin="0.3s" path="M 330 50 Q 270 90 200 130"/>
+                                    <circle class="flow-dot" r="5" fill="#a855f7">
+                                        <animateMotion dur="2s" repeatCount="indefinite" begin="0.3s" path="M 325 42 Q 275 85 195 135"/>
                                         <animate attributeName="opacity" values="0;1;1;0" dur="2s" repeatCount="indefinite" begin="0.3s"/>
                                     </circle>
                                     
                                     <!-- Processing to Validate -->
-                                    <path class="workflow-connection" d="M 190 180 Q 140 210 80 240" stroke="url(#flow-gradient-3)" stroke-width="2" fill="none" stroke-dasharray="5,5">
+                                    <path class="workflow-connection" d="M 195 175 Q 130 215 65 255" stroke="url(#flow-gradient-3)" stroke-width="2.5" fill="none" stroke-dasharray="6,4" stroke-linecap="round">
                                         <animate attributeName="stroke-dashoffset" from="10" to="0" dur="1.5s" repeatCount="indefinite"/>
                                     </path>
-                                    <circle class="flow-dot" r="4" fill="#6366f1">
-                                        <animateMotion dur="2s" repeatCount="indefinite" begin="0.6s" path="M 190 180 Q 140 210 80 240"/>
+                                    <circle class="flow-dot" r="5" fill="#6366f1">
+                                        <animateMotion dur="2s" repeatCount="indefinite" begin="0.6s" path="M 195 175 Q 130 215 65 255"/>
                                         <animate attributeName="opacity" values="0;1;1;0" dur="2s" repeatCount="indefinite" begin="0.6s"/>
                                     </circle>
                                     
                                     <!-- Processing to Complete -->
-                                    <path class="workflow-connection" d="M 200 180 Q 250 210 310 240" stroke="url(#flow-gradient-4)" stroke-width="2" fill="none" stroke-dasharray="5,5">
+                                    <path class="workflow-connection" d="M 195 175 Q 260 215 325 255" stroke="url(#flow-gradient-4)" stroke-width="2.5" fill="none" stroke-dasharray="6,4" stroke-linecap="round">
                                         <animate attributeName="stroke-dashoffset" from="10" to="0" dur="1.5s" repeatCount="indefinite"/>
                                     </path>
-                                    <circle class="flow-dot" r="4" fill="#22c55e">
-                                        <animateMotion dur="2s" repeatCount="indefinite" begin="0.9s" path="M 200 180 Q 250 210 310 240"/>
+                                    <circle class="flow-dot" r="5" fill="#22c55e">
+                                        <animateMotion dur="2s" repeatCount="indefinite" begin="0.9s" path="M 195 175 Q 260 215 325 255"/>
                                         <animate attributeName="opacity" values="0;1;1;0" dur="2s" repeatCount="indefinite" begin="0.9s"/>
                                     </circle>
                                 </svg>
