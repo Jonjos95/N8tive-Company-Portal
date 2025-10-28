@@ -665,8 +665,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Create hexagonal network structure
     const hexGroup = new THREE.Group();
     
-    const hexRadius = 0.6;
-    const hexDepth = 1.0; // Much deeper for cubic appearance
+    const hexRadius = 0.65;
+    const hexDepth = 0.7; // Balanced proportions for cubic appearance
     
     // Generate hexagon vertices
     function getHexagonVertices(z) {
@@ -732,7 +732,7 @@ document.addEventListener('DOMContentLoaded', () => {
     hexGroup.add(centerLine);
     
     // Add vertex spheres
-    const vertexGeometry = new THREE.SphereGeometry(0.05, 16, 16);
+    const vertexGeometry = new THREE.SphereGeometry(0.045, 16, 16);
     const vertexMaterial = new THREE.MeshPhongMaterial({ color: 0x8b5cf6 });
     
     // Front vertices
@@ -749,8 +749,8 @@ document.addEventListener('DOMContentLoaded', () => {
         hexGroup.add(sphere);
     });
     
-    // Center hubs (larger for emphasis)
-    const hubGeometry = new THREE.SphereGeometry(0.1, 16, 16);
+    // Center hubs
+    const hubGeometry = new THREE.SphereGeometry(0.09, 16, 16);
     const hubMaterial = new THREE.MeshPhongMaterial({ 
         color: 0x6366f1,
         emissive: 0x3b82f6,
@@ -779,7 +779,7 @@ document.addEventListener('DOMContentLoaded', () => {
     pointLight2.position.set(-2, -1, -2);
     scene.add(pointLight2);
     
-    camera.position.z = 3.5; // Move camera back to see full cubic depth
+    camera.position.z = 3.2; // Optimal view for balanced proportions
     
     // Mouse interaction variables
     let isDragging = false;
