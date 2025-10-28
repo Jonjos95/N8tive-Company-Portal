@@ -35,7 +35,7 @@
 /* ===== HERO SECTION ANIMATIONS ===== */
 @keyframes heroLogoEnter {
     0% {
-        opacity: 0;
+        opacity: 1;
         transform: translateY(-50px) scale(0.8) rotateX(20deg);
     }
     60% {
@@ -49,7 +49,7 @@
 
 @keyframes heroSubtitleEnter {
     0% {
-        opacity: 0;
+        opacity: 1;
         transform: translateY(30px);
         filter: blur(10px);
     }
@@ -62,7 +62,7 @@
 
 @keyframes heroButtonsEnter {
     0% {
-        opacity: 0;
+        opacity: 1;
         transform: translateY(30px) scale(0.9);
     }
     100% {
@@ -1213,24 +1213,33 @@ section.visible {
 /* ===== HERO SECTION STYLES ===== */
 .hero-content {
     perspective: 1000px;
+    opacity: 1 !important;
 }
 
 .hero-logo {
-    opacity: 0;
+    opacity: 1 !important;
     animation: heroLogoEnter 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     animation-delay: 0.2s;
 }
 
 .hero-subtitle {
-    opacity: 0;
+    opacity: 1 !important;
     animation: heroSubtitleEnter 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     animation-delay: 0.5s;
 }
 
 .hero-buttons {
-    opacity: 0;
+    opacity: 1 !important;
     animation: heroButtonsEnter 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     animation-delay: 0.8s;
+}
+
+/* Override any opacity changes - keep hero always visible */
+#hero .hero-content,
+#hero .hero-logo,
+#hero .hero-subtitle,
+#hero .hero-buttons {
+    opacity: 1 !important;
 }
 
 /* Bidirectional support for hero */
