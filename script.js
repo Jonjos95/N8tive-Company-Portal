@@ -19,7 +19,87 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initialize card interactions
     initializeCardInteractions();
+    
+    // Initialize dynamic background effects
+    initDynamicBackgroundEffects();
 });
+
+// Dynamic Background Effects
+function initDynamicBackgroundEffects() {
+    const vantaBg = document.getElementById('vanta-bg');
+    const particlesOverlay = document.getElementById('particles-overlay');
+    
+    // Mouse move parallax effect
+    let mouseX = 0, mouseY = 0;
+    let targetX = 0, targetY = 0;
+    
+    document.addEventListener('mousemove', (e) => {
+        mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+        mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+    });
+    
+    // Smooth parallax animation
+    function animateParallax() {
+        targetX += (mouseX - targetX) * 0.05;
+        targetY += (mouseY - targetY) * 0.05;
+        
+        if (vantaBg && window.vantaEffect) {
+            // Subtle camera movement based on mouse position
+            const offsetX = targetX * 10;
+            const offsetY = targetY * 10;
+            vantaBg.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(1.05)`;
+        }
+        
+        if (particlesOverlay) {
+            particlesOverlay.style.transform = `translate(${targetX * 20}px, ${targetY * 20}px)`;
+        }
+        
+        requestAnimationFrame(animateParallax);
+    }
+    
+    animateParallax();
+    
+    // Scroll-based parallax for sections
+    window.addEventListener('scroll', () => {
+        const scrollY = window.scrollY;
+        const sections = document.querySelectorAll('section:not(#hero)');
+        
+        sections.forEach((section, index) => {
+            const rect = section.getBoundingClientRect();
+            const scrollProgress = (window.innerHeight - rect.top) / (window.innerHeight + rect.height);
+            
+            if (scrollProgress > 0 && scrollProgress < 1) {
+                const parallaxAmount = (scrollProgress - 0.5) * 30;
+                section.style.transform = `translateY(${parallaxAmount}px)`;
+            }
+        });
+    }, { passive: true });
+    
+    // Create dynamic gradient overlay that follows scroll
+    const gradientOverlay = document.createElement('div');
+    gradientOverlay.id = 'dynamic-gradient';
+    gradientOverlay.style.cssText = `
+        position: fixed;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle at center, 
+            rgba(139, 92, 246, 0.15) 0%, 
+            transparent 50%);
+        pointer-events: none;
+        z-index: 1;
+        transition: transform 0.3s ease-out;
+    `;
+    document.body.appendChild(gradientOverlay);
+    
+    // Move gradient overlay with mouse
+    document.addEventListener('mousemove', (e) => {
+        const x = (e.clientX / window.innerWidth) * 100;
+        const y = (e.clientY / window.innerHeight) * 100;
+        gradientOverlay.style.transform = `translate(${x}px, ${y}px)`;
+    });
+}
 
 // Enhanced Intersection Observer for scroll animations
 const sectionObserver = new IntersectionObserver((entries) => {
@@ -761,9 +841,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // Mouse interaction variables
     let isDragging = false;
     let previousMousePosition = { x: 0, y: 0 };
-    let rotation = { x: -0.5, y: 0.7 }; // Isometric-like view
-    let targetRotation = { x: -0.5, y: 0.7 };
+    let rotation = { x: -0.6, y: 0.8 }; // Match screenshot orientation
+    let targetRotation = { x: -0.6, y: 0.8 };
     let autoRotate = true;
+    let autoRotateSpeed = 0.003; // Slow continuous rotation
     
     // Mouse events for interaction
     canvas.addEventListener('mousedown', (e) => {
@@ -825,9 +906,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function animate() {
         requestAnimationFrame(animate);
         
-        // Auto-rotate when not dragging
+        // Auto-rotate slowly to the right when not dragging
         if (autoRotate) {
-            targetRotation.y += 0.005;
+            targetRotation.y += autoRotateSpeed;
         }
         
         // Smooth rotation interpolation

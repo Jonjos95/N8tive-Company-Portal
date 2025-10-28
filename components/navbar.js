@@ -30,19 +30,15 @@ class CustomNavbar extends HTMLElement {
                     gap: 0.5rem;
                 }
                 .logo-cube-nav {
-                    width: 32px;
-                    height: 32px;
-                    filter: drop-shadow(0 0 8px rgba(139, 92, 246, 0.4));
-                    animation: spinCubeNav 20s linear infinite;
-                    transform-style: preserve-3d;
+                    width: 40px;
+                    height: 40px;
+                    cursor: pointer;
                 }
-                @keyframes spinCubeNav {
-                    0% {
-                        transform: perspective(400px) rotateY(0deg) rotateX(-15deg);
-                    }
-                    100% {
-                        transform: perspective(400px) rotateY(360deg) rotateX(-15deg);
-                    }
+                #nav-cube-canvas {
+                    filter: drop-shadow(0 0 10px rgba(139, 92, 246, 0.6));
+                }
+                #nav-cube-canvas:hover {
+                    filter: drop-shadow(0 0 15px rgba(139, 92, 246, 0.9));
                 }
                 .nav-links {
                     display: flex;
@@ -101,58 +97,9 @@ class CustomNavbar extends HTMLElement {
             </style>
             <nav>
                 <a href="#" class="logo">
-                    <svg class="logo-cube-nav" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-                        <defs>
-                            <linearGradient id="navCenterGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
-                                <stop offset="50%" style="stop-color:#6366f1;stop-opacity:1" />
-                                <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
-                            </linearGradient>
-                        </defs>
-                        <g>
-                            <polygon points="60,20 85,32 85,60 60,72 35,60 35,32" 
-                                     fill="url(#navCenterGrad)" 
-                                     stroke="#6366f1" 
-                                     stroke-width="1.5" 
-                                     opacity="0.3"/>
-                            <line x1="60" y1="20" x2="60" y2="35" stroke="#6366f1" stroke-width="2" opacity="0.6"/>
-                            <line x1="85" y1="32" x2="95" y2="45" stroke="#6366f1" stroke-width="2" opacity="0.6"/>
-                            <line x1="85" y1="60" x2="95" y2="75" stroke="#6366f1" stroke-width="2" opacity="0.6"/>
-                            <line x1="60" y1="72" x2="60" y2="88" stroke="#6366f1" stroke-width="2" opacity="0.6"/>
-                            <line x1="35" y1="60" x2="25" y2="75" stroke="#6366f1" stroke-width="2" opacity="0.6"/>
-                            <line x1="35" y1="32" x2="25" y2="45" stroke="#6366f1" stroke-width="2" opacity="0.6"/>
-                            <polygon points="60,35 95,45 95,75 60,88 25,75 25,45" 
-                                     fill="none" 
-                                     stroke="#8b5cf6" 
-                                     stroke-width="2.5"/>
-                            <line x1="60" y1="46" x2="60" y2="20" stroke="#6366f1" stroke-width="1.5" opacity="0.3"/>
-                            <line x1="60" y1="46" x2="85" y2="32" stroke="#6366f1" stroke-width="1.5" opacity="0.3"/>
-                            <line x1="60" y1="46" x2="85" y2="60" stroke="#6366f1" stroke-width="1.5" opacity="0.3"/>
-                            <line x1="60" y1="46" x2="60" y2="72" stroke="#6366f1" stroke-width="1.5" opacity="0.3"/>
-                            <line x1="60" y1="46" x2="35" y2="60" stroke="#6366f1" stroke-width="1.5" opacity="0.3"/>
-                            <line x1="60" y1="46" x2="35" y2="32" stroke="#6366f1" stroke-width="1.5" opacity="0.3"/>
-                            <line x1="60" y1="61" x2="60" y2="35" stroke="#8b5cf6" stroke-width="2"/>
-                            <line x1="60" y1="61" x2="95" y2="45" stroke="#8b5cf6" stroke-width="2"/>
-                            <line x1="60" y1="61" x2="95" y2="75" stroke="#8b5cf6" stroke-width="2"/>
-                            <line x1="60" y1="61" x2="60" y2="88" stroke="#8b5cf6" stroke-width="2"/>
-                            <line x1="60" y1="61" x2="25" y2="75" stroke="#8b5cf6" stroke-width="2"/>
-                            <line x1="60" y1="61" x2="25" y2="45" stroke="#8b5cf6" stroke-width="2"/>
-                            <circle cx="60" cy="20" r="3" fill="#6366f1" opacity="0.6"/>
-                            <circle cx="85" cy="32" r="3" fill="#6366f1" opacity="0.6"/>
-                            <circle cx="85" cy="60" r="3" fill="#6366f1" opacity="0.6"/>
-                            <circle cx="60" cy="72" r="3" fill="#6366f1" opacity="0.6"/>
-                            <circle cx="35" cy="60" r="3" fill="#6366f1" opacity="0.6"/>
-                            <circle cx="35" cy="32" r="3" fill="#6366f1" opacity="0.6"/>
-                            <circle cx="60" cy="35" r="4" fill="#8b5cf6"/>
-                            <circle cx="95" cy="45" r="4" fill="#8b5cf6"/>
-                            <circle cx="95" cy="75" r="4" fill="#8b5cf6"/>
-                            <circle cx="60" cy="88" r="4" fill="#8b5cf6"/>
-                            <circle cx="25" cy="75" r="4" fill="#8b5cf6"/>
-                            <circle cx="25" cy="45" r="4" fill="#8b5cf6"/>
-                            <circle cx="60" cy="46" r="6" fill="url(#navCenterGrad)" opacity="0.5"/>
-                            <circle cx="60" cy="61" r="8" fill="url(#navCenterGrad)"/>
-                        </g>
-                    </svg>
+                    <div class="logo-cube-nav">
+                        <canvas id="nav-cube-canvas" width="40" height="40"></canvas>
+                    </div>
                     N8tive.io
                 </a>
                 <div class="nav-links">
@@ -173,6 +120,176 @@ class CustomNavbar extends HTMLElement {
         this.shadowRoot.querySelectorAll('[data-feather]').forEach(el => {
             feather.replace(el);
         });
+        
+        // Initialize Three.js 3D Cube Logo
+        this.initNavCube();
+    }
+    
+    initNavCube() {
+        const canvas = this.shadowRoot.getElementById('nav-cube-canvas');
+        if (!canvas || !window.THREE) return;
+        
+        // Scene setup
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ 
+            canvas: canvas, 
+            alpha: true, 
+            antialias: true 
+        });
+        renderer.setSize(40, 40);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        
+        // Create cube structure
+        const cubeGroup = new THREE.Group();
+        scene.add(cubeGroup);
+        
+        const cubeSize = 0.7;
+        const halfSize = cubeSize / 2;
+        
+        // Define cube corners
+        const corners = [
+            new THREE.Vector3(-halfSize, -halfSize, -halfSize),
+            new THREE.Vector3(halfSize, -halfSize, -halfSize),
+            new THREE.Vector3(halfSize, halfSize, -halfSize),
+            new THREE.Vector3(-halfSize, halfSize, -halfSize),
+            new THREE.Vector3(-halfSize, -halfSize, halfSize),
+            new THREE.Vector3(halfSize, -halfSize, halfSize),
+            new THREE.Vector3(halfSize, halfSize, halfSize),
+            new THREE.Vector3(-halfSize, halfSize, halfSize)
+        ];
+        
+        // Define cube edges (pairs of corner indices)
+        const edges = [
+            [0,1],[1,2],[2,3],[3,0], // Back face
+            [4,5],[5,6],[6,7],[7,4], // Front face
+            [0,4],[1,5],[2,6],[3,7]  // Connecting edges
+        ];
+        
+        const center = new THREE.Vector3(0, 0, 0);
+        
+        // Define only 4 key nodes at face centers
+        const keyNodes = [
+            new THREE.Vector3(0, halfSize, 0),   // Top
+            new THREE.Vector3(0, -halfSize, 0),  // Bottom
+            new THREE.Vector3(-halfSize, 0, 0),  // Left
+            new THREE.Vector3(halfSize, 0, 0)    // Right
+        ];
+        
+        // Material for cube edges - purple
+        const edgeLineMaterial = new THREE.LineBasicMaterial({ color: 0x8b5cf6, linewidth: 2 });
+        
+        // Material for spokes - purple
+        const spokeMaterial = new THREE.LineBasicMaterial({ color: 0x8b5cf6, linewidth: 2 });
+        
+        // Draw cube edges
+        edges.forEach(([i, j]) => {
+            const edgePoints = [corners[i], corners[j]];
+            const edgeGeometry = new THREE.BufferGeometry().setFromPoints(edgePoints);
+            const edgeLine = new THREE.Line(edgeGeometry, edgeLineMaterial);
+            cubeGroup.add(edgeLine);
+        });
+        
+        // Draw only 4 connections from center to key nodes
+        keyNodes.forEach(node => {
+            const spokePoints = [center, node];
+            const spokeGeometry = new THREE.BufferGeometry().setFromPoints(spokePoints);
+            const spokeLine = new THREE.Line(spokeGeometry, spokeMaterial);
+            cubeGroup.add(spokeLine);
+        });
+        
+        // Add only 4 node spheres - purple
+        const nodeGeometry = new THREE.SphereGeometry(0.045, 16, 16);
+        const nodeMaterial = new THREE.MeshPhongMaterial({ color: 0x8b5cf6 });
+        
+        keyNodes.forEach(node => {
+            const sphere = new THREE.Mesh(nodeGeometry, nodeMaterial);
+            sphere.position.copy(node);
+            cubeGroup.add(sphere);
+        });
+        
+        // Add central hub - cyan/blue
+        const hubGeometry = new THREE.SphereGeometry(0.09, 16, 16);
+        const hubMaterial = new THREE.MeshPhongMaterial({ 
+            color: 0x3b82f6,
+            emissive: 0x60a5fa,
+            emissiveIntensity: 0.7
+        });
+        
+        const centralHub = new THREE.Mesh(hubGeometry, hubMaterial);
+        centralHub.position.copy(center);
+        cubeGroup.add(centralHub);
+        
+        // Add lighting
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        scene.add(ambientLight);
+        
+        const pointLight1 = new THREE.PointLight(0x8b5cf6, 1, 10);
+        pointLight1.position.set(2, 1, 2);
+        scene.add(pointLight1);
+        
+        const pointLight2 = new THREE.PointLight(0x6366f1, 0.8, 10);
+        pointLight2.position.set(-2, -1, -2);
+        scene.add(pointLight2);
+        
+        camera.position.z = 3.2;
+        
+        // Rotation variables
+        let rotation = { x: -0.6, y: 0.8 };
+        let targetRotation = { x: -0.6, y: 0.8 };
+        let autoRotate = true;
+        let autoRotateSpeed = 0.003;
+        let isDragging = false;
+        let previousMousePosition = { x: 0, y: 0 };
+        
+        // Mouse events for interaction
+        canvas.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            autoRotate = false;
+            previousMousePosition = { x: e.clientX, y: e.clientY };
+        });
+        
+        canvas.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                const deltaMove = {
+                    x: e.clientX - previousMousePosition.x,
+                    y: e.clientY - previousMousePosition.y
+                };
+                
+                targetRotation.y += deltaMove.x * 0.01;
+                targetRotation.x += deltaMove.y * 0.01;
+                
+                previousMousePosition = { x: e.clientX, y: e.clientY };
+            }
+        });
+        
+        canvas.addEventListener('mouseup', () => {
+            isDragging = false;
+            setTimeout(() => { autoRotate = true; }, 2000);
+        });
+        
+        canvas.addEventListener('mouseleave', () => {
+            isDragging = false;
+        });
+        
+        // Animation loop
+        const animate = () => {
+            requestAnimationFrame(animate);
+            
+            if (autoRotate) {
+                targetRotation.y += autoRotateSpeed;
+            }
+            
+            rotation.x += (targetRotation.x - rotation.x) * 0.1;
+            rotation.y += (targetRotation.y - rotation.y) * 0.1;
+            
+            cubeGroup.rotation.x = rotation.x;
+            cubeGroup.rotation.y = rotation.y;
+            
+            renderer.render(scene, camera);
+        };
+        
+        animate();
     }
 }
 

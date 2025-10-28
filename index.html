@@ -13,11 +13,30 @@
     <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.globe.min.js"></script>
 </head>
 <body class="bg-gray-900 text-gray-100 font-inter">
-    <custom-navbar></custom-navbar>
+    <!-- Full Page Vanta Background -->
+    <div class="fixed inset-0 z-0" id="vanta-bg"></div>
+    
+    <!-- Animated Mesh Grid Overlay -->
+    <div class="fixed inset-0 z-0 pointer-events-none opacity-20" id="mesh-grid">
+        <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <pattern id="grid" width="80" height="80" patternUnits="userSpaceOnUse">
+                    <path d="M 80 0 L 0 0 0 80" fill="none" stroke="rgba(139, 92, 246, 0.3)" stroke-width="0.5"/>
+                </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#grid)" />
+        </svg>
+    </div>
+    
+    <!-- Floating Particles Overlay -->
+    <div class="fixed inset-0 z-0 pointer-events-none" id="particles-overlay"></div>
+    
+    <!-- Main Content Wrapper -->
+    <div class="relative z-10">
+        <custom-navbar></custom-navbar>
 
-    <!-- Hero Section -->
-    <section id="hero" class="relative min-h-screen flex items-center justify-center overflow-hidden">
-        <div class="absolute inset-0 z-0" id="vanta-bg"></div>
+        <!-- Hero Section -->
+        <section id="hero" class="relative min-h-screen flex items-center justify-center overflow-hidden">
         <div class="hero-content relative z-10 text-center space-y-8 px-4 max-w-7xl mx-auto">
                 <div class="hero-logo flex items-center justify-center gap-4">
                     <!-- Interactive 3D Cube Logo -->
@@ -615,6 +634,8 @@
     </main>
 
     <custom-footer></custom-footer>
+    </div>
+    <!-- End Main Content Wrapper -->
 
     <script src="components/navbar.js"></script>
     <script src="components/footer.js"></script>
@@ -622,7 +643,7 @@
     <script>
         feather.replace();
         
-        // Initialize Vanta.js
+        // Initialize Vanta.js - Full Page Background
         VANTA.GLOBE({
             el: "#vanta-bg",
             mouseControls: true,
@@ -632,10 +653,51 @@
             minWidth: 200.00,
             scale: 1.00,
             scaleMobile: 1.00,
-            color: 0x3b82f6,
+            color: 0x8b5cf6, // Purple
+            color2: 0x3b82f6, // Blue
             backgroundColor: 0x111827,
-            size: 0.8
+            size: 1.2,
+            spacing: 15.00
         });
+        
+        // Initialize Floating Particles
+        initFloatingParticles();
+        
+        function initFloatingParticles() {
+            const particlesContainer = document.getElementById('particles-overlay');
+            const particleCount = 30;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'floating-particle';
+                
+                // Random size between 2-6px
+                const size = Math.random() * 4 + 2;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                
+                // Random starting position
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.top = `${Math.random() * 100}%`;
+                
+                // Random animation delay
+                particle.style.animationDelay = `${Math.random() * 10}s`;
+                
+                // Random animation duration (20-40s)
+                particle.style.animationDuration = `${Math.random() * 20 + 20}s`;
+                
+                // Random opacity
+                particle.style.opacity = Math.random() * 0.3 + 0.1;
+                
+                // Set random transform values as CSS variables
+                const tx = (Math.random() - 0.5) * 200;
+                const ty = (Math.random() - 0.5) * 200;
+                particle.style.setProperty('--tx', `${tx}vw`);
+                particle.style.setProperty('--ty', `${ty}vh`);
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
     </script>
 </body>
 </html>
