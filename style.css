@@ -247,6 +247,31 @@ section.visible {
     height: 100%;
     display: flex;
     flex-direction: column;
+    justify-content: flex-start;
+}
+
+.vertical-card h3 {
+    font-size: 2rem !important;
+    font-weight: 700 !important;
+    margin-bottom: 1.25rem !important;
+    line-height: 1.2 !important;
+}
+
+.vertical-card p {
+    font-size: 1.05rem !important;
+    line-height: 1.8 !important;
+    text-align: center !important;
+}
+
+.vertical-card p:first-of-type {
+    font-size: 1.15rem !important;
+    margin-bottom: 1.25rem !important;
+    font-weight: 500 !important;
+}
+
+.vertical-card p:last-of-type {
+    font-size: 1rem !important;
+    line-height: 1.75 !important;
 }
 
 /* Ensure about section cards take full width and align evenly */
