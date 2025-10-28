@@ -32,15 +32,16 @@ class CustomNavbar extends HTMLElement {
                 .logo-cube-nav {
                     width: 32px;
                     height: 32px;
-                    animation: spinCubeNav 20s linear infinite;
                     filter: drop-shadow(0 0 8px rgba(139, 92, 246, 0.4));
+                    animation: spinCubeNav 20s linear infinite;
+                    transform-style: preserve-3d;
                 }
                 @keyframes spinCubeNav {
                     0% {
-                        transform: rotateY(0deg) rotateX(0deg);
+                        transform: perspective(400px) rotateY(0deg) rotateX(-15deg);
                     }
                     100% {
-                        transform: rotateY(360deg) rotateX(360deg);
+                        transform: perspective(400px) rotateY(360deg) rotateX(-15deg);
                     }
                 }
                 .nav-links {
