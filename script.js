@@ -312,17 +312,18 @@ function updateDemoSection(scrollPos, direction) {
         }
     });
     
-    // Animate showcase items
+    // Animate showcase items with enhanced triggering
     const showcaseItems = document.querySelectorAll('.showcase-item');
     showcaseItems.forEach((item, index) => {
         const itemProgress = Math.max(0, Math.min(1, (progress - 0.3 - (index * 0.2)) * 2));
         
-        if (itemProgress > 0.5) {
-            item.classList.add('active');
-            item.classList.add(direction === 'down' ? 'scroll-forward' : 'scroll-backward');
-            item.classList.remove(direction === 'down' ? 'scroll-backward' : 'scroll-forward');
-        } else {
-            item.classList.remove('active', 'scroll-forward', 'scroll-backward');
+        // More sensitive trigger for showcase items
+        if (itemProgress > 0.3 && !item.classList.contains('active')) {
+            setTimeout(() => {
+                item.classList.add('active');
+                item.classList.add(direction === 'down' ? 'scroll-forward' : 'scroll-backward');
+                item.classList.remove(direction === 'down' ? 'scroll-backward' : 'scroll-forward');
+            }, index * 100);
         }
     });
     
@@ -386,6 +387,27 @@ setTimeout(() => {
         // Start with cards hidden
         card.style.opacity = '0';
         demoCardsObserver.observe(card);
+    });
+}, 100);
+
+// Observe showcase items for entrance animations
+const showcaseObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting && !entry.target.classList.contains('active')) {
+            setTimeout(() => {
+                entry.target.classList.add('active');
+            }, 100);
+        }
+    });
+}, {
+    threshold: 0.15,
+    rootMargin: '0px 0px -50px 0px'
+});
+
+// Observe all showcase items
+setTimeout(() => {
+    document.querySelectorAll('.showcase-item').forEach((item) => {
+        showcaseObserver.observe(item);
     });
 }, 100);
 
