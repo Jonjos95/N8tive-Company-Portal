@@ -687,53 +687,55 @@ document.addEventListener('DOMContentLoaded', () => {
         [0, 4], [1, 5], [2, 6], [3, 7]  // Connecting edges
     ];
     
-    // Calculate edge midpoints (where nodes will be placed)
-    const edgeMidpoints = edges.map(([i, j]) => {
-        return new THREE.Vector3(
-            (corners[i].x + corners[j].x) / 2,
-            (corners[i].y + corners[j].y) / 2,
-            (corners[i].z + corners[j].z) / 2
-        );
-    });
-    
     // Center of cube
     const center = new THREE.Vector3(0, 0, 0);
     
-    // Material for lines
-    const lineMaterial = new THREE.LineBasicMaterial({ color: 0x8b5cf6, linewidth: 2 });
+    // Define only 4 key nodes at face centers (top, bottom, left, right)
+    const keyNodes = [
+        new THREE.Vector3(0, halfSize, 0),   // Top
+        new THREE.Vector3(0, -halfSize, 0),  // Bottom
+        new THREE.Vector3(-halfSize, 0, 0),  // Left
+        new THREE.Vector3(halfSize, 0, 0)    // Right
+    ];
+    
+    // Material for cube edges - purple
+    const edgeLineMaterial = new THREE.LineBasicMaterial({ color: 0x8b5cf6, linewidth: 2 });
+    
+    // Material for spokes - purple
+    const spokeMaterial = new THREE.LineBasicMaterial({ color: 0x8b5cf6, linewidth: 2 });
     
     // Draw cube edges
     edges.forEach(([i, j]) => {
         const edgePoints = [corners[i], corners[j]];
         const edgeGeometry = new THREE.BufferGeometry().setFromPoints(edgePoints);
-        const edgeLine = new THREE.Line(edgeGeometry, lineMaterial);
+        const edgeLine = new THREE.Line(edgeGeometry, edgeLineMaterial);
         cubeGroup.add(edgeLine);
     });
     
-    // Draw connections from center to each edge midpoint
-    edgeMidpoints.forEach(midpoint => {
-        const spokePoints = [center, midpoint];
+    // Draw only 4 connections from center to key nodes
+    keyNodes.forEach(node => {
+        const spokePoints = [center, node];
         const spokeGeometry = new THREE.BufferGeometry().setFromPoints(spokePoints);
-        const spokeLine = new THREE.Line(spokeGeometry, lineMaterial);
+        const spokeLine = new THREE.Line(spokeGeometry, spokeMaterial);
         cubeGroup.add(spokeLine);
     });
     
-    // Add edge midpoint spheres (nodes)
-    const nodeGeometry = new THREE.SphereGeometry(0.05, 16, 16);
+    // Add only 4 node spheres - purple
+    const nodeGeometry = new THREE.SphereGeometry(0.055, 16, 16);
     const nodeMaterial = new THREE.MeshPhongMaterial({ color: 0x8b5cf6 });
     
-    edgeMidpoints.forEach(midpoint => {
+    keyNodes.forEach(node => {
         const sphere = new THREE.Mesh(nodeGeometry, nodeMaterial);
-        sphere.position.copy(midpoint);
+        sphere.position.copy(node);
         cubeGroup.add(sphere);
     });
     
-    // Add central hub
-    const hubGeometry = new THREE.SphereGeometry(0.1, 16, 16);
+    // Add central hub - cyan/blue
+    const hubGeometry = new THREE.SphereGeometry(0.11, 16, 16);
     const hubMaterial = new THREE.MeshPhongMaterial({ 
-        color: 0x6366f1,
-        emissive: 0x3b82f6,
-        emissiveIntensity: 0.6
+        color: 0x3b82f6,
+        emissive: 0x60a5fa,
+        emissiveIntensity: 0.7
     });
     
     const centralHub = new THREE.Mesh(hubGeometry, hubMaterial);
