@@ -596,6 +596,34 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+// ===== PRICING CARDS ANIMATION =====
+const pricingCardsObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            // Entering viewport - add animation
+            entry.target.classList.add('animate-in');
+            entry.target.classList.remove('animate-out');
+        } else {
+            // Leaving viewport - remove animation for reverse play
+            const rect = entry.target.getBoundingClientRect();
+            if (rect.top > window.innerHeight) {
+                // Element is below viewport (scrolling up past it)
+                entry.target.classList.remove('animate-in');
+                entry.target.classList.add('animate-out');
+            }
+        }
+    });
+}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+// Observe pricing cards
+document.addEventListener('DOMContentLoaded', () => {
+    const pricingCards = document.querySelectorAll('.pricing-card');
+    pricingCards.forEach(card => {
+        card.style.opacity = '0';
+        pricingCardsObserver.observe(card);
+    });
+});
+
 // ===== MISSION SECTION ANIMATION =====
 const missionObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {

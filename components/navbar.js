@@ -107,6 +107,7 @@ class CustomNavbar extends HTMLElement {
                     <a href="#about" class="nav-link">About</a>
                     <a href="#demo" class="nav-link">Demo</a>
                     <a href="#products" class="nav-link">Products</a>
+                    <a href="#pricing" class="nav-link">Pricing</a>
                     <a href="#mission" class="nav-link">Mission</a>
                     <a href="#" class="contact-btn">Contact</a>
                 </div>

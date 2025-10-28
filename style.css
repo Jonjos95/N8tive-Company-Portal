@@ -235,6 +235,7 @@ section.visible {
 /* Delayed animations for better visual flow */
 #about { animation-delay: 0.2s; }
 #products { animation-delay: 0.4s; }
+#pricing { animation-delay: 0.5s; }
 #mission { animation-delay: 0.6s; }
 
 /* Interactive About Cards */
@@ -1405,6 +1406,73 @@ section.visible {
 
 .product-card:hover {
     transform: translateY(-10px) scale(1.03) !important;
+}
+
+/* ===== PRICING SECTION STYLES ===== */
+.pricing-card {
+    opacity: 0;
+    transform: translateY(50px) scale(0.95);
+    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform, opacity;
+}
+
+.pricing-card.animate-in {
+    opacity: 1;
+    animation: pricingCardEnter 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.pricing-card.animate-out {
+    opacity: 0;
+    transform: translateY(50px) scale(0.95);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.6, 1);
+}
+
+.pricing-card:nth-child(1).animate-in {
+    animation-delay: 0s;
+}
+
+.pricing-card:nth-child(2).animate-in {
+    animation-delay: 0.15s;
+}
+
+.pricing-card:nth-child(3).animate-in {
+    animation-delay: 0.3s;
+}
+
+.pricing-card-featured {
+    transform: scale(1.05);
+}
+
+.pricing-card-featured.animate-in {
+    animation: pricingCardFeaturedEnter 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes pricingCardEnter {
+    0% {
+        opacity: 0;
+        transform: translateY(50px) scale(0.95) rotateX(10deg);
+    }
+    60% {
+        transform: translateY(-5px) scale(1.02) rotateX(-2deg);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1) rotateX(0);
+    }
+}
+
+@keyframes pricingCardFeaturedEnter {
+    0% {
+        opacity: 0;
+        transform: translateY(50px) scale(0.95) rotateX(10deg);
+    }
+    60% {
+        transform: translateY(-10px) scale(1.08) rotateX(-2deg);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1.05) rotateX(0);
+    }
 }
 
 /* ===== MISSION SECTION STYLES ===== */
