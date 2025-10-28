@@ -102,26 +102,31 @@ class CustomNavbar extends HTMLElement {
                 <a href="#" class="logo">
                     <svg class="logo-cube-nav" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                         <defs>
-                            <linearGradient id="navCubeGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <linearGradient id="navCenterGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                                 <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
-                                <stop offset="100%" style="stop-color:#6366f1;stop-opacity:1" />
-                            </linearGradient>
-                            <linearGradient id="navCubeGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#6366f1;stop-opacity:1" />
+                                <stop offset="50%" style="stop-color:#6366f1;stop-opacity:1" />
                                 <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
-                            </linearGradient>
-                            <linearGradient id="navCubeGrad3" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#a78bfa;stop-opacity:1" />
-                                <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
                             </linearGradient>
                         </defs>
                         <g>
-                            <polygon points="50,15 75,28 75,48 50,61 25,48 25,28" fill="url(#navCubeGrad1)" opacity="0.9"/>
-                            <polygon points="25,48 25,28 50,15 50,35" fill="url(#navCubeGrad2)" opacity="0.7"/>
-                            <polygon points="50,35 50,15 75,28 75,48" fill="url(#navCubeGrad3)" opacity="0.8"/>
-                            <polygon points="50,35 62,42 62,56 50,63 38,56 38,42" fill="#4c1d95" opacity="0.6"/>
-                            <circle cx="50" cy="48" r="8" fill="#7c3aed" opacity="0.5"/>
-                            <circle cx="50" cy="48" r="4" fill="#a78bfa" opacity="0.8"/>
+                            <polygon points="50,10 85,30 85,70 50,90 15,70 15,30" 
+                                     fill="none" 
+                                     stroke="#8b5cf6" 
+                                     stroke-width="3" 
+                                     stroke-linejoin="round"/>
+                            <line x1="50" y1="50" x2="50" y2="10" stroke="#8b5cf6" stroke-width="2.5"/>
+                            <line x1="50" y1="50" x2="85" y2="30" stroke="#8b5cf6" stroke-width="2.5"/>
+                            <line x1="50" y1="50" x2="85" y2="70" stroke="#8b5cf6" stroke-width="2.5"/>
+                            <line x1="50" y1="50" x2="50" y2="90" stroke="#8b5cf6" stroke-width="2.5"/>
+                            <line x1="50" y1="50" x2="15" y2="70" stroke="#8b5cf6" stroke-width="2.5"/>
+                            <line x1="50" y1="50" x2="15" y2="30" stroke="#8b5cf6" stroke-width="2.5"/>
+                            <circle cx="50" cy="10" r="5" fill="#8b5cf6"/>
+                            <circle cx="85" cy="30" r="5" fill="#8b5cf6"/>
+                            <circle cx="85" cy="70" r="5" fill="#8b5cf6"/>
+                            <circle cx="50" cy="90" r="5" fill="#8b5cf6"/>
+                            <circle cx="15" cy="70" r="5" fill="#8b5cf6"/>
+                            <circle cx="15" cy="30" r="5" fill="#8b5cf6"/>
+                            <circle cx="50" cy="50" r="12" fill="url(#navCenterGrad)"/>
                         </g>
                     </svg>
                     N8tive.io
