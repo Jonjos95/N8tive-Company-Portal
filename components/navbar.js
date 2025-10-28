@@ -11,10 +11,12 @@ class CustomNavbar extends HTMLElement {
                     justify-content: space-between;
                     align-items: center;
                     position: fixed;
-                    width: 100%;
+                    left: 0;
+                    right: 0;
                     top: 0;
                     z-index: 50;
                     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+                    box-sizing: border-box;
                 }
                 .logo {
                     font-weight: 700;
