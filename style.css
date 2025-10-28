@@ -49,10 +49,10 @@
 
 @keyframes spinCube3D {
     0% {
-        transform: rotateY(0deg) rotateX(-20deg);
+        transform: rotateX(-20deg) rotateY(0deg) rotateZ(0deg);
     }
     100% {
-        transform: rotateY(360deg) rotateX(-20deg);
+        transform: rotateX(-20deg) rotateY(360deg) rotateZ(0deg);
     }
 }
 
@@ -1233,29 +1233,29 @@ section.visible {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 120px;
-    height: 120px;
+    width: 140px;
+    height: 140px;
 }
 
 .logo-3d-scene {
     width: 100px;
     height: 100px;
-    perspective: 600px;
+    perspective: 1000px;
     perspective-origin: 50% 50%;
 }
 
 .logo-3d-cube {
-    width: 100%;
-    height: 100%;
+    width: 100px;
+    height: 100px;
     position: relative;
     transform-style: preserve-3d;
-    animation: spinCube3D 15s linear infinite;
-    filter: drop-shadow(0 0 25px rgba(139, 92, 246, 0.7));
+    animation: spinCube3D 12s linear infinite;
+    filter: drop-shadow(0 0 30px rgba(139, 92, 246, 0.8));
 }
 
 .logo-3d-cube:hover {
-    filter: drop-shadow(0 0 35px rgba(139, 92, 246, 1));
-    animation-duration: 10s;
+    filter: drop-shadow(0 0 40px rgba(139, 92, 246, 1));
+    animation-duration: 8s;
 }
 
 .cube-face {
@@ -1266,44 +1266,51 @@ section.visible {
     align-items: center;
     justify-content: center;
     backface-visibility: visible;
-    border: 1px solid rgba(139, 92, 246, 0.3);
+    border: 2px solid rgba(139, 92, 246, 0.4);
+    box-shadow: inset 0 0 20px rgba(139, 92, 246, 0.2);
 }
 
 /* Front and Back faces */
 .cube-front {
     transform: translateZ(50px);
+    border-color: rgba(139, 92, 246, 0.6);
 }
 
 .cube-back {
     transform: translateZ(-50px) rotateY(180deg);
+    border-color: rgba(99, 102, 241, 0.5);
 }
 
 /* Side faces */
 .cube-right {
     transform: rotateY(90deg) translateZ(50px);
-    background: linear-gradient(135deg, rgba(139, 92, 246, 0.25), rgba(99, 102, 241, 0.15));
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.35), rgba(99, 102, 241, 0.25));
+    border-color: rgba(139, 92, 246, 0.5);
 }
 
 .cube-left {
     transform: rotateY(-90deg) translateZ(50px);
-    background: linear-gradient(225deg, rgba(139, 92, 246, 0.25), rgba(99, 102, 241, 0.15));
+    background: linear-gradient(225deg, rgba(139, 92, 246, 0.35), rgba(99, 102, 241, 0.25));
+    border-color: rgba(139, 92, 246, 0.5);
 }
 
 .cube-top {
     transform: rotateX(90deg) translateZ(50px);
-    background: linear-gradient(180deg, rgba(139, 92, 246, 0.3), rgba(99, 102, 241, 0.2));
+    background: linear-gradient(180deg, rgba(139, 92, 246, 0.4), rgba(99, 102, 241, 0.3));
+    border-color: rgba(139, 92, 246, 0.6);
 }
 
 .cube-bottom {
     transform: rotateX(-90deg) translateZ(50px);
-    background: linear-gradient(0deg, rgba(139, 92, 246, 0.2), rgba(99, 102, 241, 0.1));
+    background: linear-gradient(0deg, rgba(139, 92, 246, 0.3), rgba(99, 102, 241, 0.2));
+    border-color: rgba(139, 92, 246, 0.4);
 }
 
 .cube-side-gradient {
     width: 100%;
     height: 100%;
-    background: radial-gradient(circle at center, rgba(139, 92, 246, 0.4), rgba(99, 102, 241, 0.1));
-    backdrop-filter: blur(2px);
+    background: radial-gradient(circle at center, rgba(139, 92, 246, 0.5), rgba(99, 102, 241, 0.2));
+    backdrop-filter: blur(3px);
 }
 
 .hero-subtitle {
