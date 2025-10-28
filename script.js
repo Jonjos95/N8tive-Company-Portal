@@ -662,113 +662,110 @@ document.addEventListener('DOMContentLoaded', () => {
     renderer.setSize(140, 140);
     renderer.setClearColor(0x000000, 0);
     
-    // Create hexagon network texture for cube faces
-    function createHexagonTexture() {
-        const size = 256;
-        const textureCanvas = document.createElement('canvas');
-        textureCanvas.width = size;
-        textureCanvas.height = size;
-        const ctx = textureCanvas.getContext('2d');
-        
-        // Dark background
-        ctx.fillStyle = 'rgba(20, 20, 40, 0.3)';
-        ctx.fillRect(0, 0, size, size);
-        
-        // Draw hexagon
-        ctx.strokeStyle = '#8b5cf6';
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        const centerX = size / 2;
-        const centerY = size / 2;
-        const hexRadius = size * 0.35;
+    // Create hexagonal network structure
+    const hexGroup = new THREE.Group();
+    
+    const hexRadius = 0.7;
+    const hexDepth = 0.4;
+    
+    // Generate hexagon vertices
+    function getHexagonVertices(z) {
+        const vertices = [];
         for (let i = 0; i < 6; i++) {
-            const angle = (Math.PI / 3) * i;
-            const x = centerX + hexRadius * Math.cos(angle);
-            const y = centerY + hexRadius * Math.sin(angle);
-            if (i === 0) ctx.moveTo(x, y);
-            else ctx.lineTo(x, y);
+            const angle = (Math.PI / 3) * i + Math.PI / 6; // Start from top
+            vertices.push(new THREE.Vector3(
+                hexRadius * Math.cos(angle),
+                hexRadius * Math.sin(angle),
+                z
+            ));
         }
-        ctx.closePath();
-        ctx.stroke();
-        
-        // Draw connection lines from center to vertices
-        ctx.lineWidth = 2;
-        for (let i = 0; i < 6; i++) {
-            const angle = (Math.PI / 3) * i;
-            const x = centerX + hexRadius * Math.cos(angle);
-            const y = centerY + hexRadius * Math.sin(angle);
-            ctx.beginPath();
-            ctx.moveTo(centerX, centerY);
-            ctx.lineTo(x, y);
-            ctx.stroke();
-        }
-        
-        // Draw vertex nodes
-        ctx.fillStyle = '#8b5cf6';
-        for (let i = 0; i < 6; i++) {
-            const angle = (Math.PI / 3) * i;
-            const x = centerX + hexRadius * Math.cos(angle);
-            const y = centerY + hexRadius * Math.sin(angle);
-            ctx.beginPath();
-            ctx.arc(x, y, 4, 0, Math.PI * 2);
-            ctx.fill();
-        }
-        
-        // Draw center hub
-        const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 12);
-        gradient.addColorStop(0, '#8b5cf6');
-        gradient.addColorStop(0.5, '#6366f1');
-        gradient.addColorStop(1, '#3b82f6');
-        ctx.fillStyle = gradient;
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, 12, 0, Math.PI * 2);
-        ctx.fill();
-        
-        const texture = new THREE.CanvasTexture(textureCanvas);
-        texture.needsUpdate = true;
-        return texture;
+        return vertices;
     }
     
-    // Create hexagonal prism geometry
-    const hexRadius = 0.6;
-    const hexDepth = 0.5;
-    const geometry = new THREE.CylinderGeometry(hexRadius, hexRadius, hexDepth, 6);
+    const frontVertices = getHexagonVertices(hexDepth / 2);
+    const backVertices = getHexagonVertices(-hexDepth / 2);
+    const centerFront = new THREE.Vector3(0, 0, hexDepth / 2);
+    const centerBack = new THREE.Vector3(0, 0, -hexDepth / 2);
     
-    const texture = createHexagonTexture();
-    
-    // Create materials
-    const sideMaterial = new THREE.MeshPhongMaterial({ 
-        color: 0x6366f1, 
-        transparent: true, 
-        opacity: 0.4,
-        side: THREE.DoubleSide
-    });
-    
-    const faceMaterial = new THREE.MeshPhongMaterial({ 
-        map: texture, 
-        transparent: true, 
-        opacity: 0.95,
-        side: THREE.DoubleSide
-    });
-    
-    // Create materials array: sides first, then top and bottom
-    const materials = [
-        sideMaterial,  // sides
-        faceMaterial,  // top (front hexagon face)
-        faceMaterial   // bottom (back hexagon face)
-    ];
-    
-    const hexPrism = new THREE.Mesh(geometry, materials);
-    
-    // Rotate to show front face
-    hexPrism.rotation.x = Math.PI / 2;
-    scene.add(hexPrism);
-    
-    // Add wireframe edges for definition
-    const edges = new THREE.EdgesGeometry(geometry);
+    // Material for lines
     const lineMaterial = new THREE.LineBasicMaterial({ color: 0x8b5cf6, linewidth: 2 });
-    const wireframe = new THREE.LineSegments(edges, lineMaterial);
-    hexPrism.add(wireframe);
+    
+    // Draw front hexagon outline
+    const frontHexPoints = [...frontVertices, frontVertices[0]];
+    const frontHexGeometry = new THREE.BufferGeometry().setFromPoints(frontHexPoints);
+    const frontHexLine = new THREE.Line(frontHexGeometry, lineMaterial);
+    hexGroup.add(frontHexLine);
+    
+    // Draw back hexagon outline
+    const backHexPoints = [...backVertices, backVertices[0]];
+    const backHexGeometry = new THREE.BufferGeometry().setFromPoints(backHexPoints);
+    const backHexLine = new THREE.Line(backHexGeometry, lineMaterial);
+    hexGroup.add(backHexLine);
+    
+    // Draw connecting edges between front and back hexagons
+    for (let i = 0; i < 6; i++) {
+        const edgePoints = [frontVertices[i], backVertices[i]];
+        const edgeGeometry = new THREE.BufferGeometry().setFromPoints(edgePoints);
+        const edgeLine = new THREE.Line(edgeGeometry, lineMaterial);
+        hexGroup.add(edgeLine);
+    }
+    
+    // Draw spokes from front center to front vertices
+    for (let i = 0; i < 6; i++) {
+        const spokePoints = [centerFront, frontVertices[i]];
+        const spokeGeometry = new THREE.BufferGeometry().setFromPoints(spokePoints);
+        const spokeLine = new THREE.Line(spokeGeometry, lineMaterial);
+        hexGroup.add(spokeLine);
+    }
+    
+    // Draw spokes from back center to back vertices
+    for (let i = 0; i < 6; i++) {
+        const spokePoints = [centerBack, backVertices[i]];
+        const spokeGeometry = new THREE.BufferGeometry().setFromPoints(spokePoints);
+        const spokeLine = new THREE.Line(spokeGeometry, lineMaterial);
+        hexGroup.add(spokeLine);
+    }
+    
+    // Draw connection between front and back centers
+    const centerConnection = new THREE.BufferGeometry().setFromPoints([centerFront, centerBack]);
+    const centerLine = new THREE.Line(centerConnection, lineMaterial);
+    hexGroup.add(centerLine);
+    
+    // Add vertex spheres
+    const vertexGeometry = new THREE.SphereGeometry(0.04, 16, 16);
+    const vertexMaterial = new THREE.MeshPhongMaterial({ color: 0x8b5cf6 });
+    
+    // Front vertices
+    frontVertices.forEach(vertex => {
+        const sphere = new THREE.Mesh(vertexGeometry, vertexMaterial);
+        sphere.position.copy(vertex);
+        hexGroup.add(sphere);
+    });
+    
+    // Back vertices
+    backVertices.forEach(vertex => {
+        const sphere = new THREE.Mesh(vertexGeometry, vertexMaterial);
+        sphere.position.copy(vertex);
+        hexGroup.add(sphere);
+    });
+    
+    // Center hubs
+    const hubGeometry = new THREE.SphereGeometry(0.08, 16, 16);
+    const hubMaterial = new THREE.MeshPhongMaterial({ 
+        color: 0x6366f1,
+        emissive: 0x3b82f6,
+        emissiveIntensity: 0.5
+    });
+    
+    const frontHub = new THREE.Mesh(hubGeometry, hubMaterial);
+    frontHub.position.copy(centerFront);
+    hexGroup.add(frontHub);
+    
+    const backHub = new THREE.Mesh(hubGeometry, hubMaterial);
+    backHub.position.copy(centerBack);
+    hexGroup.add(backHub);
+    
+    scene.add(hexGroup);
     
     // Add lighting
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
@@ -787,8 +784,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Mouse interaction variables
     let isDragging = false;
     let previousMousePosition = { x: 0, y: 0 };
-    let rotation = { x: 0, y: 0 };
-    let targetRotation = { x: 0, y: 0 };
+    let rotation = { x: -0.2, y: 0.3 };
+    let targetRotation = { x: -0.2, y: 0.3 };
     let autoRotate = true;
     
     // Mouse events for interaction
@@ -860,9 +857,9 @@ document.addEventListener('DOMContentLoaded', () => {
         rotation.x += (targetRotation.x - rotation.x) * 0.1;
         rotation.y += (targetRotation.y - rotation.y) * 0.1;
         
-        // Apply rotation (hexPrism already has base rotation of PI/2 on x-axis)
-        hexPrism.rotation.x = Math.PI / 2 + rotation.x;
-        hexPrism.rotation.y = rotation.y;
+        // Apply rotation to hexGroup
+        hexGroup.rotation.x = rotation.x;
+        hexGroup.rotation.y = rotation.y;
         
         renderer.render(scene, camera);
     }
