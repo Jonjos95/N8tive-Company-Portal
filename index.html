@@ -18,18 +18,18 @@
     <!-- Hero Section -->
     <section id="hero" class="relative min-h-screen flex items-center justify-center overflow-hidden">
         <div class="absolute inset-0 z-0" id="vanta-bg"></div>
-        <div class="relative z-10 text-center space-y-8 px-4 max-w-7xl mx-auto">
-                <div class="flex justify-center">
+        <div class="hero-content relative z-10 text-center space-y-8 px-4 max-w-7xl mx-auto">
+                <div class="hero-logo flex justify-center">
                     <div class="bg-gradient-to-r from-blue-500 to-purple-600 p-1 rounded-lg">
                         <h1 class="text-5xl md:text-7xl font-bold bg-gray-900 px-6 py-3 rounded-md">
                             n8tive<span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">.io</span>
                         </h1>
                     </div>
                 </div>
-                <p class="text-xl md:text-2xl max-w-2xl mx-auto text-gray-300">
+                <p class="hero-subtitle text-xl md:text-2xl max-w-2xl mx-auto text-gray-300">
                     Building intuitive web tools for the modern digital landscape
                 </p>
-                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <div class="hero-buttons flex flex-col sm:flex-row justify-center gap-4">
                     <a href="#products" class="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg font-medium hover:shadow-lg hover:shadow-blue-500/30 transition-all duration-300">
                         Explore Apps
                     </a>
@@ -385,7 +385,7 @@
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Products Section -->
         <section id="products" class="py-20">
-            <div class="max-w-4xl mx-auto text-center mb-16">
+            <div class="section-header max-w-4xl mx-auto text-center mb-16">
                 <h2 class="text-3xl md:text-4xl font-bold">
                     Our <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">Products</span>
                 </h2>
@@ -395,7 +395,7 @@
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <!-- Product 1 -->
-                <div class="bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 rounded-xl overflow-hidden hover:shadow-lg hover:shadow-blue-500/20 transition-all duration-300">
+                <div class="product-card bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 rounded-xl overflow-hidden hover:shadow-lg hover:shadow-blue-500/20 transition-all duration-300">
                     <div class="h-48 bg-gradient-to-r from-blue-600/30 to-purple-600/30 flex items-center justify-center">
                         <i data-feather="trello" class="w-16 h-16 text-blue-400"></i>
                     </div>
@@ -407,7 +407,7 @@
                 </div>
                 
                 <!-- Product 2 -->
-                <div class="bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 rounded-xl overflow-hidden hover:shadow-lg hover:shadow-purple-500/20 transition-all duration-300">
+                <div class="product-card bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 rounded-xl overflow-hidden hover:shadow-lg hover:shadow-purple-500/20 transition-all duration-300">
                     <div class="h-48 bg-gradient-to-r from-purple-600/30 to-blue-600/30 flex items-center justify-center">
                         <i data-feather="navigation" class="w-16 h-16 text-purple-400"></i>
                     </div>
@@ -419,7 +419,7 @@
                 </div>
                 
                 <!-- Product 3 -->
-                <div class="bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 rounded-xl overflow-hidden hover:shadow-lg hover:shadow-blue-500/20 transition-all duration-300">
+                <div class="product-card bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 rounded-xl overflow-hidden hover:shadow-lg hover:shadow-blue-500/20 transition-all duration-300">
                     <div class="h-48 bg-gradient-to-r from-blue-600/30 to-purple-600/30 flex items-center justify-center">
                         <i data-feather="cpu" class="w-16 h-16 text-blue-400"></i>
                     </div>
@@ -434,12 +434,12 @@
 
         <!-- Mission Section -->
         <section id="mission" class="py-20">
-            <div class="bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 rounded-xl p-8 md:p-12">
-                <h2 class="text-3xl md:text-4xl font-bold mb-8 text-center">
+            <div class="mission-container bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 rounded-xl p-8 md:p-12">
+                <h2 class="section-header text-3xl md:text-4xl font-bold mb-8 text-center">
                     Our <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">Mission</span>
                 </h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div>
+                    <div class="mission-card">
                         <h3 class="text-xl font-bold mb-4 flex items-center">
                             <span class="bg-gradient-to-r from-blue-500 to-purple-600 w-8 h-8 rounded-lg flex items-center justify-center mr-3">
                                 <i data-feather="target" class="w-4 h-4"></i>
@@ -450,7 +450,7 @@
                             We push boundaries by reimagining how digital tools should work. Our solutions combine cutting-edge technology with thoughtful design.
                         </p>
                     </div>
-                    <div>
+                    <div class="mission-card">
                         <h3 class="text-xl font-bold mb-4 flex items-center">
                             <span class="bg-gradient-to-r from-blue-500 to-purple-600 w-8 h-8 rounded-lg flex items-center justify-center mr-3">
                                 <i data-feather="user" class="w-4 h-4"></i>
@@ -461,9 +461,9 @@
                             Every pixel and interaction is designed with the user in mind. We obsess over details that make our tools feel intuitive.
                         </p>
                     </div>
-                    <div>
+                    <div class="mission-card">
                         <h3 class="text-xl font-bold mb-4 flex items-center">
-                            <span class="bg-gradient-to-r from-blue-500 to-purple-600 w-8 h-8 rounded-lg flex items-center justify center mr-3">
+                            <span class="bg-gradient-to-r from-blue-500 to-purple-600 w-8 h-8 rounded-lg flex items-center justify-center mr-3">
                                 <i data-feather="refresh-cw" class="w-4 h-4"></i>
                             </span>
                             Automation
@@ -472,7 +472,7 @@
                             We eliminate repetitive work through smart automation, freeing you to focus on what matters most.
                         </p>
                     </div>
-                    <div>
+                    <div class="mission-card">
                         <h3 class="text-xl font-bold mb-4 flex items-center">
                             <span class="bg-gradient-to-r from-blue-500 to-purple-600 w-8 h-8 rounded-lg flex items-center justify-center mr-3">
                                 <i data-feather="lock" class="w-4 h-4"></i>

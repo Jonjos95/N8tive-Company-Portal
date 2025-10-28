@@ -442,3 +442,184 @@ setTimeout(() => {
 window.addEventListener('resize', () => {
     updateCardPositions(window.pageYOffset);
 });
+
+// ===== PRODUCT CARDS ANIMATION =====
+const productCardsObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('animate-in');
+        }
+    });
+}, {
+    threshold: 0.2,
+    rootMargin: '0px 0px -100px 0px'
+});
+
+// Observe product cards
+document.addEventListener('DOMContentLoaded', () => {
+    const productCards = document.querySelectorAll('.product-card');
+    productCards.forEach(card => {
+        productCardsObserver.observe(card);
+    });
+    
+    // Also observe section headers
+    const sectionHeaders = document.querySelectorAll('.section-header');
+    sectionHeaders.forEach(header => {
+        productCardsObserver.observe(header);
+    });
+});
+
+// ===== MISSION SECTION ANIMATION =====
+const missionObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('animate-in');
+        }
+    });
+}, {
+    threshold: 0.15,
+    rootMargin: '0px 0px -100px 0px'
+});
+
+// Observe mission container
+document.addEventListener('DOMContentLoaded', () => {
+    const missionContainer = document.querySelector('.mission-container');
+    if (missionContainer) {
+        missionObserver.observe(missionContainer);
+    }
+});
+
+// ===== BIDIRECTIONAL SCROLL FOR ALL SECTIONS =====
+let lastScrollY = window.pageYOffset;
+let scrollDirection = 'down';
+let ticking = false;
+
+// Track scroll direction globally
+function updateScrollDirection() {
+    const currentScrollY = window.pageYOffset;
+    
+    if (currentScrollY > lastScrollY) {
+        scrollDirection = 'down';
+    } else if (currentScrollY < lastScrollY) {
+        scrollDirection = 'up';
+    }
+    
+    lastScrollY = currentScrollY;
+    ticking = false;
+}
+
+// Optimized scroll listener
+window.addEventListener('scroll', () => {
+    if (!ticking) {
+        window.requestAnimationFrame(() => {
+            updateScrollDirection();
+            updateAllSectionAnimations();
+        });
+        ticking = true;
+    }
+});
+
+// Update all section animations based on scroll
+function updateAllSectionAnimations() {
+    const scrollY = window.pageYOffset;
+    const windowHeight = window.innerHeight;
+    
+    // Hero section parallax
+    const heroSection = document.getElementById('hero');
+    if (heroSection) {
+        const heroContent = heroSection.querySelector('.hero-content');
+        if (heroContent) {
+            const heroProgress = Math.min(scrollY / windowHeight, 1);
+            const heroOpacity = 1 - (heroProgress * 0.8);
+            const heroY = scrollY * 0.4;
+            
+            heroContent.style.transform = `translateY(${heroY}px)`;
+            heroContent.style.opacity = heroOpacity;
+            
+            // Add scroll direction class for bidirectional animations
+            if (scrollDirection === 'up' && scrollY < windowHeight * 0.5) {
+                heroContent.classList.add('scroll-backward');
+                heroContent.classList.remove('scroll-forward');
+            } else {
+                heroContent.classList.remove('scroll-backward');
+                heroContent.classList.add('scroll-forward');
+            }
+        }
+    }
+    
+    // About section cards - enhance existing parallax
+    const aboutSection = document.getElementById('about');
+    if (aboutSection) {
+        const rect = aboutSection.getBoundingClientRect();
+        const sectionTop = rect.top;
+        const sectionHeight = rect.height;
+        const sectionProgress = (windowHeight - sectionTop) / (windowHeight + sectionHeight);
+        
+        if (sectionProgress > 0 && sectionProgress < 1) {
+            const verticalCards = aboutSection.querySelectorAll('.vertical-card');
+            verticalCards.forEach((card, index) => {
+                const cardRect = card.getBoundingClientRect();
+                const cardCenter = cardRect.top + cardRect.height / 2;
+                const distanceFromCenter = (windowHeight / 2) - cardCenter;
+                const normalizedDistance = distanceFromCenter / (windowHeight / 2);
+                
+                // Enhanced parallax with scroll direction
+                const dirMultiplier = scrollDirection === 'down' ? 1 : 0.8;
+                const translateY = normalizedDistance * 15 * dirMultiplier;
+                const scale = 1 + (Math.abs(normalizedDistance) * -0.02);
+                const opacity = 1 - (Math.abs(normalizedDistance) * 0.15);
+                
+                card.style.transform = `translateY(${translateY}px) scale(${scale})`;
+                card.style.opacity = Math.max(0.7, opacity);
+            });
+        }
+    }
+    
+    // Products section parallax
+    const productsSection = document.getElementById('products');
+    if (productsSection) {
+        const rect = productsSection.getBoundingClientRect();
+        const sectionProgress = (windowHeight - rect.top) / (windowHeight + rect.height);
+        
+        if (sectionProgress > 0 && sectionProgress < 1) {
+            const productCards = productsSection.querySelectorAll('.product-card.animate-in');
+            productCards.forEach((card, index) => {
+                const cardRect = card.getBoundingClientRect();
+                const cardProgress = (windowHeight - cardRect.top) / windowHeight;
+                
+                if (cardProgress > 0.1 && cardProgress < 1.2) {
+                    const dirMultiplier = scrollDirection === 'down' ? 1 : -0.5;
+                    const drift = (cardProgress - 0.5) * 10 * dirMultiplier;
+                    const rotate = (cardProgress - 0.5) * 2 * dirMultiplier;
+                    
+                    // Preserve the base transform and add drift
+                    const currentTransform = `translateY(${drift}px) rotateZ(${rotate}deg)`;
+                    card.style.transform = currentTransform;
+                    card.style.opacity = Math.min(1, 0.5 + cardProgress);
+                }
+            });
+        }
+    }
+    
+    // Mission section parallax
+    const missionSection = document.getElementById('mission');
+    if (missionSection) {
+        const missionContainer = missionSection.querySelector('.mission-container');
+        if (missionContainer && missionContainer.classList.contains('animate-in')) {
+            const rect = missionContainer.getBoundingClientRect();
+            const containerProgress = (windowHeight - rect.top) / windowHeight;
+            
+            if (containerProgress > 0.1 && containerProgress < 1.2) {
+                const dirMultiplier = scrollDirection === 'down' ? 1 : -0.5;
+                const drift = (containerProgress - 0.5) * 8 * dirMultiplier;
+                
+                missionContainer.style.transform = `translateY(${drift}px)`;
+            }
+        }
+    }
+}
+
+// Initial call
+setTimeout(() => {
+    updateAllSectionAnimations();
+}, 100);
