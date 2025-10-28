@@ -729,28 +729,46 @@ document.addEventListener('DOMContentLoaded', () => {
         return texture;
     }
     
-    // Create cube geometry
-    const geometry = new THREE.BoxGeometry(1.2, 1.2, 1.2);
+    // Create hexagonal prism geometry
+    const hexRadius = 0.6;
+    const hexDepth = 0.5;
+    const geometry = new THREE.CylinderGeometry(hexRadius, hexRadius, hexDepth, 6);
+    
     const texture = createHexagonTexture();
     
-    // Create materials for each face
+    // Create materials
+    const sideMaterial = new THREE.MeshPhongMaterial({ 
+        color: 0x6366f1, 
+        transparent: true, 
+        opacity: 0.4,
+        side: THREE.DoubleSide
+    });
+    
+    const faceMaterial = new THREE.MeshPhongMaterial({ 
+        map: texture, 
+        transparent: true, 
+        opacity: 0.95,
+        side: THREE.DoubleSide
+    });
+    
+    // Create materials array: sides first, then top and bottom
     const materials = [
-        new THREE.MeshPhongMaterial({ map: texture, transparent: true, opacity: 0.95 }), // right
-        new THREE.MeshPhongMaterial({ map: texture, transparent: true, opacity: 0.95 }), // left
-        new THREE.MeshPhongMaterial({ map: texture, transparent: true, opacity: 0.95 }), // top
-        new THREE.MeshPhongMaterial({ map: texture, transparent: true, opacity: 0.95 }), // bottom
-        new THREE.MeshPhongMaterial({ map: texture, transparent: true, opacity: 0.95 }), // front
-        new THREE.MeshPhongMaterial({ map: texture, transparent: true, opacity: 0.95 })  // back
+        sideMaterial,  // sides
+        faceMaterial,  // top (front hexagon face)
+        faceMaterial   // bottom (back hexagon face)
     ];
     
-    const cube = new THREE.Mesh(geometry, materials);
-    scene.add(cube);
+    const hexPrism = new THREE.Mesh(geometry, materials);
     
-    // Add wireframe for better 3D perception
+    // Rotate to show front face
+    hexPrism.rotation.x = Math.PI / 2;
+    scene.add(hexPrism);
+    
+    // Add wireframe edges for definition
     const edges = new THREE.EdgesGeometry(geometry);
     const lineMaterial = new THREE.LineBasicMaterial({ color: 0x8b5cf6, linewidth: 2 });
     const wireframe = new THREE.LineSegments(edges, lineMaterial);
-    cube.add(wireframe);
+    hexPrism.add(wireframe);
     
     // Add lighting
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
@@ -769,8 +787,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Mouse interaction variables
     let isDragging = false;
     let previousMousePosition = { x: 0, y: 0 };
-    let rotation = { x: -0.3, y: 0 };
-    let targetRotation = { x: -0.3, y: 0 };
+    let rotation = { x: 0, y: 0 };
+    let targetRotation = { x: 0, y: 0 };
     let autoRotate = true;
     
     // Mouse events for interaction
@@ -842,8 +860,9 @@ document.addEventListener('DOMContentLoaded', () => {
         rotation.x += (targetRotation.x - rotation.x) * 0.1;
         rotation.y += (targetRotation.y - rotation.y) * 0.1;
         
-        cube.rotation.x = rotation.x;
-        cube.rotation.y = rotation.y;
+        // Apply rotation (hexPrism already has base rotation of PI/2 on x-axis)
+        hexPrism.rotation.x = Math.PI / 2 + rotation.x;
+        hexPrism.rotation.y = rotation.y;
         
         renderer.render(scene, camera);
     }
