@@ -59,6 +59,19 @@ section.visible {
     position: relative;
     overflow: hidden;
     will-change: transform, opacity;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Ensure about section cards take full width and align evenly */
+#about .grid {
+    width: 100%;
+    align-items: stretch;
+}
+
+#about .vertical-card {
+    min-height: 100%;
 }
 
 .vertical-card::before {
@@ -237,55 +250,228 @@ section.visible {
     100% { background-position: 50px 50px; }
 }
 
+/* Dynamic entrance animations for demo cards */
+@keyframes demoCardEnter {
+    0% {
+        opacity: 0;
+        transform: translateY(100px) scale(0.8) rotateX(20deg);
+    }
+    50% {
+        transform: translateY(-15px) scale(1.05) rotateX(-5deg);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1) rotateX(0deg);
+    }
+}
+
+@keyframes demoCardEnterLeft {
+    0% {
+        opacity: 0;
+        transform: translateX(-100px) translateY(50px) scale(0.8) rotate(-10deg);
+    }
+    60% {
+        transform: translateX(10px) translateY(-10px) scale(1.03) rotate(2deg);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0) translateY(0) scale(1) rotate(0deg);
+    }
+}
+
+@keyframes demoCardEnterRight {
+    0% {
+        opacity: 0;
+        transform: translateX(100px) translateY(50px) scale(0.8) rotate(10deg);
+    }
+    60% {
+        transform: translateX(-10px) translateY(-10px) scale(1.03) rotate(-2deg);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0) translateY(0) scale(1) rotate(0deg);
+    }
+}
+
 .demo-card {
-    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-    will-change: transform;
+    opacity: 0;
+    transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    will-change: transform, opacity;
+    perspective: 1000px;
+}
+
+.demo-card.animate-in:nth-child(1) {
+    animation: demoCardEnterLeft 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.demo-card.animate-in:nth-child(2) {
+    animation: demoCardEnterRight 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    animation-delay: 0.2s;
 }
 
 .demo-card:hover {
-    transform: translateY(-8px);
+    transform: translateY(-12px) scale(1.03) rotateX(5deg);
+    box-shadow: 0 25px 50px -12px rgba(59, 130, 246, 0.3);
 }
 
 .demo-mockup {
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transform-origin: center;
 }
 
 .demo-card:hover .demo-mockup {
-    transform: scale(1.02);
+    transform: scale(1.03) translateY(-5px);
 }
+
+/* Mockup content animations */
+@keyframes pulseGlow {
+    0%, 100% { 
+        opacity: 0.3;
+        filter: brightness(1);
+    }
+    50% { 
+        opacity: 0.6;
+        filter: brightness(1.3);
+    }
+}
+
+.demo-mockup .animate-pulse {
+    animation: pulseGlow 2s ease-in-out infinite;
+}
+
+/* Bar chart animation */
+@keyframes barGrow {
+    0% {
+        transform: scaleY(0);
+        opacity: 0;
+    }
+    100% {
+        transform: scaleY(1);
+        opacity: 1;
+    }
+}
+
+.demo-card.animate-in .demo-mockup .flex-1 {
+    animation: barGrow 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    transform-origin: bottom;
+}
+
+.demo-card.animate-in .demo-mockup .flex-1:nth-child(1) { animation-delay: 0.5s; }
+.demo-card.animate-in .demo-mockup .flex-1:nth-child(2) { animation-delay: 0.6s; }
+.demo-card.animate-in .demo-mockup .flex-1:nth-child(3) { animation-delay: 0.7s; }
+.demo-card.animate-in .demo-mockup .flex-1:nth-child(4) { animation-delay: 0.8s; }
+.demo-card.animate-in .demo-mockup .flex-1:nth-child(5) { animation-delay: 0.9s; }
+.demo-card.animate-in .demo-mockup .flex-1:nth-child(6) { animation-delay: 1.0s; }
 
 /* Showcase Container */
 .showcase-container {
     min-height: 400px;
 }
 
+/* Dynamic showcase entrance */
+@keyframes showcaseSlideIn {
+    0% {
+        opacity: 0;
+        transform: translateY(60px) scale(0.95);
+    }
+    60% {
+        transform: translateY(-10px) scale(1.02);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes showcaseContentEnter {
+    0% {
+        opacity: 0;
+        transform: translateX(-80px) rotateY(-15deg);
+    }
+    70% {
+        transform: translateX(10px) rotateY(3deg);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0) rotateY(0deg);
+    }
+}
+
+@keyframes showcaseVisualEnter {
+    0% {
+        opacity: 0;
+        transform: translateX(80px) rotateY(15deg) scale(0.8);
+    }
+    70% {
+        transform: translateX(-10px) rotateY(-3deg) scale(1.05);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0) rotateY(0deg) scale(1);
+    }
+}
+
 .showcase-item {
     opacity: 0;
     transform: translateY(40px);
-    transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    perspective: 1500px;
 }
 
 .showcase-item.active {
-    opacity: 1;
-    transform: translateY(0);
+    animation: showcaseSlideIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
 .showcase-content {
-    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity: 0;
+    transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transform-style: preserve-3d;
+}
+
+.showcase-item.active .showcase-content {
+    animation: showcaseContentEnter 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    animation-delay: 0.2s;
 }
 
 .showcase-visual {
-    transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity: 0;
+    transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transform-style: preserve-3d;
+}
+
+.showcase-item.active .showcase-visual {
+    animation: showcaseVisualEnter 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    animation-delay: 0.4s;
+}
+
+/* List items staggered animation */
+.showcase-item.active ul li {
+    opacity: 0;
+    animation: fadeInUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.showcase-item.active ul li:nth-child(1) { animation-delay: 0.6s; }
+.showcase-item.active ul li:nth-child(2) { animation-delay: 0.7s; }
+.showcase-item.active ul li:nth-child(3) { animation-delay: 0.8s; }
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* Bidirectional scroll animation states */
 .scroll-forward .showcase-content {
-    transform: translateX(0);
+    transform: translateX(0) rotateY(0deg);
     opacity: 1;
 }
 
 .scroll-backward .showcase-content {
-    transform: translateX(0);
+    transform: translateX(0) rotateY(0deg);
     opacity: 1;
 }
 
@@ -297,6 +483,22 @@ section.visible {
 .showcase-item:not(.active) .showcase-visual {
     transform: translateX(50px) scale(0.95);
     opacity: 0;
+}
+
+/* Pulse animation for interactive demo icon */
+@keyframes demoPulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 20px rgba(59, 130, 246, 0);
+    }
+}
+
+.showcase-visual .animate-pulse {
+    animation: demoPulse 2s ease-in-out infinite;
 }
 
 /* Custom scrollbar */

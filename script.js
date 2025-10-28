@@ -262,7 +262,7 @@ function onScroll() {
     }
 }
 
-// Bidirectional animation for demo section
+// Enhanced bidirectional animation for demo section
 function updateDemoSection(scrollPos, direction) {
     const demoSection = document.querySelector('#demo');
     if (!demoSection) return;
@@ -274,33 +274,41 @@ function updateDemoSection(scrollPos, direction) {
     // Check if demo section is in viewport
     const isInView = scrollPos + windowHeight > sectionTop && scrollPos < sectionTop + sectionHeight;
     
-    if (!isInView) return;
-    
     // Calculate progress through section (0 to 1)
     const progress = Math.max(0, Math.min(1, (scrollPos + windowHeight - sectionTop) / (sectionHeight + windowHeight)));
     
-    // Animate demo cards based on scroll position and direction
+    // Trigger entrance animations for demo cards
     const demoCards = document.querySelectorAll('.demo-card');
     demoCards.forEach((card, index) => {
-        const delay = index * 0.1;
-        const cardProgress = Math.max(0, Math.min(1, progress - delay));
+        if (isInView && progress > 0.2) {
+            // Trigger entrance animation once
+            if (!card.classList.contains('animate-in')) {
+                setTimeout(() => {
+                    card.classList.add('animate-in');
+                }, index * 100);
+            }
+        }
         
-        if (direction === 'down') {
-            // Forward animation
-            const translateY = (1 - cardProgress) * 50;
-            const opacity = cardProgress;
-            const scale = 0.95 + (cardProgress * 0.05);
+        // Continue with scroll-based transformations after entrance
+        if (card.classList.contains('animate-in')) {
+            const delay = index * 0.05;
+            const cardProgress = Math.max(0, Math.min(1, (progress - 0.3 - delay) * 1.5));
             
-            card.style.transform = `translateY(${translateY}px) scale(${scale})`;
-            card.style.opacity = opacity;
-        } else {
-            // Reverse animation - smooth transition back
-            const translateY = (1 - cardProgress) * 50;
-            const opacity = cardProgress;
-            const scale = 0.95 + (cardProgress * 0.05);
-            
-            card.style.transform = `translateY(${translateY}px) scale(${scale})`;
-            card.style.opacity = opacity;
+            if (direction === 'down' && cardProgress > 0) {
+                // Forward scroll - subtle drift
+                const translateY = Math.sin(cardProgress * Math.PI) * -10;
+                const rotateZ = Math.sin(cardProgress * Math.PI) * 2;
+                const scale = 1 + (Math.sin(cardProgress * Math.PI) * 0.02);
+                
+                card.style.transform = `translateY(${translateY}px) scale(${scale}) rotateZ(${rotateZ}deg)`;
+            } else if (direction === 'up' && cardProgress > 0) {
+                // Backward scroll - reverse drift
+                const translateY = Math.sin(cardProgress * Math.PI) * -10;
+                const rotateZ = Math.sin(cardProgress * Math.PI) * -2;
+                const scale = 1 + (Math.sin(cardProgress * Math.PI) * 0.02);
+                
+                card.style.transform = `translateY(${translateY}px) scale(${scale}) rotateZ(${rotateZ}deg)`;
+            }
         }
     });
     
