@@ -1216,8 +1216,8 @@ section.visible {
 
 .hero-logo {
     opacity: 1 !important;
-    animation: heroLogoEnter 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    animation-delay: 0.2s;
+    animation: none !important;
+    transform: translateY(0) !important;
 }
 
 .hero-subtitle {
@@ -1231,8 +1231,8 @@ section.visible {
 
 .hero-buttons {
     opacity: 1 !important;
-    animation: heroButtonsEnter 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    animation-delay: 0.8s;
+    animation: none !important;
+    transform: translateY(0) scale(1) !important;
 }
 
 /* Override any opacity changes - keep hero always visible */
