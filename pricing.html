@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pricing | n8tive.io</title>
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.globe.min.js"></script>
+</head>
+<body class="bg-gray-900 text-gray-100 font-inter">
+    <!-- Full Page Vanta Background -->
+    <div class="fixed inset-0 z-0" id="vanta-bg"></div>
+    
+    <!-- Animated Mesh Grid Overlay -->
+    <div class="fixed inset-0 z-0 pointer-events-none opacity-20" id="mesh-grid">
+        <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <pattern id="grid" width="80" height="80" patternUnits="userSpaceOnUse">
+                    <path d="M 80 0 L 0 0 0 80" fill="none" stroke="rgba(139, 92, 246, 0.3)" stroke-width="0.5"/>
+                </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#grid)" />
+        </svg>
+    </div>
+    
+    <!-- Floating Particles Overlay -->
+    <div class="fixed inset-0 z-0 pointer-events-none" id="particles-overlay"></div>
+    
+    <!-- Main Content Wrapper -->
+    <div class="relative z-10">
+        <custom-navbar></custom-navbar>
+
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-20">
+            <!-- Pricing Section -->
+            <section id="pricing" class="py-20">
+                <div class="section-header max-w-4xl mx-auto text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold">
+                        Simple, <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">Transparent</span> Pricing
+                    </h2>
+                    <p class="text-gray-400 mt-4 text-lg">
+                        Choose the perfect plan for your needs. All plans include our core features.
+                    </p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                    <!-- Starter Plan -->
+                    <div class="pricing-card bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 rounded-xl p-8 hover:border-blue-500 transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/20">
+                        <div class="text-center mb-6">
+                            <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-500/10 rounded-full mb-4">
+                                <i data-feather="zap" class="w-8 h-8 text-blue-400"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold mb-2">Starter</h3>
+                            <p class="text-gray-400 text-sm">Perfect for individuals</p>
+                        </div>
+                        <div class="text-center mb-6">
+                            <div class="flex items-baseline justify-center">
+                                <span class="text-4xl font-bold">$29</span>
+                                <span class="text-gray-400 ml-2">/month</span>
+                            </div>
+                        </div>
+                        <ul class="space-y-4 mb-8">
+                            <li class="flex items-start">
+                                <i data-feather="check" class="w-5 h-5 text-blue-400 mr-3 flex-shrink-0 mt-0.5"></i>
+                                <span class="text-gray-300">Up to 5 active projects</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i data-feather="check" class="w-5 h-5 text-blue-400 mr-3 flex-shrink-0 mt-0.5"></i>
+                                <span class="text-gray-300">Basic automation workflows</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i data-feather="check" class="w-5 h-5 text-blue-400 mr-3 flex-shrink-0 mt-0.5"></i>
+                                <span class="text-gray-300">5GB storage</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i data-feather="check" class="w-5 h-5 text-blue-400 mr-3 flex-shrink-0 mt-0.5"></i>
+                                <span class="text-gray-300">Email support</span>
+                            </li>
+                        </ul>
+                        <a href="login.html" class="block w-full py-3 px-6 bg-blue-600 hover:bg-blue-500 text-white text-center rounded-lg font-medium transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/30">
+                            Get Started
+                        </a>
+                    </div>
+
+                    <!-- Pro Plan (Popular) -->
+                    <div class="pricing-card pricing-card-featured bg-gradient-to-br from-purple-900/40 to-blue-900/40 border-2 border-purple-500 rounded-xl p-8 relative hover:shadow-2xl hover:shadow-purple-500/30 transition-all duration-300 transform hover:scale-105">
+                        <div class="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                            <span class="bg-gradient-to-r from-purple-500 to-blue-500 text-white px-4 py-1 rounded-full text-sm font-semibold">
+                                Most Popular
+                            </span>
+                        </div>
+                        <div class="text-center mb-6">
+                            <div class="inline-flex items-center justify-center w-16 h-16 bg-purple-500/20 rounded-full mb-4">
+                                <i data-feather="trending-up" class="w-8 h-8 text-purple-400"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold mb-2">Pro</h3>
+                            <p class="text-gray-400 text-sm">Best for teams</p>
+                        </div>
+                        <div class="text-center mb-6">
+                            <div class="flex items-baseline justify-center">
+                                <span class="text-4xl font-bold">$79</span>
+                                <span class="text-gray-400 ml-2">/month</span>
+                            </div>
+                        </div>
+                        <ul class="space-y-4 mb-8">
+                            <li class="flex items-start">
+                                <i data-feather="check" class="w-5 h-5 text-purple-400 mr-3 flex-shrink-0 mt-0.5"></i>
+                                <span class="text-gray-300">Unlimited projects</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i data-feather="check" class="w-5 h-5 text-purple-400 mr-3 flex-shrink-0 mt-0.5"></i>
+                                <span class="text-gray-300">Advanced automation + API access</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i data-feather="check" class="w-5 h-5 text-purple-400 mr-3 flex-shrink-0 mt-0.5"></i>
+                                <span class="text-gray-300">100GB storage</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i data-feather="check" class="w-5 h-5 text-purple-400 mr-3 flex-shrink-0 mt-0.5"></i>
+                                <span class="text-gray-300">Priority support</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i data-feather="check" class="w-5 h-5 text-purple-400 mr-3 flex-shrink-0 mt-0.5"></i>
+                                <span class="text-gray-300">Team collaboration</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i data-feather="check" class="w-5 h-5 text-purple-400 mr-3 flex-shrink-0 mt-0.5"></i>
+                                <span class="text-gray-300">Advanced analytics</span>
+                            </li>
+                        </ul>
+                        <a href="login.html" class="block w-full py-3 px-6 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white text-center rounded-lg font-medium transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/50">
+                            Get Started
+                        </a>
+                    </div>
+
+                    <!-- Enterprise Plan -->
+                    <div class="pricing-card bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 rounded-xl p-8 hover:border-purple-500 transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/20">
+                        <div class="text-center mb-6">
+                            <div class="inline-flex items-center justify-center w-16 h-16 bg-purple-500/10 rounded-full mb-4">
+                                <i data-feather="briefcase" class="w-8 h-8 text-purple-400"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold mb-2">Enterprise</h3>
+                            <p class="text-gray-400 text-sm">For large organizations</p>
+                        </div>
+                        <div class="text-center mb-6">
+                            <div class="flex items-baseline justify-center">
+                                <span class="text-4xl font-bold">Custom</span>
+                            </div>
+                            <p class="text-gray-400 text-sm mt-2">Tailored to your needs</p>
+                        </div>
+                        <ul class="space-y-4 mb-8">
+                            <li class="flex items-start">
+                                <i data-feather="check" class="w-5 h-5 text-purple-400 mr-3 flex-shrink-0 mt-0.5"></i>
+                                <span class="text-gray-300">Everything in Pro</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i data-feather="check" class="w-5 h-5 text-purple-400 mr-3 flex-shrink-0 mt-0.5"></i>
+                                <span class="text-gray-300">Custom integrations</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i data-feather="check" class="w-5 h-5 text-purple-400 mr-3 flex-shrink-0 mt-0.5"></i>
+                                <span class="text-gray-300">Unlimited storage</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i data-feather="check" class="w-5 h-5 text-purple-400 mr-3 flex-shrink-0 mt-0.5"></i>
+                                <span class="text-gray-300">Dedicated support team</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i data-feather="check" class="w-5 h-5 text-purple-400 mr-3 flex-shrink-0 mt-0.5"></i>
+                                <span class="text-gray-300">On-premise deployment</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i data-feather="check" class="w-5 h-5 text-purple-400 mr-3 flex-shrink-0 mt-0.5"></i>
+                                <span class="text-gray-300">SLA guarantee</span>
+                            </li>
+                        </ul>
+                        <a href="login.html" class="block w-full py-3 px-6 bg-gray-700 hover:bg-gray-600 text-white text-center rounded-lg font-medium transition-all duration-300 hover:shadow-lg">
+                            Contact Sales
+                        </a>
+                    </div>
+                </div>
+                <div class="text-center mt-12">
+                    <p class="text-gray-400 text-sm">
+                        All plans include a 14-day free trial. No credit card required.
+                    </p>
+                </div>
+            </section>
+        </main>
+
+        <custom-footer></custom-footer>
+    </div>
+
+    <script src="components/navbar.js"></script>
+    <script src="components/footer.js"></script>
+    <script src="script.js"></script>
+    <script>
+        feather.replace();
+        
+        // Initialize Vanta.js
+        VANTA.GLOBE({
+            el: "#vanta-bg",
+            mouseControls: true,
+            touchControls: true,
+            gyroControls: false,
+            minHeight: 200.00,
+            minWidth: 200.00,
+            scale: 1.00,
+            scaleMobile: 1.00,
+            color: 0x8b5cf6,
+            color2: 0x3b82f6,
+            backgroundColor: 0x111827,
+            size: 1.2,
+            spacing: 15.00
+        });
+        
+        // Initialize Floating Particles
+        initFloatingParticles();
+        
+        function initFloatingParticles() {
+            const particlesContainer = document.getElementById('particles-overlay');
+            const particleCount = 30;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'floating-particle';
+                
+                const size = Math.random() * 4 + 2;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.top = `${Math.random() * 100}%`;
+                
+                particle.style.animationDelay = `${Math.random() * 10}s`;
+                particle.style.animationDuration = `${Math.random() * 20 + 20}s`;
+                particle.style.opacity = Math.random() * 0.3 + 0.1;
+                
+                const tx = (Math.random() - 0.5) * 200;
+                const ty = (Math.random() - 0.5) * 200;
+                particle.style.setProperty('--tx', `${tx}vw`);
+                particle.style.setProperty('--ty', `${ty}vh`);
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+    </script>
+</body>
+</html>
