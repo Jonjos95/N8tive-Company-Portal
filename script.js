@@ -645,3 +645,208 @@ function updateAllSectionAnimations() {
         }
     }
 }
+
+// ===== INTERACTIVE 3D CUBE LOGO =====
+document.addEventListener('DOMContentLoaded', () => {
+    const canvas = document.getElementById('logo-cube-canvas');
+    if (!canvas) return;
+    
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ 
+        canvas: canvas, 
+        alpha: true, 
+        antialias: true 
+    });
+    
+    renderer.setSize(140, 140);
+    renderer.setClearColor(0x000000, 0);
+    
+    // Create hexagon network texture for cube faces
+    function createHexagonTexture() {
+        const size = 256;
+        const textureCanvas = document.createElement('canvas');
+        textureCanvas.width = size;
+        textureCanvas.height = size;
+        const ctx = textureCanvas.getContext('2d');
+        
+        // Dark background
+        ctx.fillStyle = 'rgba(20, 20, 40, 0.3)';
+        ctx.fillRect(0, 0, size, size);
+        
+        // Draw hexagon
+        ctx.strokeStyle = '#8b5cf6';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        const centerX = size / 2;
+        const centerY = size / 2;
+        const hexRadius = size * 0.35;
+        for (let i = 0; i < 6; i++) {
+            const angle = (Math.PI / 3) * i;
+            const x = centerX + hexRadius * Math.cos(angle);
+            const y = centerY + hexRadius * Math.sin(angle);
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+        ctx.stroke();
+        
+        // Draw connection lines from center to vertices
+        ctx.lineWidth = 2;
+        for (let i = 0; i < 6; i++) {
+            const angle = (Math.PI / 3) * i;
+            const x = centerX + hexRadius * Math.cos(angle);
+            const y = centerY + hexRadius * Math.sin(angle);
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.lineTo(x, y);
+            ctx.stroke();
+        }
+        
+        // Draw vertex nodes
+        ctx.fillStyle = '#8b5cf6';
+        for (let i = 0; i < 6; i++) {
+            const angle = (Math.PI / 3) * i;
+            const x = centerX + hexRadius * Math.cos(angle);
+            const y = centerY + hexRadius * Math.sin(angle);
+            ctx.beginPath();
+            ctx.arc(x, y, 4, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        
+        // Draw center hub
+        const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 12);
+        gradient.addColorStop(0, '#8b5cf6');
+        gradient.addColorStop(0.5, '#6366f1');
+        gradient.addColorStop(1, '#3b82f6');
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, 12, 0, Math.PI * 2);
+        ctx.fill();
+        
+        const texture = new THREE.CanvasTexture(textureCanvas);
+        texture.needsUpdate = true;
+        return texture;
+    }
+    
+    // Create cube geometry
+    const geometry = new THREE.BoxGeometry(1.2, 1.2, 1.2);
+    const texture = createHexagonTexture();
+    
+    // Create materials for each face
+    const materials = [
+        new THREE.MeshPhongMaterial({ map: texture, transparent: true, opacity: 0.95 }), // right
+        new THREE.MeshPhongMaterial({ map: texture, transparent: true, opacity: 0.95 }), // left
+        new THREE.MeshPhongMaterial({ map: texture, transparent: true, opacity: 0.95 }), // top
+        new THREE.MeshPhongMaterial({ map: texture, transparent: true, opacity: 0.95 }), // bottom
+        new THREE.MeshPhongMaterial({ map: texture, transparent: true, opacity: 0.95 }), // front
+        new THREE.MeshPhongMaterial({ map: texture, transparent: true, opacity: 0.95 })  // back
+    ];
+    
+    const cube = new THREE.Mesh(geometry, materials);
+    scene.add(cube);
+    
+    // Add wireframe for better 3D perception
+    const edges = new THREE.EdgesGeometry(geometry);
+    const lineMaterial = new THREE.LineBasicMaterial({ color: 0x8b5cf6, linewidth: 2 });
+    const wireframe = new THREE.LineSegments(edges, lineMaterial);
+    cube.add(wireframe);
+    
+    // Add lighting
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+    scene.add(ambientLight);
+    
+    const pointLight1 = new THREE.PointLight(0x8b5cf6, 1, 100);
+    pointLight1.position.set(2, 2, 2);
+    scene.add(pointLight1);
+    
+    const pointLight2 = new THREE.PointLight(0x6366f1, 0.8, 100);
+    pointLight2.position.set(-2, -1, -2);
+    scene.add(pointLight2);
+    
+    camera.position.z = 3;
+    
+    // Mouse interaction variables
+    let isDragging = false;
+    let previousMousePosition = { x: 0, y: 0 };
+    let rotation = { x: -0.3, y: 0 };
+    let targetRotation = { x: -0.3, y: 0 };
+    let autoRotate = true;
+    
+    // Mouse events for interaction
+    canvas.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        autoRotate = false;
+        previousMousePosition = { x: e.clientX, y: e.clientY };
+    });
+    
+    canvas.addEventListener('mousemove', (e) => {
+        if (isDragging) {
+            const deltaX = e.clientX - previousMousePosition.x;
+            const deltaY = e.clientY - previousMousePosition.y;
+            
+            targetRotation.y += deltaX * 0.01;
+            targetRotation.x += deltaY * 0.01;
+            
+            previousMousePosition = { x: e.clientX, y: e.clientY };
+        }
+    });
+    
+    canvas.addEventListener('mouseup', () => {
+        isDragging = false;
+        setTimeout(() => { autoRotate = true; }, 2000);
+    });
+    
+    canvas.addEventListener('mouseleave', () => {
+        isDragging = false;
+    });
+    
+    // Touch events for mobile
+    canvas.addEventListener('touchstart', (e) => {
+        isDragging = true;
+        autoRotate = false;
+        const touch = e.touches[0];
+        previousMousePosition = { x: touch.clientX, y: touch.clientY };
+        e.preventDefault();
+    }, { passive: false });
+    
+    canvas.addEventListener('touchmove', (e) => {
+        if (isDragging && e.touches.length === 1) {
+            const touch = e.touches[0];
+            const deltaX = touch.clientX - previousMousePosition.x;
+            const deltaY = touch.clientY - previousMousePosition.y;
+            
+            targetRotation.y += deltaX * 0.01;
+            targetRotation.x += deltaY * 0.01;
+            
+            previousMousePosition = { x: touch.clientX, y: touch.clientY };
+            e.preventDefault();
+        }
+    }, { passive: false });
+    
+    canvas.addEventListener('touchend', () => {
+        isDragging = false;
+        setTimeout(() => { autoRotate = true; }, 2000);
+    });
+    
+    // Animation loop
+    function animate() {
+        requestAnimationFrame(animate);
+        
+        // Auto-rotate when not dragging
+        if (autoRotate) {
+            targetRotation.y += 0.005;
+        }
+        
+        // Smooth rotation interpolation
+        rotation.x += (targetRotation.x - rotation.x) * 0.1;
+        rotation.y += (targetRotation.y - rotation.y) * 0.1;
+        
+        cube.rotation.x = rotation.x;
+        cube.rotation.y = rotation.y;
+        
+        renderer.render(scene, camera);
+    }
+    
+    animate();
+});
