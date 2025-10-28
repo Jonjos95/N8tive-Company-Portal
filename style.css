@@ -58,6 +58,7 @@ section.visible {
     transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     position: relative;
     overflow: hidden;
+    will-change: transform, opacity;
 }
 
 .vertical-card::before {
@@ -91,26 +92,88 @@ section.visible {
     animation-delay: 0.3s;
 }
 
+/* Dynamic scroll-based card states */
+.vertical-card.scroll-phase-out {
+    opacity: 0.3;
+    transform: scale(0.9) translateY(20px);
+}
+
+.vertical-card.scroll-phase-in {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+}
+
+/* Parallax movement classes */
+.card-parallax-left {
+    transform: translateX(-20px);
+}
+
+.card-parallax-right {
+    transform: translateX(20px);
+}
+
+.card-parallax-up {
+    transform: translateY(-15px);
+}
+
+.card-parallax-down {
+    transform: translateY(15px);
+}
+
 /* Tech icon animations */
 .tech-icon {
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
 }
 
 .tech-icon:hover {
     transform: scale(1.15) rotate(5deg);
+    z-index: 10;
+}
+
+.tech-icon::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+}
+
+.tech-icon:hover::after {
+    opacity: 1;
+    animation: pulse 2s ease-in-out infinite;
 }
 
 /* Visualization icons */
 .viz-icon {
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
 }
 
 .viz-icon:hover {
     transform: scale(1.1);
+    z-index: 10;
 }
 
 .viz-icon:hover svg {
     filter: drop-shadow(0 0 8px currentColor);
+}
+
+.viz-icon::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+}
+
+.viz-icon:hover::after {
+    opacity: 1;
+    animation: pulse 2s ease-in-out infinite;
 }
 
 /* Automation workflow animation */
@@ -126,6 +189,36 @@ section.visible {
 /* Floating animation for special elements */
 .float-animation {
     animation: float 3s ease-in-out infinite;
+}
+
+/* Smooth entrance for cards */
+@keyframes cardEntrance {
+    0% {
+        opacity: 0;
+        transform: translateY(60px) scale(0.9) rotateX(10deg);
+    }
+    60% {
+        transform: translateY(-10px) scale(1.02);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1) rotateX(0deg);
+    }
+}
+
+.vertical-card.entering {
+    animation: cardEntrance 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Performance optimization */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
 }
 
 /* Custom scrollbar */
