@@ -71,6 +71,20 @@
     background: radial-gradient(circle, rgba(236, 72, 153, 0.7), rgba(139, 92, 246, 0.4));
 }
 
+/* Full Page Background Layers - Cover Entire Document */
+#vanta-bg,
+#mesh-grid,
+#particles-overlay {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    overflow: hidden;
+}
+
 /* Mesh Grid Animation */
 #mesh-grid {
     animation: meshPulse 8s ease-in-out infinite;
@@ -172,9 +186,16 @@
 }
 
 /* Shared styles */
-body {
+html, body {
     font-family: 'Inter', sans-serif;
     scroll-behavior: smooth;
+    width: 100%;
+    overflow-x: hidden;
+    position: relative;
+}
+
+body {
+    min-height: 100vh;
 }
 
 /* Section animations */
@@ -185,8 +206,8 @@ section {
 section:not(#hero) {
     opacity: 0;
     animation: fadeIn 0.8s ease-out forwards;
-    background: rgba(17, 24, 39, 0.6);
-    backdrop-filter: blur(10px);
+    background: rgba(17, 24, 39, 0.3);
+    backdrop-filter: blur(15px);
     position: relative;
 }
 
@@ -195,9 +216,9 @@ section:not(#hero)::before {
     position: absolute;
     inset: 0;
     background: linear-gradient(180deg, 
-        rgba(17, 24, 39, 0.8) 0%, 
-        rgba(17, 24, 39, 0.5) 50%, 
-        rgba(17, 24, 39, 0.8) 100%);
+        rgba(17, 24, 39, 0.4) 0%, 
+        rgba(17, 24, 39, 0.2) 50%, 
+        rgba(17, 24, 39, 0.4) 100%);
     z-index: -1;
     pointer-events: none;
 }
