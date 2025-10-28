@@ -1475,6 +1475,100 @@ section.visible {
     }
 }
 
+/* ===== AUTHENTICATION PAGE STYLES ===== */
+.auth-container {
+    animation: authContainerEnter 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes authContainerEnter {
+    0% {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.auth-tab {
+    font-weight: 500;
+    color: #9ca3af;
+    cursor: pointer;
+}
+
+.auth-tab.active {
+    background: linear-gradient(to right, #8b5cf6, #3b82f6);
+    color: white;
+    font-weight: 600;
+}
+
+.auth-input {
+    font-size: 0.875rem;
+}
+
+.auth-input:focus {
+    outline: none;
+}
+
+.auth-input::placeholder {
+    color: #6b7280;
+}
+
+.auth-submit {
+    cursor: pointer;
+}
+
+.auth-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.social-login {
+    cursor: pointer;
+}
+
+.form-group {
+    animation: formFieldEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+}
+
+.form-group:nth-child(1) { animation-delay: 0.1s; }
+.form-group:nth-child(2) { animation-delay: 0.2s; }
+.form-group:nth-child(3) { animation-delay: 0.3s; }
+.form-group:nth-child(4) { animation-delay: 0.4s; }
+
+@keyframes formFieldEnter {
+    0% {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.error-message {
+    animation: errorShake 0.4s ease-in-out;
+}
+
+@keyframes errorShake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    25% {
+        transform: translateX(-5px);
+    }
+    75% {
+        transform: translateX(5px);
+    }
+}
+
+#login-cube-canvas {
+    filter: drop-shadow(0 0 20px rgba(139, 92, 246, 0.6));
+}
+
 /* ===== MISSION SECTION STYLES ===== */
 .mission-container {
     opacity: 0;

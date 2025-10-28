@@ -65,7 +65,7 @@ class CustomNavbar extends HTMLElement {
                     background: linear-gradient(to right, #3b82f6, #8b5cf6);
                     border-radius: 2px;
                 }
-                .contact-btn {
+                .contact-btn, .login-btn {
                     padding: 0.5rem 1rem;
                     background: linear-gradient(to right, #3b82f6, #8b5cf6);
                     border-radius: 0.5rem;
@@ -76,7 +76,7 @@ class CustomNavbar extends HTMLElement {
                     transition: all 0.3s;
                     white-space: nowrap;
                 }
-                .contact-btn:hover {
+                .contact-btn:hover, .login-btn:hover {
                     box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3);
                     transform: translateY(-1px);
                 }
@@ -96,20 +96,20 @@ class CustomNavbar extends HTMLElement {
                 }
             </style>
             <nav>
-                <a href="#" class="logo">
+                <a href="index.html" class="logo">
                     <div class="logo-cube-nav">
                         <canvas id="nav-cube-canvas" width="40" height="40"></canvas>
                     </div>
                     N8tive.io
                 </a>
                 <div class="nav-links">
-                    <a href="#hero" class="nav-link">Home</a>
-                    <a href="#about" class="nav-link">About</a>
-                    <a href="#demo" class="nav-link">Demo</a>
-                    <a href="#products" class="nav-link">Products</a>
-                    <a href="#pricing" class="nav-link">Pricing</a>
-                    <a href="#mission" class="nav-link">Mission</a>
-                    <a href="#" class="contact-btn">Contact</a>
+                    <a href="index.html" class="nav-link">Home</a>
+                    <a href="index.html#about" class="nav-link">About</a>
+                    <a href="index.html#demo" class="nav-link">Demo</a>
+                    <a href="products.html" class="nav-link">Products</a>
+                    <a href="pricing.html" class="nav-link">Pricing</a>
+                    <a href="index.html#mission" class="nav-link">Mission</a>
+                    <a href="login.html" class="login-btn">Login</a>
                 </div>
                 <button class="mobile-menu-btn">
                     <i data-feather="menu"></i>
