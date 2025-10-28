@@ -717,6 +717,189 @@ section.visible {
     filter: brightness(1.3);
 }
 
+/* ===== ADVANCED WORKFLOW DIAGRAM ANIMATIONS ===== */
+.workflow-diagram-advanced {
+    animation: fadeIn 0.6s ease-out forwards;
+}
+
+/* Flow particles animation */
+@keyframes flowParticle {
+    0% {
+        left: 0;
+        opacity: 0;
+    }
+    20% {
+        opacity: 1;
+    }
+    80% {
+        opacity: 1;
+    }
+    100% {
+        left: 100%;
+        opacity: 0;
+    }
+}
+
+.flow-particle {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: radial-gradient(circle, rgba(59, 130, 246, 1) 0%, rgba(139, 92, 246, 1) 100%);
+    border-radius: 50%;
+    animation: flowParticle 2s ease-in-out infinite;
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.8);
+}
+
+/* Node pulse animations */
+@keyframes nodePulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 currentColor;
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 15px 5px rgba(59, 130, 246, 0.4);
+    }
+}
+
+.node-pulse {
+    animation: nodePulse 2s ease-in-out infinite;
+}
+
+@keyframes nodePulseStrong {
+    0%, 100% {
+        transform: scale(1) rotate(0deg);
+        box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7);
+    }
+    50% {
+        transform: scale(1.08) rotate(2deg);
+        box-shadow: 0 0 20px 8px rgba(99, 102, 241, 0.5);
+    }
+}
+
+.node-pulse-strong {
+    animation: nodePulseStrong 2.5s ease-in-out infinite;
+}
+
+@keyframes nodePulseSuccess {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 15px 5px rgba(34, 197, 94, 0.4);
+    }
+}
+
+.node-pulse-success {
+    animation: nodePulseSuccess 2s ease-in-out infinite;
+}
+
+/* Gear spin animation */
+@keyframes gearSpin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.gear-spin {
+    animation: gearSpin 8s linear infinite;
+}
+
+/* Status dot pulse */
+@keyframes statusDotPulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.3);
+        opacity: 0.7;
+    }
+}
+
+.status-dot {
+    animation: statusDotPulse 2s ease-in-out infinite;
+}
+
+/* Pulse ring animations */
+@keyframes pulseRing {
+    0% {
+        transform: scale(0.95);
+        opacity: 0.7;
+    }
+    50% {
+        transform: scale(1.05);
+        opacity: 0.3;
+    }
+    100% {
+        transform: scale(0.95);
+        opacity: 0.7;
+    }
+}
+
+.pulse-ring {
+    animation: pulseRing 2.5s ease-in-out infinite;
+}
+
+@keyframes pulseRingSuccess {
+    0% {
+        transform: scale(0.9);
+        opacity: 0.5;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 0.2;
+    }
+    100% {
+        transform: scale(0.9);
+        opacity: 0.5;
+    }
+}
+
+.pulse-ring-success {
+    animation: pulseRingSuccess 2s ease-in-out infinite;
+}
+
+/* Connection path animation */
+@keyframes connectionPath {
+    0% {
+        stroke-dashoffset: 1000;
+    }
+    100% {
+        stroke-dashoffset: 0;
+    }
+}
+
+.connection-path {
+    stroke-dasharray: 5, 5;
+    animation: connectionPath 20s linear infinite;
+}
+
+/* Processing status animation */
+@keyframes processingStatus {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.processing-status {
+    animation: processingStatus 1.5s ease-in-out infinite;
+}
+
+/* Workflow node hover effects */
+.workflow-node-advanced:hover > div > div {
+    transform: scale(1.1);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
 .workflow-arrow {
     position: relative;
     background-size: 200% 100%;
