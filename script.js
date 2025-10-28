@@ -362,21 +362,29 @@ function animateNumbers() {
 // Observe demo cards for animation trigger
 const demoCardsObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
-        if (entry.isIntersecting && !entry.target.hasAttribute('data-animated')) {
-            entry.target.setAttribute('data-animated', 'true');
+        if (entry.isIntersecting && !entry.target.classList.contains('animate-in')) {
+            // Add animate-in class to trigger CSS animations
+            setTimeout(() => {
+                entry.target.classList.add('animate-in');
+            }, 100);
+            
             // Trigger number animations when cards are visible
             if (entry.target.querySelector('.metric-number')) {
-                animateNumbers();
+                setTimeout(() => {
+                    animateNumbers();
+                }, 500);
             }
         }
     });
 }, {
-    threshold: 0.3
+    threshold: 0.2
 });
 
 // Observe demo cards
 setTimeout(() => {
-    document.querySelectorAll('.demo-card').forEach(card => {
+    document.querySelectorAll('.demo-card').forEach((card, index) => {
+        // Start with cards hidden
+        card.style.opacity = '0';
         demoCardsObserver.observe(card);
     });
 }, 100);

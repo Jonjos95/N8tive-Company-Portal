@@ -294,10 +294,13 @@ section.visible {
 }
 
 .demo-card {
-    opacity: 0;
     transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
     will-change: transform, opacity;
     perspective: 1000px;
+}
+
+.demo-card.animate-in {
+    opacity: 1 !important;
 }
 
 .demo-card.animate-in:nth-child(1) {
@@ -543,6 +546,96 @@ section.visible {
     to {
         transform: rotate(360deg);
     }
+}
+
+/* Workflow diagram animations */
+@keyframes flowArrow {
+    0% {
+        background-position: 0% 50%;
+    }
+    100% {
+        background-position: 100% 50%;
+    }
+}
+
+@keyframes nodeGlow {
+    0%, 100% {
+        box-shadow: 0 0 10px currentColor;
+    }
+    50% {
+        box-shadow: 0 0 20px currentColor, 0 0 30px currentColor;
+    }
+}
+
+@keyframes nodePop {
+    0% {
+        opacity: 0;
+        transform: scale(0);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.workflow-diagram {
+    opacity: 0;
+}
+
+.demo-card.animate-in .workflow-diagram {
+    opacity: 1;
+    animation: fadeIn 0.6s ease-out forwards;
+    animation-delay: 0.3s;
+}
+
+.workflow-node > div {
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.demo-card.animate-in .workflow-node:nth-child(1) > div {
+    animation: nodePop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    animation-delay: 0.5s;
+    opacity: 0;
+}
+
+.demo-card.animate-in .workflow-node:nth-child(3) > div {
+    animation: nodePop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    animation-delay: 0.9s;
+    opacity: 0;
+}
+
+.demo-card.animate-in .workflow-node:nth-child(5) > div {
+    animation: nodePop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    animation-delay: 1.3s;
+    opacity: 0;
+}
+
+.workflow-node:hover > div {
+    transform: scale(1.1);
+    filter: brightness(1.3);
+}
+
+.workflow-arrow {
+    position: relative;
+    background-size: 200% 100%;
+    animation: flowArrow 2s linear infinite;
+}
+
+.workflow-arrow::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: -3px;
+    width: 0;
+    height: 0;
+    border-left: 6px solid currentColor;
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+    color: inherit;
+    animation: pulse 2s ease-in-out infinite;
 }
 
 /* Bar chart animation */
