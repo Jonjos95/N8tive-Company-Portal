@@ -47,6 +47,15 @@
     }
 }
 
+@keyframes spinCube {
+    0% {
+        transform: rotateY(0deg) rotateX(0deg);
+    }
+    100% {
+        transform: rotateY(360deg) rotateX(360deg);
+    }
+}
+
 @keyframes heroSubtitleEnter {
     0% {
         opacity: 1;
@@ -1218,6 +1227,28 @@ section.visible {
     opacity: 1 !important;
     animation: none !important;
     transform: translateY(0) !important;
+}
+
+.logo-shape-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    perspective: 1000px;
+}
+
+.logo-cube {
+    animation: spinCube 20s linear infinite;
+    transform-style: preserve-3d;
+    filter: drop-shadow(0 0 20px rgba(139, 92, 246, 0.5));
+    transition: filter 0.3s ease;
+}
+
+.logo-cube:hover {
+    filter: drop-shadow(0 0 30px rgba(139, 92, 246, 0.8));
+}
+
+.cube-group {
+    transform-origin: center;
 }
 
 .hero-subtitle {
