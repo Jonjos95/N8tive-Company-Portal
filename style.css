@@ -6,6 +6,32 @@
     to { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+@keyframes shimmer {
+    0% { background-position: -1000px 0; }
+    100% { background-position: 1000px 0; }
+}
+
 /* Shared styles */
 body {
     font-family: 'Inter', sans-serif;
@@ -14,13 +40,93 @@ body {
 
 /* Section animations */
 section {
+    opacity: 0;
     animation: fadeIn 0.8s ease-out forwards;
+}
+
+section.visible {
+    animation: slideInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* Delayed animations for better visual flow */
 #about { animation-delay: 0.2s; }
 #products { animation-delay: 0.4s; }
 #mission { animation-delay: 0.6s; }
+
+/* Interactive About Cards */
+.vertical-card {
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.vertical-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent);
+    transition: left 0.6s;
+}
+
+.vertical-card:hover::before {
+    left: 100%;
+}
+
+.vertical-card:hover {
+    transform: translateY(-8px) scale(1.02);
+}
+
+.vertical-card:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.vertical-card:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.vertical-card:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+/* Tech icon animations */
+.tech-icon {
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tech-icon:hover {
+    transform: scale(1.15) rotate(5deg);
+}
+
+/* Visualization icons */
+.viz-icon {
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.viz-icon:hover {
+    transform: scale(1.1);
+}
+
+.viz-icon:hover svg {
+    filter: drop-shadow(0 0 8px currentColor);
+}
+
+/* Automation workflow animation */
+@keyframes workflow {
+    0%, 100% { stroke-dashoffset: 0; }
+    50% { stroke-dashoffset: 50; }
+}
+
+.workflow-line {
+    animation: workflow 3s linear infinite;
+}
+
+/* Floating animation for special elements */
+.float-animation {
+    animation: float 3s ease-in-out infinite;
+}
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
