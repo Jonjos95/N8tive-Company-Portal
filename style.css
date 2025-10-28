@@ -51,12 +51,10 @@
     0% {
         opacity: 1;
         transform: translateY(30px);
-        filter: blur(10px);
     }
     100% {
         opacity: 1;
         transform: translateY(0);
-        filter: blur(0);
     }
 }
 
@@ -1224,8 +1222,11 @@ section.visible {
 
 .hero-subtitle {
     opacity: 1 !important;
-    animation: heroSubtitleEnter 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    animation-delay: 0.5s;
+    animation: none !important;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    color: #e5e7eb !important;
+    transform: translateY(0) !important;
+    filter: none !important;
 }
 
 .hero-buttons {
