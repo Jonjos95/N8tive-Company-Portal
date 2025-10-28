@@ -256,6 +256,7 @@ function onScroll() {
         window.requestAnimationFrame(() => {
             updateCardPositions(lastScrollPosition);
             updateDemoSection(lastScrollPosition, scrollDirection);
+            updateAllSectionAnimations();
             ticking = false;
         });
         ticking = true;
@@ -436,11 +437,13 @@ window.addEventListener('scroll', onScroll);
 // Initial position update
 setTimeout(() => {
     updateCardPositions(window.pageYOffset);
+    updateAllSectionAnimations();
 }, 500);
 
 // Update on resize
 window.addEventListener('resize', () => {
     updateCardPositions(window.pageYOffset);
+    updateAllSectionAnimations();
 });
 
 // ===== PRODUCT CARDS ANIMATION =====
@@ -490,35 +493,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ===== BIDIRECTIONAL SCROLL FOR ALL SECTIONS =====
-let lastScrollY = window.pageYOffset;
-let scrollDirection = 'down';
-let ticking = false;
-
-// Track scroll direction globally
-function updateScrollDirection() {
-    const currentScrollY = window.pageYOffset;
-    
-    if (currentScrollY > lastScrollY) {
-        scrollDirection = 'down';
-    } else if (currentScrollY < lastScrollY) {
-        scrollDirection = 'up';
-    }
-    
-    lastScrollY = currentScrollY;
-    ticking = false;
-}
-
-// Optimized scroll listener
-window.addEventListener('scroll', () => {
-    if (!ticking) {
-        window.requestAnimationFrame(() => {
-            updateScrollDirection();
-            updateAllSectionAnimations();
-        });
-        ticking = true;
-    }
-});
-
 // Update all section animations based on scroll
 function updateAllSectionAnimations() {
     const scrollY = window.pageYOffset;
@@ -618,8 +592,3 @@ function updateAllSectionAnimations() {
         }
     }
 }
-
-// Initial call
-setTimeout(() => {
-    updateAllSectionAnimations();
-}, 100);

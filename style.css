@@ -117,12 +117,21 @@ body {
 
 /* Section animations */
 section {
+    opacity: 1;
+}
+
+section:not(#hero) {
     opacity: 0;
     animation: fadeIn 0.8s ease-out forwards;
 }
 
 section.visible {
     animation: slideInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Hero section is always visible */
+#hero {
+    opacity: 1 !important;
 }
 
 /* Delayed animations for better visual flow */
