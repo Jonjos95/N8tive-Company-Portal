@@ -551,17 +551,17 @@ function updateAllSectionAnimations() {
     const scrollY = window.pageYOffset;
     const windowHeight = window.innerHeight;
     
-    // Hero section parallax
+    // Hero section parallax - keep content visible
     const heroSection = document.getElementById('hero');
     if (heroSection) {
         const heroContent = heroSection.querySelector('.hero-content');
         if (heroContent) {
-            const heroProgress = Math.min(scrollY / windowHeight, 1);
-            const heroOpacity = 1 - (heroProgress * 0.8);
-            const heroY = scrollY * 0.4;
+            // Keep opacity at 1 (always visible)
+            heroContent.style.opacity = 1;
             
+            // Optional: gentle parallax movement (reduced)
+            const heroY = scrollY * 0.15;
             heroContent.style.transform = `translateY(${heroY}px)`;
-            heroContent.style.opacity = heroOpacity;
             
             // Add scroll direction class for bidirectional animations
             if (scrollDirection === 'up' && scrollY < windowHeight * 0.5) {
