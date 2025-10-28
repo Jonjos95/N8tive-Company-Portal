@@ -47,39 +47,177 @@
                     </p>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <!-- Product 1 -->
-                    <div class="product-card bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 rounded-xl overflow-hidden hover:shadow-lg hover:shadow-blue-500/20 transition-all duration-300">
-                        <div class="h-48 bg-gradient-to-r from-blue-600/30 to-purple-600/30 flex items-center justify-center">
-                            <i data-feather="trello" class="w-16 h-16 text-blue-400"></i>
-                        </div>
-                        <div class="p-6">
-                            <h3 class="text-xl font-bold mb-2">Project Manager</h3>
-                            <p class="text-gray-400 mb-4">Intuitive task management with powerful automation</p>
-                            <span class="inline-block px-3 py-1 bg-blue-900/50 text-blue-400 rounded-full text-sm">Coming Soon</span>
+                    <!-- Product 1 - Project Manager -->
+                    <div class="product-card-interactive relative group" data-tilt>
+                        <div class="product-card-inner bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 rounded-xl overflow-hidden">
+                            <!-- Animated particles on hover -->
+                            <div class="card-particles absolute inset-0 pointer-events-none"></div>
+                            
+                            <!-- Glow effect -->
+                            <div class="absolute inset-0 bg-gradient-to-br from-blue-500/0 to-purple-500/0 group-hover:from-blue-500/10 group-hover:to-purple-500/10 transition-all duration-500"></div>
+                            
+                            <!-- Icon container with animation -->
+                            <div class="h-56 bg-gradient-to-r from-blue-600/30 to-purple-600/30 flex items-center justify-center relative overflow-hidden">
+                                <div class="icon-pulse absolute inset-0 bg-blue-500/20 rounded-full blur-3xl"></div>
+                                <i data-feather="trello" class="product-icon w-20 h-20 text-blue-400 relative z-10"></i>
+                                <!-- Floating elements -->
+                                <div class="floating-element absolute top-4 right-4 w-12 h-12 bg-blue-500/20 rounded-lg rotate-12"></div>
+                                <div class="floating-element absolute bottom-4 left-4 w-16 h-16 bg-purple-500/20 rounded-full" style="animation-delay: 1s;"></div>
+                            </div>
+                            
+                            <div class="p-6 relative">
+                                <!-- Status badge -->
+                                <div class="absolute top-4 right-4 flex gap-2">
+                                    <span class="status-badge px-2 py-1 bg-blue-900/50 text-blue-400 rounded-full text-xs font-semibold">Beta</span>
+                                </div>
+                                
+                                <h3 class="text-2xl font-bold mb-2 group-hover:text-blue-400 transition-colors">Project Manager</h3>
+                                <p class="text-gray-400 mb-4">Intuitive task management with powerful automation</p>
+                                
+                                <!-- Feature tags -->
+                                <div class="flex flex-wrap gap-2 mb-4">
+                                    <span class="feature-tag text-xs px-2 py-1 bg-blue-500/10 text-blue-300 rounded">Automation</span>
+                                    <span class="feature-tag text-xs px-2 py-1 bg-purple-500/10 text-purple-300 rounded">Analytics</span>
+                                    <span class="feature-tag text-xs px-2 py-1 bg-blue-500/10 text-blue-300 rounded">Team Collab</span>
+                                </div>
+                                
+                                <!-- Progress bar -->
+                                <div class="mb-4">
+                                    <div class="flex justify-between text-xs text-gray-400 mb-1">
+                                        <span>Development</span>
+                                        <span>85%</span>
+                                    </div>
+                                    <div class="progress-bar-bg h-2 bg-gray-700 rounded-full overflow-hidden">
+                                        <div class="progress-bar h-full bg-gradient-to-r from-blue-500 to-purple-500" style="width: 85%"></div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Action buttons -->
+                                <div class="flex gap-2">
+                                    <button class="btn-primary flex-1 px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg font-medium hover:shadow-lg hover:shadow-blue-500/50 transition-all duration-300">
+                                        Join Waitlist
+                                    </button>
+                                    <button class="btn-secondary px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-all duration-300">
+                                        <i data-feather="info" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     
-                    <!-- Product 2 -->
-                    <div class="product-card bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 rounded-xl overflow-hidden hover:shadow-lg hover:shadow-purple-500/20 transition-all duration-300">
-                        <div class="h-48 bg-gradient-to-r from-purple-600/30 to-blue-600/30 flex items-center justify-center">
-                            <i data-feather="navigation" class="w-16 h-16 text-purple-400"></i>
-                        </div>
-                        <div class="p-6">
-                            <h3 class="text-xl font-bold mb-2">SkyTracker Pro</h3>
-                            <p class="text-gray-400 mb-4">Real-time flight data visualization</p>
-                            <span class="inline-block px-3 py-1 bg-purple-900/50 text-purple-400 rounded-full text-sm">Coming Soon</span>
+                    <!-- Product 2 - SkyTracker Pro -->
+                    <div class="product-card-interactive relative group" data-tilt>
+                        <div class="product-card-inner bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 rounded-xl overflow-hidden">
+                            <!-- Animated particles on hover -->
+                            <div class="card-particles absolute inset-0 pointer-events-none"></div>
+                            
+                            <!-- Glow effect -->
+                            <div class="absolute inset-0 bg-gradient-to-br from-purple-500/0 to-blue-500/0 group-hover:from-purple-500/10 group-hover:to-blue-500/10 transition-all duration-500"></div>
+                            
+                            <!-- Icon container with animation -->
+                            <div class="h-56 bg-gradient-to-r from-purple-600/30 to-blue-600/30 flex items-center justify-center relative overflow-hidden">
+                                <div class="icon-pulse absolute inset-0 bg-purple-500/20 rounded-full blur-3xl" style="animation-delay: 0.5s;"></div>
+                                <i data-feather="navigation" class="product-icon w-20 h-20 text-purple-400 relative z-10"></i>
+                                <!-- Floating elements -->
+                                <div class="floating-element absolute top-6 left-6 w-10 h-10 bg-purple-500/20 rounded-lg rotate-45" style="animation-delay: 0.5s;"></div>
+                                <div class="floating-element absolute bottom-6 right-6 w-14 h-14 bg-blue-500/20 rounded-full" style="animation-delay: 1.5s;"></div>
+                            </div>
+                            
+                            <div class="p-6 relative">
+                                <!-- Status badge -->
+                                <div class="absolute top-4 right-4 flex gap-2">
+                                    <span class="status-badge px-2 py-1 bg-purple-900/50 text-purple-400 rounded-full text-xs font-semibold">Alpha</span>
+                                </div>
+                                
+                                <h3 class="text-2xl font-bold mb-2 group-hover:text-purple-400 transition-colors">SkyTracker Pro</h3>
+                                <p class="text-gray-400 mb-4">Real-time flight data visualization</p>
+                                
+                                <!-- Feature tags -->
+                                <div class="flex flex-wrap gap-2 mb-4">
+                                    <span class="feature-tag text-xs px-2 py-1 bg-purple-500/10 text-purple-300 rounded">Real-time</span>
+                                    <span class="feature-tag text-xs px-2 py-1 bg-blue-500/10 text-blue-300 rounded">API</span>
+                                    <span class="feature-tag text-xs px-2 py-1 bg-purple-500/10 text-purple-300 rounded">Maps</span>
+                                </div>
+                                
+                                <!-- Progress bar -->
+                                <div class="mb-4">
+                                    <div class="flex justify-between text-xs text-gray-400 mb-1">
+                                        <span>Development</span>
+                                        <span>65%</span>
+                                    </div>
+                                    <div class="progress-bar-bg h-2 bg-gray-700 rounded-full overflow-hidden">
+                                        <div class="progress-bar h-full bg-gradient-to-r from-purple-500 to-blue-500" style="width: 65%"></div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Action buttons -->
+                                <div class="flex gap-2">
+                                    <button class="btn-primary flex-1 px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-600 rounded-lg font-medium hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300">
+                                        Join Waitlist
+                                    </button>
+                                    <button class="btn-secondary px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-all duration-300">
+                                        <i data-feather="info" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     
-                    <!-- Product 3 -->
-                    <div class="product-card bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 rounded-xl overflow-hidden hover:shadow-lg hover:shadow-blue-500/20 transition-all duration-300">
-                        <div class="h-48 bg-gradient-to-r from-blue-600/30 to-purple-600/30 flex items-center justify-center">
-                            <i data-feather="cpu" class="w-16 h-16 text-blue-400"></i>
-                        </div>
-                        <div class="p-6">
-                            <h3 class="text-xl font-bold mb-2">Codefolio Nexus</h3>
-                            <p class="text-gray-400 mb-4">Developer portfolio automation</p>
-                            <span class="inline-block px-3 py-1 bg-blue-900/50 text-blue-400 rounded-full text-sm">Coming Soon</span>
+                    <!-- Product 3 - Codefolio Nexus -->
+                    <div class="product-card-interactive relative group" data-tilt>
+                        <div class="product-card-inner bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 rounded-xl overflow-hidden">
+                            <!-- Animated particles on hover -->
+                            <div class="card-particles absolute inset-0 pointer-events-none"></div>
+                            
+                            <!-- Glow effect -->
+                            <div class="absolute inset-0 bg-gradient-to-br from-blue-500/0 to-purple-500/0 group-hover:from-blue-500/10 group-hover:to-purple-500/10 transition-all duration-500"></div>
+                            
+                            <!-- Icon container with animation -->
+                            <div class="h-56 bg-gradient-to-r from-blue-600/30 to-purple-600/30 flex items-center justify-center relative overflow-hidden">
+                                <div class="icon-pulse absolute inset-0 bg-blue-500/20 rounded-full blur-3xl" style="animation-delay: 1s;"></div>
+                                <i data-feather="cpu" class="product-icon w-20 h-20 text-blue-400 relative z-10"></i>
+                                <!-- Floating elements -->
+                                <div class="floating-element absolute top-8 right-8 w-10 h-10 bg-blue-500/20 rounded-lg -rotate-12" style="animation-delay: 1s;"></div>
+                                <div class="floating-element absolute bottom-8 left-8 w-12 h-12 bg-purple-500/20 rounded-full" style="animation-delay: 2s;"></div>
+                            </div>
+                            
+                            <div class="p-6 relative">
+                                <!-- Status badge -->
+                                <div class="absolute top-4 right-4 flex gap-2">
+                                    <span class="status-badge px-2 py-1 bg-blue-900/50 text-blue-400 rounded-full text-xs font-semibold">Soon</span>
+                                </div>
+                                
+                                <h3 class="text-2xl font-bold mb-2 group-hover:text-blue-400 transition-colors">Codefolio Nexus</h3>
+                                <p class="text-gray-400 mb-4">Developer portfolio automation</p>
+                                
+                                <!-- Feature tags -->
+                                <div class="flex flex-wrap gap-2 mb-4">
+                                    <span class="feature-tag text-xs px-2 py-1 bg-blue-500/10 text-blue-300 rounded">GitHub</span>
+                                    <span class="feature-tag text-xs px-2 py-1 bg-purple-500/10 text-purple-300 rounded">Templates</span>
+                                    <span class="feature-tag text-xs px-2 py-1 bg-blue-500/10 text-blue-300 rounded">Deploy</span>
+                                </div>
+                                
+                                <!-- Progress bar -->
+                                <div class="mb-4">
+                                    <div class="flex justify-between text-xs text-gray-400 mb-1">
+                                        <span>Development</span>
+                                        <span>45%</span>
+                                    </div>
+                                    <div class="progress-bar-bg h-2 bg-gray-700 rounded-full overflow-hidden">
+                                        <div class="progress-bar h-full bg-gradient-to-r from-blue-500 to-purple-500" style="width: 45%"></div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Action buttons -->
+                                <div class="flex gap-2">
+                                    <button class="btn-primary flex-1 px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg font-medium hover:shadow-lg hover:shadow-blue-500/50 transition-all duration-300">
+                                        Join Waitlist
+                                    </button>
+                                    <button class="btn-secondary px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-all duration-300">
+                                        <i data-feather="info" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -124,25 +262,17 @@
                 const particle = document.createElement('div');
                 particle.className = 'floating-particle';
                 
-                // Random size between 2-6px
                 const size = Math.random() * 4 + 2;
                 particle.style.width = `${size}px`;
                 particle.style.height = `${size}px`;
                 
-                // Random starting position
                 particle.style.left = `${Math.random() * 100}%`;
                 particle.style.top = `${Math.random() * 100}%`;
                 
-                // Random animation delay
                 particle.style.animationDelay = `${Math.random() * 10}s`;
-                
-                // Random animation duration (20-40s)
                 particle.style.animationDuration = `${Math.random() * 20 + 20}s`;
-                
-                // Random opacity
                 particle.style.opacity = Math.random() * 0.3 + 0.1;
                 
-                // Set random transform values as CSS variables
                 const tx = (Math.random() - 0.5) * 200;
                 const ty = (Math.random() - 0.5) * 200;
                 particle.style.setProperty('--tx', `${tx}vw`);
@@ -151,6 +281,120 @@
                 particlesContainer.appendChild(particle);
             }
         }
+        
+        // 3D Tilt Effect for Product Cards
+        document.querySelectorAll('[data-tilt]').forEach(card => {
+            let bounds;
+            
+            function rotateToMouse(e) {
+                const mouseX = e.clientX;
+                const mouseY = e.clientY;
+                const leftX = mouseX - bounds.x;
+                const topY = mouseY - bounds.y;
+                const center = {
+                    x: leftX - bounds.width / 2,
+                    y: topY - bounds.height / 2
+                }
+                const distance = Math.sqrt(center.x**2 + center.y**2);
+                
+                card.style.transform = `
+                    scale3d(1.05, 1.05, 1.05)
+                    rotate3d(
+                        ${center.y / 100},
+                        ${-center.x / 100},
+                        0,
+                        ${Math.log(distance)* 2}deg
+                    )
+                `;
+                
+                // Create glow effect that follows mouse
+                const glow = card.querySelector('.absolute.inset-0.bg-gradient-to-br');
+                if (glow) {
+                    glow.style.background = `radial-gradient(
+                        circle at ${leftX}px ${topY}px,
+                        rgba(139, 92, 246, 0.15),
+                        rgba(59, 130, 246, 0.1),
+                        transparent
+                    )`;
+                }
+            }
+            
+            card.addEventListener('mouseenter', () => {
+                bounds = card.getBoundingClientRect();
+                document.addEventListener('mousemove', rotateToMouse);
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                document.removeEventListener('mousemove', rotateToMouse);
+                card.style.transform = '';
+                card.style.background = '';
+            });
+        });
+        
+        // Card Particle Effects on Hover
+        document.querySelectorAll('.product-card-interactive').forEach(card => {
+            const particlesContainer = card.querySelector('.card-particles');
+            
+            card.addEventListener('mouseenter', () => {
+                // Clear existing particles
+                particlesContainer.innerHTML = '';
+                
+                // Create particles
+                for (let i = 0; i < 15; i++) {
+                    const particle = document.createElement('div');
+                    particle.style.position = 'absolute';
+                    particle.style.width = `${Math.random() * 3 + 1}px`;
+                    particle.style.height = particle.style.width;
+                    particle.style.background = `rgba(${Math.random() > 0.5 ? '139, 92, 246' : '59, 130, 246'}, 0.6)`;
+                    particle.style.borderRadius = '50%';
+                    particle.style.left = `${Math.random() * 100}%`;
+                    particle.style.top = `${Math.random() * 100}%`;
+                    particle.style.animation = `cardParticleFloat ${Math.random() * 2 + 1}s ease-out forwards`;
+                    particlesContainer.appendChild(particle);
+                }
+            });
+        });
+        
+        // Animate progress bars on scroll
+        const progressObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const progressBar = entry.target;
+                    const width = progressBar.style.width;
+                    progressBar.style.width = '0%';
+                    setTimeout(() => {
+                        progressBar.style.width = width;
+                        progressBar.style.transition = 'width 1.5s cubic-bezier(0.16, 1, 0.3, 1)';
+                    }, 200);
+                }
+            });
+        }, { threshold: 0.5 });
+        
+        document.querySelectorAll('.progress-bar').forEach(bar => {
+            progressObserver.observe(bar);
+        });
+        
+        // Button hover effects
+        document.querySelectorAll('.btn-primary, .btn-secondary').forEach(button => {
+            button.addEventListener('mouseenter', function(e) {
+                const ripple = document.createElement('span');
+                ripple.style.position = 'absolute';
+                ripple.style.width = ripple.style.height = '100px';
+                ripple.style.left = e.offsetX - 50 + 'px';
+                ripple.style.top = e.offsetY - 50 + 'px';
+                ripple.style.background = 'rgba(255, 255, 255, 0.1)';
+                ripple.style.borderRadius = '50%';
+                ripple.style.transform = 'scale(0)';
+                ripple.style.animation = 'ripple 0.6s ease-out';
+                ripple.style.pointerEvents = 'none';
+                
+                this.style.position = 'relative';
+                this.style.overflow = 'hidden';
+                this.appendChild(ripple);
+                
+                setTimeout(() => ripple.remove(), 600);
+            });
+        });
     </script>
 </body>
 </html>
