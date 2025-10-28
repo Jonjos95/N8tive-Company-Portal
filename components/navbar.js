@@ -54,6 +54,21 @@ class CustomNavbar extends HTMLElement {
                     background: linear-gradient(to right, #3b82f6, #8b5cf6);
                     border-radius: 2px;
                 }
+                .contact-btn {
+                    padding: 0.5rem 1rem;
+                    background: linear-gradient(to right, #3b82f6, #8b5cf6);
+                    border-radius: 0.5rem;
+                    font-size: 0.875rem;
+                    font-weight: 500;
+                    color: white;
+                    text-decoration: none;
+                    transition: all 0.3s;
+                    white-space: nowrap;
+                }
+                .contact-btn:hover {
+                    box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3);
+                    transform: translateY(-1px);
+                }
                 .mobile-menu-btn {
                     display: none;
                     background: none;
@@ -79,9 +94,7 @@ class CustomNavbar extends HTMLElement {
                     <a href="#about" class="nav-link">About</a>
                     <a href="#products" class="nav-link">Products</a>
                     <a href="#mission" class="nav-link">Mission</a>
-                    <a href="#" class="px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg text-sm font-medium">
-                        Contact
-                    </a>
+                    <a href="#" class="contact-btn">Contact</a>
                 </div>
                 <button class="mobile-menu-btn">
                     <i data-feather="menu"></i>
