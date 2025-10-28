@@ -367,28 +367,47 @@ const demoCardsObserver = new IntersectionObserver((entries) => {
             // Add animate-in class to trigger CSS animations
             setTimeout(() => {
                 entry.target.classList.add('animate-in');
-            }, 100);
+            }, 50);
             
             // Trigger number animations when cards are visible
             if (entry.target.querySelector('.metric-number')) {
                 setTimeout(() => {
-                    animateNumbers();
-                }, 500);
+                    // Only animate if we want counting effect, otherwise just show the number
+                    const metrics = entry.target.querySelectorAll('.metric-number');
+                    metrics.forEach(metric => {
+                        const target = parseInt(metric.getAttribute('data-target'));
+                        metric.textContent = target; // Show final value immediately
+                    });
+                }, 300);
             }
         }
     });
 }, {
-    threshold: 0.2
+    threshold: 0.1,
+    rootMargin: '50px'
 });
 
 // Observe demo cards
-setTimeout(() => {
-    document.querySelectorAll('.demo-card').forEach((card, index) => {
-        // Start with cards hidden
-        card.style.opacity = '0';
-        demoCardsObserver.observe(card);
-    });
-}, 100);
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+        const demoCards = document.querySelectorAll('.demo-card');
+        demoCards.forEach((card, index) => {
+            // Start with cards visible but not animated
+            card.style.opacity = '0';
+            demoCardsObserver.observe(card);
+            
+            // Check if card is already in viewport on load
+            const rect = card.getBoundingClientRect();
+            const isInViewport = rect.top < window.innerHeight && rect.bottom > 0;
+            if (isInViewport) {
+                setTimeout(() => {
+                    card.classList.add('animate-in');
+                    card.style.opacity = '1';
+                }, 300 + (index * 200));
+            }
+        });
+    }, 100);
+});
 
 // Observe showcase items for entrance animations
 const showcaseObserver = new IntersectionObserver((entries) => {
