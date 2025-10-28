@@ -1233,14 +1233,14 @@ section.visible {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 100px;
-    height: 100px;
+    width: 120px;
+    height: 120px;
 }
 
 .logo-3d-scene {
     width: 100px;
     height: 100px;
-    perspective: 800px;
+    perspective: 600px;
     perspective-origin: 50% 50%;
 }
 
@@ -1249,12 +1249,13 @@ section.visible {
     height: 100%;
     position: relative;
     transform-style: preserve-3d;
-    animation: spinCube3D 20s linear infinite;
-    filter: drop-shadow(0 0 20px rgba(139, 92, 246, 0.6));
+    animation: spinCube3D 15s linear infinite;
+    filter: drop-shadow(0 0 25px rgba(139, 92, 246, 0.7));
 }
 
 .logo-3d-cube:hover {
-    filter: drop-shadow(0 0 30px rgba(139, 92, 246, 0.9));
+    filter: drop-shadow(0 0 35px rgba(139, 92, 246, 1));
+    animation-duration: 10s;
 }
 
 .cube-face {
@@ -1265,14 +1266,44 @@ section.visible {
     align-items: center;
     justify-content: center;
     backface-visibility: visible;
+    border: 1px solid rgba(139, 92, 246, 0.3);
 }
 
-.cube-face.front {
-    transform: translateZ(30px);
+/* Front and Back faces */
+.cube-front {
+    transform: translateZ(50px);
 }
 
-.cube-face.back {
-    transform: translateZ(-30px) rotateY(180deg);
+.cube-back {
+    transform: translateZ(-50px) rotateY(180deg);
+}
+
+/* Side faces */
+.cube-right {
+    transform: rotateY(90deg) translateZ(50px);
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.25), rgba(99, 102, 241, 0.15));
+}
+
+.cube-left {
+    transform: rotateY(-90deg) translateZ(50px);
+    background: linear-gradient(225deg, rgba(139, 92, 246, 0.25), rgba(99, 102, 241, 0.15));
+}
+
+.cube-top {
+    transform: rotateX(90deg) translateZ(50px);
+    background: linear-gradient(180deg, rgba(139, 92, 246, 0.3), rgba(99, 102, 241, 0.2));
+}
+
+.cube-bottom {
+    transform: rotateX(-90deg) translateZ(50px);
+    background: linear-gradient(0deg, rgba(139, 92, 246, 0.2), rgba(99, 102, 241, 0.1));
+}
+
+.cube-side-gradient {
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, rgba(139, 92, 246, 0.4), rgba(99, 102, 241, 0.1));
+    backdrop-filter: blur(2px);
 }
 
 .hero-subtitle {
