@@ -41,23 +41,34 @@ document.querySelectorAll('section').forEach(section => {
 // Staggered animation for cards with entrance effect
 const cardObserver = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
-        if (entry.isIntersecting && !entry.target.classList.contains('has-entered')) {
-            const cards = Array.from(document.querySelectorAll('.vertical-card'));
-            const index = cards.indexOf(entry.target);
-            
-            setTimeout(() => {
-                entry.target.classList.add('entering', 'has-entered');
+        if (entry.isIntersecting) {
+            if (!entry.target.classList.contains('has-entered')) {
+                const cards = Array.from(document.querySelectorAll('.vertical-card'));
+                const index = cards.indexOf(entry.target);
                 
-                // Remove entering class after animation completes
                 setTimeout(() => {
-                    entry.target.classList.remove('entering');
-                }, 800);
-            }, index * 150);
+                    entry.target.classList.add('entering', 'has-entered');
+                    entry.target.style.opacity = '1';
+                    
+                    // Remove entering class after animation completes
+                    setTimeout(() => {
+                        entry.target.classList.remove('entering');
+                    }, 800);
+                }, index * 150);
+            }
+        } else {
+            // Leaving viewport - reset for reverse play
+            const rect = entry.target.getBoundingClientRect();
+            if (rect.top > window.innerHeight) {
+                // Element is below viewport (scrolling up past it)
+                entry.target.classList.remove('entering', 'has-entered');
+                entry.target.style.opacity = '0';
+            }
         }
     });
 }, {
-    threshold: 0.2,
-    rootMargin: '0px 0px -100px 0px'
+    threshold: [0, 0.2],
+    rootMargin: '0px 0px -50px 0px'
 });
 
 // Observe vertical cards with staggered animation
@@ -364,27 +375,39 @@ function animateNumbers() {
 // Observe demo cards for animation trigger
 const demoCardsObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
-        if (entry.isIntersecting && !entry.target.classList.contains('animate-in')) {
-            // Add animate-in class to trigger CSS animations
-            setTimeout(() => {
-                entry.target.classList.add('animate-in');
-            }, 50);
-            
-            // Trigger number animations when cards are visible
-            if (entry.target.querySelector('.metric-number')) {
+        if (entry.isIntersecting) {
+            if (!entry.target.classList.contains('animate-in')) {
+                // Add animate-in class to trigger CSS animations
                 setTimeout(() => {
-                    // Only animate if we want counting effect, otherwise just show the number
-                    const metrics = entry.target.querySelectorAll('.metric-number');
-                    metrics.forEach(metric => {
-                        const target = parseInt(metric.getAttribute('data-target'));
-                        metric.textContent = target; // Show final value immediately
-                    });
-                }, 300);
+                    entry.target.classList.add('animate-in');
+                    entry.target.classList.remove('animate-out');
+                }, 50);
+                
+                // Trigger number animations when cards are visible
+                if (entry.target.querySelector('.metric-number')) {
+                    setTimeout(() => {
+                        // Only animate if we want counting effect, otherwise just show the number
+                        const metrics = entry.target.querySelectorAll('.metric-number');
+                        metrics.forEach(metric => {
+                            const target = parseInt(metric.getAttribute('data-target'));
+                            metric.textContent = target; // Show final value immediately
+                        });
+                    }, 300);
+                }
+            }
+        } else {
+            // Leaving viewport - remove animation for reverse play
+            const rect = entry.target.getBoundingClientRect();
+            if (rect.top > window.innerHeight) {
+                // Element is below viewport (scrolling up past it)
+                entry.target.classList.remove('animate-in');
+                entry.target.classList.add('animate-out');
+                entry.target.style.opacity = '0';
             }
         }
     });
 }, {
-    threshold: 0.1,
+    threshold: [0, 0.1],
     rootMargin: '50px'
 });
 
@@ -413,14 +436,25 @@ document.addEventListener('DOMContentLoaded', () => {
 // Observe showcase items for entrance animations
 const showcaseObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
-        if (entry.isIntersecting && !entry.target.classList.contains('active')) {
-            setTimeout(() => {
-                entry.target.classList.add('active');
-            }, 100);
+        if (entry.isIntersecting) {
+            if (!entry.target.classList.contains('active')) {
+                setTimeout(() => {
+                    entry.target.classList.add('active');
+                    entry.target.classList.remove('inactive');
+                }, 100);
+            }
+        } else {
+            // Leaving viewport - remove animation for reverse play
+            const rect = entry.target.getBoundingClientRect();
+            if (rect.top > window.innerHeight) {
+                // Element is below viewport (scrolling up past it)
+                entry.target.classList.remove('active');
+                entry.target.classList.add('inactive');
+            }
         }
     });
 }, {
-    threshold: 0.15,
+    threshold: [0, 0.15],
     rootMargin: '0px 0px -50px 0px'
 });
 
@@ -450,12 +484,22 @@ window.addEventListener('resize', () => {
 const productCardsObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
+            // Entering viewport - add animation
             entry.target.classList.add('animate-in');
+            entry.target.classList.remove('animate-out');
+        } else {
+            // Leaving viewport - remove animation for reverse play
+            const rect = entry.target.getBoundingClientRect();
+            if (rect.top > window.innerHeight) {
+                // Element is below viewport (scrolling up past it)
+                entry.target.classList.remove('animate-in');
+                entry.target.classList.add('animate-out');
+            }
         }
     });
 }, {
-    threshold: 0.2,
-    rootMargin: '0px 0px -100px 0px'
+    threshold: [0, 0.2],
+    rootMargin: '0px 0px -50px 0px'
 });
 
 // Observe product cards
@@ -477,11 +521,20 @@ const missionObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
             entry.target.classList.add('animate-in');
+            entry.target.classList.remove('animate-out');
+        } else {
+            // Leaving viewport - remove animation for reverse play
+            const rect = entry.target.getBoundingClientRect();
+            if (rect.top > window.innerHeight) {
+                // Element is below viewport (scrolling up past it)
+                entry.target.classList.remove('animate-in');
+                entry.target.classList.add('animate-out');
+            }
         }
     });
 }, {
-    threshold: 0.15,
-    rootMargin: '0px 0px -100px 0px'
+    threshold: [0, 0.15],
+    rootMargin: '0px 0px -50px 0px'
 });
 
 // Observe mission container
