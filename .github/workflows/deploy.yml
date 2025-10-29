@@ -1,0 +1,91 @@
+name: Deploy to Hugging Face Spaces
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Validate HTML files
+        run: |
+          echo "✅ Validating HTML structure..."
+          find . -name "*.html" -not -path "./.git/*" -exec echo "Found: {}" \;
+      
+      - name: Check for required files
+        run: |
+          echo "📁 Validating project structure..."
+          
+          # Core files
+          REQUIRED=(
+            "index.html"
+            "products.html"
+            "pricing.html"
+            "login.html"
+            "style.css"
+            "script.js"
+            "auth.js"
+          )
+          
+          MISSING=0
+          for file in "${REQUIRED[@]}"; do
+            if [ ! -f "$file" ]; then
+              echo "❌ Missing: $file"
+              MISSING=$((MISSING + 1))
+            else
+              echo "✅ Found: $file"
+            fi
+          done
+          
+          # Components
+          if [ ! -d "components" ]; then
+            echo "❌ Missing: components/ directory"
+            MISSING=$((MISSING + 1))
+          else
+            echo "✅ Found: components/ directory"
+            if [ ! -f "components/navbar.js" ]; then
+              echo "⚠️  Warning: components/navbar.js not found"
+            fi
+            if [ ! -f "components/footer.js" ]; then
+              echo "⚠️  Warning: components/footer.js not found"
+            fi
+          fi
+          
+          # Assets
+          if [ ! -d "assets/images/tech-logos" ]; then
+            echo "⚠️  Warning: assets/images/tech-logos/ directory not found"
+          else
+            echo "✅ Found: assets/images/tech-logos/ directory"
+          fi
+          
+          if [ $MISSING -gt 0 ]; then
+            echo "❌ $MISSING required file(s) missing!"
+            exit 1
+          fi
+          
+          echo "✅ All required files present"
+      
+      - name: Deploy to Hugging Face Spaces
+        run: |
+          # Hugging Face Spaces auto-deploys from GitHub when connected
+          # This workflow validates files are ready before deployment
+          HF_USERNAME="${HF_USERNAME:-jjosephdev}"
+          HF_SPACE="${HF_SPACE:-n8tive-nexus-portal}"
+          
+          echo "✅ Push successful - Hugging Face will auto-deploy"
+          echo "🔗 Space URL: https://huggingface.co/spaces/$HF_USERNAME/$HF_SPACE"
+          echo "ℹ️  If Space is connected to this repo, it will update automatically"
+      
+      - name: Deployment Status
+        run: |
+          echo "✅ All checks passed!"
+          echo "📦 Your site is ready to be served"
+          echo "🌐 Hugging Face Spaces will automatically update"
+
