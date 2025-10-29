@@ -1,4 +1,4 @@
-name: Deploy to Hugging Face Spaces
+name: Deploy (HF + optional AWS)
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
   workflow_dispatch:  # Allow manual trigger
 
 jobs:
-  deploy:
+  validate:
     runs-on: ubuntu-latest
     
     steps:
@@ -88,4 +88,86 @@ jobs:
           echo "✅ All checks passed!"
           echo "📦 Your site is ready to be served"
           echo "🌐 Hugging Face Spaces will automatically update"
+
+  aws:
+    name: Deploy to AWS (S3 + CloudFront)
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Check AWS secrets present
+        id: check
+        run: |
+          missing=0
+          if [ -z "${{ secrets.AWS_ACCESS_KEY_ID }}" ]; then
+            echo "⚠️  Missing secret: AWS_ACCESS_KEY_ID"; missing=$((missing+1));
+          fi
+          if [ -z "${{ secrets.AWS_SECRET_ACCESS_KEY }}" ]; then
+            echo "⚠️  Missing secret: AWS_SECRET_ACCESS_KEY"; missing=$((missing+1));
+          fi
+          if [ -z "${{ secrets.S3_BUCKET_NAME }}" ]; then
+            echo "⚠️  Missing secret: S3_BUCKET_NAME"; missing=$((missing+1));
+          fi
+          if [ -z "${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}" ]; then
+            echo "⚠️  Missing secret: CLOUDFRONT_DISTRIBUTION_ID"; missing=$((missing+1));
+          fi
+          if [ $missing -gt 0 ]; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Skip if secrets missing
+        if: steps.check.outputs.skip == 'true'
+        run: |
+          echo "ℹ️  AWS secrets not fully configured. Skipping AWS deployment."
+          exit 0
+
+      - name: Configure AWS credentials
+        if: steps.check.outputs.skip != 'true'
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION || 'us-east-1' }}
+
+      - name: Sync static assets to S3 (long cache)
+        if: steps.check.outputs.skip != 'true'
+        run: |
+          aws s3 sync . s3://${{ secrets.S3_BUCKET_NAME }} \
+            --exclude ".git/*" \
+            --exclude "node_modules/*" \
+            --exclude ".github/*" \
+            --exclude "*.md" \
+            --exclude ".DS_Store" \
+            --exclude "deploy.sh" \
+            --cache-control "public, max-age=31536000" \
+            --delete \
+            --exclude "*.html" \
+            --exclude "*.json"
+
+      - name: Upload HTML (short cache)
+        if: steps.check.outputs.skip != 'true'
+        run: |
+          aws s3 sync . s3://${{ secrets.S3_BUCKET_NAME }} \
+            --exclude "*" \
+            --include "*.html" \
+            --cache-control "public, max-age=3600" \
+            --delete
+
+      - name: Invalidate CloudFront cache
+        if: steps.check.outputs.skip != 'true'
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
+            --paths "/*"
+
+      - name: AWS Deployment Status
+        if: steps.check.outputs.skip != 'true'
+        run: |
+          echo "✅ Deployed to S3 bucket: ${{ secrets.S3_BUCKET_NAME }}"
+          echo "🧊 CloudFront distribution invalidated: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}"
+          echo "🌐 Your AWS site will reflect changes within a few minutes"
 
