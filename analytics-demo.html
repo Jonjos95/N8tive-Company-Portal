@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>N8tive Analytics Demo</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body class="bg-gray-900 text-gray-100">
+  <div class="p-4 md:p-6">
+    <div class="mb-4">
+      <h1 class="text-xl font-semibold">Real-time Analytics Demo</h1>
+      <p class="text-xs text-gray-400">Standalone demo with mock data. No login required.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="bg-gray-800 border border-gray-700 rounded-lg p-4">
+        <div class="text-sm text-gray-300 mb-2">Requests per Minute</div>
+        <div style="height:180px">
+          <canvas id="lineChart"></canvas>
+        </div>
+      </div>
+
+      <div class="bg-gray-800 border border-gray-700 rounded-lg p-4">
+        <div class="text-sm text-gray-300 mb-2">Error Rate</div>
+        <div style="height:180px">
+          <canvas id="doughnutChart"></canvas>
+        </div>
+      </div>
+
+      <div class="bg-gray-800 border border-gray-700 rounded-lg p-4">
+        <div class="text-sm text-gray-300 mb-2">Latency (p50 / p95 / p99)</div>
+        <div style="height:180px">
+          <canvas id="barChart"></canvas>
+        </div>
+      </div>
+
+      <div class="bg-gray-800 border border-gray-700 rounded-lg p-4">
+        <div class="text-sm text-gray-300 mb-2">Active Users</div>
+        <div id="activeUsers" class="text-3xl font-bold text-blue-400">0</div>
+        <div class="text-xs text-gray-500">Updating every second…</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const nowLabel = () => new Date().toLocaleTimeString([], { hour12: false, minute: '2-digit', second: '2-digit' });
+
+    // Line chart (requests per minute simulated every second)
+    const lineCtx = document.getElementById('lineChart');
+    const lineData = {
+      labels: Array.from({ length: 20 }, () => nowLabel()),
+      datasets: [{
+        label: 'RPM',
+        data: Array.from({ length: 20 }, () => 200 + Math.round(Math.random() * 80)),
+        borderColor: '#8b5cf6',
+        backgroundColor: 'rgba(139,92,246,0.15)',
+        fill: true,
+        tension: 0.35
+      }]
+    };
+    const lineChart = new Chart(lineCtx, {
+      type: 'line',
+      data: lineData,
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ticks: { color: '#9ca3af' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+          y: { ticks: { color: '#9ca3af' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+        }
+      }
+    });
+
+    // Doughnut chart (error rate)
+    const doughnutCtx = document.getElementById('doughnutChart');
+    let ok = 980, err = 20;
+    const doughnutChart = new Chart(doughnutCtx, {
+      type: 'doughnut',
+      data: { labels: ['OK', 'Errors'], datasets: [{ data: [ok, err], backgroundColor: ['#22c55e', '#ef4444'] }] },
+      options: { plugins: { legend: { labels: { color: '#9ca3af' } } } }
+    });
+
+    // Bar chart (latency)
+    const barCtx = document.getElementById('barChart');
+    const barChart = new Chart(barCtx, {
+      type: 'bar',
+      data: {
+        labels: ['p50', 'p95', 'p99'],
+        datasets: [{
+          data: [120, 320, 520],
+          backgroundColor: ['#60a5fa', '#a78bfa', '#f59e0b']
+        }]
+      },
+      options: {
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ticks: { color: '#9ca3af' }, grid: { display: false } },
+          y: { ticks: { color: '#9ca3af' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+        }
+      }
+    });
+
+    // Ensure proper initial sizing once the iframe/layout settles
+    requestAnimationFrame(() => {
+      lineChart.resize();
+      doughnutChart.resize();
+      barChart.resize();
+    });
+
+    // Active users counter
+    const activeUsersEl = document.getElementById('activeUsers');
+    let activeUsers = 120;
+
+    function tick() {
+      // Line series
+      lineData.labels.push(nowLabel());
+      lineData.labels.shift();
+      const last = lineData.datasets[0].data[lineData.datasets[0].data.length - 1] || 220;
+      const next = Math.max(120, Math.min(400, last + Math.round((Math.random() - 0.5) * 30)));
+      lineData.datasets[0].data.push(next);
+      lineData.datasets[0].data.shift();
+      lineChart.update('none');
+
+      // Error rate slight drift
+      const drift = Math.random() < 0.2 ? 1 : 0;
+      if (Math.random() < 0.5) {
+        ok = Math.max(900, ok + (drift ? -5 : 3));
+        err = Math.max(5, 1000 - ok);
+      } else {
+        ok = Math.min(995, ok + 2);
+        err = Math.max(5, 1000 - ok);
+      }
+      doughnutChart.data.datasets[0].data = [ok, err];
+      doughnutChart.update('none');
+
+      // Latency small noise
+      const jitter = () => Math.max(60, Math.round(100 + Math.random() * 40));
+      const p50 = jitter();
+      const p95 = p50 + 180 + Math.round(Math.random() * 80);
+      const p99 = p95 + 160 + Math.round(Math.random() * 120);
+      barChart.data.datasets[0].data = [p50, p95, p99];
+      barChart.update('none');
+
+      // Active users
+      activeUsers = Math.max(50, activeUsers + Math.round((Math.random() - 0.45) * 10));
+      activeUsersEl.textContent = activeUsers.toLocaleString();
+    }
+
+    setInterval(tick, 1000);
+  </script>
+</body>
+</html>
+
+

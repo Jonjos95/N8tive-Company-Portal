@@ -20,7 +20,7 @@ class CustomNavbar extends HTMLElement {
                 }
                 .logo {
                     font-weight: 700;
-                    font-size: 1.5rem;
+                    font-size: 2.25rem;
                     background: linear-gradient(to right, #a78bfa, #8b5cf6);
                     -webkit-background-clip: text;
                     background-clip: text;
@@ -28,10 +28,11 @@ class CustomNavbar extends HTMLElement {
                     display: flex;
                     align-items: center;
                     gap: 0.5rem;
+                    text-decoration: none;
                 }
                 .logo-cube-nav {
-                    width: 40px;
-                    height: 40px;
+                    width: 64px;
+                    height: 64px;
                     cursor: pointer;
                 }
                 #nav-cube-canvas {
@@ -98,7 +99,7 @@ class CustomNavbar extends HTMLElement {
             <nav>
                 <a href="index.html" class="logo">
                     <div class="logo-cube-nav">
-                        <canvas id="nav-cube-canvas" width="40" height="40"></canvas>
+                        <canvas id="nav-cube-canvas" width="64" height="64"></canvas>
                     </div>
                     N8tive.io
                 </a>
@@ -138,7 +139,7 @@ class CustomNavbar extends HTMLElement {
             alpha: true, 
             antialias: true 
         });
-        renderer.setSize(40, 40);
+        renderer.setSize(64, 64);
         renderer.setPixelRatio(window.devicePixelRatio);
         
         // Create cube structure
