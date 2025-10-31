@@ -8,12 +8,12 @@ Log into GoDaddy DNS Management for **n8tiveio.app** and add/update these record
 #### A Records:
 - **Name**: `@` (or leave blank for root domain)
 - **Type**: `A`
-- **Value**: `54.158.1.37`
+- **Value**: `YOUR_EC2_IP`
 - **TTL**: `600` (10 minutes)
 
 - **Name**: `www`
 - **Type**: `A`
-- **Value**: `54.158.1.37`
+- **Value**: `YOUR_EC2_IP`
 - **TTL**: `600`
 
 **OR** you can use CNAME for www:
@@ -32,7 +32,7 @@ Log into GoDaddy DNS Management for **n8tiveio.app** and add/update these record
 Once DNS is pointing to your server, SSH in and install SSL:
 
 ```bash
-ssh -i /Users/jon/dev/n8tiveio-backend-key.pem ec2-user@54.158.1.37
+ssh -i /path/to/your-key.pem ec2-user@YOUR_EC2_IP
 
 # Install certbot
 sudo dnf install -y certbot python3-certbot-nginx
@@ -54,7 +54,7 @@ Certbot will:
 
 ## Important: Elastic IP Recommendation
 
-⚠️ **Your current IP (54.158.1.37) may change if the instance restarts.**
+⚠️ **Your current IP (YOUR_EC2_IP) may change if the instance restarts.**
 
 To prevent this:
 1. Go to EC2 Console → Elastic IPs

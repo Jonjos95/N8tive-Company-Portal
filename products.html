@@ -68,7 +68,7 @@
                             <div class="p-6 relative flex flex-col flex-grow">
                                 <!-- Status badge -->
                                 <div class="absolute top-4 right-4 flex gap-2">
-                                    <span class="status-badge px-2 py-1 bg-blue-900/50 text-blue-400 rounded-full text-xs font-semibold">Beta</span>
+                                    <span class="status-badge px-2 py-1 bg-green-900/50 text-green-400 rounded-full text-xs font-semibold">Live</span>
                                 </div>
                                 
                                 <h3 class="text-2xl font-bold mb-2 group-hover:text-blue-400 transition-colors">Project Manager</h3>
@@ -86,18 +86,18 @@
                                     <div class="mb-4">
                                         <div class="flex justify-between text-xs text-gray-400 mb-1">
                                             <span>Development</span>
-                                            <span>85%</span>
+                                            <span>100%</span>
                                         </div>
                                         <div class="progress-bar-bg h-2 bg-gray-700 rounded-full overflow-hidden">
-                                            <div class="progress-bar h-full bg-gradient-to-r from-blue-500 to-purple-500" style="width: 85%"></div>
+                                            <div class="progress-bar h-full bg-gradient-to-r from-green-500 to-blue-500" style="width: 100%"></div>
                                         </div>
                                     </div>
                                     
                                     <!-- Action buttons -->
                                     <div class="flex gap-2">
-                                        <button class="btn-primary flex-1 px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg font-medium hover:shadow-lg hover:shadow-blue-500/50 transition-all duration-300">
-                                            Join Waitlist
-                                        </button>
+                                        <a href="https://n8tiveio.app/projectmanager" target="_blank" rel="noopener noreferrer" class="btn-primary flex-1 px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg font-medium hover:shadow-lg hover:shadow-blue-500/50 transition-all duration-300 text-center no-underline text-white inline-block" style="text-decoration: none; display: inline-block;">
+                                            Launch Project Manager
+                                        </a>
                                         <button class="btn-secondary px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-all duration-300">
                                             <i data-feather="info" class="w-4 h-4"></i>
                                         </button>
@@ -403,6 +403,30 @@
                 
                 setTimeout(() => ripple.remove(), 600);
             });
+        });
+        
+        // Ensure Project Manager link opens in new tab - must run on DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', function() {
+            const projectManagerLink = document.querySelector('a[href*="projectmanager"]');
+            if (projectManagerLink) {
+                // Remove any existing click handlers
+                projectManagerLink.replaceWith(projectManagerLink.cloneNode(true));
+                const newLink = document.querySelector('a[href*="projectmanager"]');
+                
+                // Set attributes
+                newLink.setAttribute('target', '_blank');
+                newLink.setAttribute('rel', 'noopener noreferrer');
+                
+                // Add click handler that prevents default and opens in new tab
+                newLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.stopImmediatePropagation();
+                    // Force open in new tab
+                    window.open(this.href, '_blank', 'noopener,noreferrer');
+                    return false;
+                }, true); // Use capture phase to run first
+            }
         });
     </script>
 </body>
