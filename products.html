@@ -404,30 +404,8 @@
                 setTimeout(() => ripple.remove(), 600);
             });
         });
-        
-        // Ensure Project Manager link opens in new tab - must run on DOMContentLoaded
-        document.addEventListener('DOMContentLoaded', function() {
-            const projectManagerLink = document.querySelector('a[href*="projectmanager"]');
-            if (projectManagerLink) {
-                // Remove any existing click handlers
-                projectManagerLink.replaceWith(projectManagerLink.cloneNode(true));
-                const newLink = document.querySelector('a[href*="projectmanager"]');
-                
-                // Set attributes
-                newLink.setAttribute('target', '_blank');
-                newLink.setAttribute('rel', 'noopener noreferrer');
-                
-                // Add click handler that prevents default and opens in new tab
-                newLink.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    e.stopImmediatePropagation();
-                    // Force open in new tab
-                    window.open(this.href, '_blank', 'noopener,noreferrer');
-                    return false;
-                }, true); // Use capture phase to run first
-            }
-        });
+        // Note: The Project Manager link already uses target="_blank" and rel attributes in HTML
+        // No additional DOMContentLoaded logic is needed here.
     </script>
 </body>
 </html>
