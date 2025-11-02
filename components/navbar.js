@@ -110,6 +110,7 @@ class CustomNavbar extends HTMLElement {
                     <a href="products.html" class="nav-link">Products</a>
                     <a href="pricing.html" class="nav-link">Pricing</a>
                     <a href="index.html#mission" class="nav-link">Mission</a>
+                    <a href="team.html" class="nav-link">Team</a>
                     <a href="login.html" class="login-btn">Login</a>
                 </div>
                 <button class="mobile-menu-btn">

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Development Team | n8tive.io</title>
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.globe.min.js"></script>
+</head>
+<body class="bg-gray-900 text-gray-100 font-inter">
+    <!-- Full Page Vanta Background -->
+    <div class="fixed inset-0 z-0" id="vanta-bg"></div>
+    
+    <!-- Animated Mesh Grid Overlay -->
+    <div class="fixed inset-0 z-0 pointer-events-none opacity-20" id="mesh-grid">
+        <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <pattern id="grid" width="80" height="80" patternUnits="userSpaceOnUse">
+                    <path d="M 80 0 L 0 0 0 80" fill="none" stroke="rgba(139, 92, 246, 0.3)" stroke-width="0.5"/>
+                </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#grid)" />
+        </svg>
+    </div>
+    
+    <!-- Floating Particles Overlay -->
+    <div class="fixed inset-0 z-0 pointer-events-none" id="particles-overlay"></div>
+    
+    <!-- Main Content Wrapper -->
+    <div class="relative z-10">
+        <custom-navbar></custom-navbar>
+
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-20">
+            <!-- Team Section -->
+            <section id="team" class="py-20">
+                <div class="section-header max-w-4xl mx-auto text-center mb-16">
+                    <h2 class="text-3xl md:text-5xl font-bold mb-6">
+                        Our <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">Development Team</span>
+                    </h2>
+                    <p class="text-lg text-gray-400">
+                        The talented developers behind n8tive.io
+                    </p>
+                </div>
+
+                <!-- Team Members Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+                    <!-- Team Member Card 1 -->
+                    <div class="team-card bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 rounded-xl p-8 hover:border-blue-500 hover:shadow-xl hover:shadow-blue-500/30 transition-all duration-500">
+                        <div class="flex flex-col items-center text-center">
+                            <div class="relative mb-6">
+                                <div class="w-32 h-32 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-4xl font-bold text-white mb-4 shadow-lg">
+                                    JD
+                                </div>
+                                <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 rounded-full border-4 border-gray-900"></div>
+                            </div>
+                            <h3 class="text-2xl font-bold mb-2">Jon Doe</h3>
+                            <p class="text-blue-400 font-semibold mb-4">Lead Developer & Founder</p>
+                            <p class="text-gray-400 text-sm mb-6">
+                                Full-stack developer passionate about building intuitive web applications and automation tools.
+                            </p>
+                            <div class="flex gap-4">
+                                <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-gray-700 hover:bg-blue-500 flex items-center justify-center transition-all duration-300">
+                                    <i data-feather="github" class="w-5 h-5"></i>
+                                </a>
+                                <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-gray-700 hover:bg-blue-500 flex items-center justify-center transition-all duration-300">
+                                    <i data-feather="linkedin" class="w-5 h-5"></i>
+                                </a>
+                                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-gray-700 hover:bg-blue-500 flex items-center justify-center transition-all duration-300">
+                                    <i data-feather="twitter" class="w-5 h-5"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Team Member Card 2 - Add more team members here -->
+                    <div class="team-card bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 rounded-xl p-8 hover:border-purple-500 hover:shadow-xl hover:shadow-purple-500/30 transition-all duration-500">
+                        <div class="flex flex-col items-center text-center">
+                            <div class="relative mb-6">
+                                <div class="w-32 h-32 rounded-full bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-4xl font-bold text-white mb-4 shadow-lg">
+                                    DS
+                                </div>
+                                <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 rounded-full border-4 border-gray-900"></div>
+                            </div>
+                            <h3 class="text-2xl font-bold mb-2">Developer Smith</h3>
+                            <p class="text-purple-400 font-semibold mb-4">Backend Engineer</p>
+                            <p class="text-gray-400 text-sm mb-6">
+                                Specializes in scalable backend architectures and API development.
+                            </p>
+                            <div class="flex gap-4">
+                                <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-gray-700 hover:bg-purple-500 flex items-center justify-center transition-all duration-300">
+                                    <i data-feather="github" class="w-5 h-5"></i>
+                                </a>
+                                <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-gray-700 hover:bg-purple-500 flex items-center justify-center transition-all duration-300">
+                                    <i data-feather="linkedin" class="w-5 h-5"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Portfolio Link Card -->
+                    <div class="team-card bg-gradient-to-br from-gray-800 to-gray-900 border-2 border-dashed border-gray-600 rounded-xl p-8 hover:border-blue-500 hover:shadow-xl hover:shadow-blue-500/30 transition-all duration-500">
+                        <div class="flex flex-col items-center text-center h-full justify-center">
+                            <div class="mb-6">
+                                <div class="w-32 h-32 rounded-full bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center mb-4 shadow-lg mx-auto">
+                                    <i data-feather="globe" class="w-16 h-16 text-white"></i>
+                                </div>
+                            </div>
+                            <h3 class="text-2xl font-bold mb-2">Personal Portfolio</h3>
+                            <p class="text-gray-400 text-sm mb-6">
+                                Check out our lead developer's personal portfolio to see more projects and experience.
+                            </p>
+                            <a href="https://your-portfolio-url.com" target="_blank" rel="noopener noreferrer" class="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg font-medium hover:shadow-lg hover:shadow-blue-500/50 transition-all duration-300 inline-flex items-center gap-2">
+                                <i data-feather="external-link" class="w-4 h-4"></i>
+                                View Portfolio
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Technologies We Use -->
+                <div class="mt-20">
+                    <h3 class="text-2xl font-bold text-center mb-12">
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">Technologies We Love</span>
+                    </h3>
+                    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+                        <div class="tech-badge bg-gray-800 p-6 rounded-xl border border-gray-700 hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/30 transition-all duration-300 text-center">
+                            <img src="assets/images/tech-logos/react.svg" alt="React" class="w-12 h-12 mx-auto mb-2">
+                            <p class="text-sm text-gray-300">React</p>
+                        </div>
+                        <div class="tech-badge bg-gray-800 p-6 rounded-xl border border-gray-700 hover:border-green-500 hover:shadow-lg hover:shadow-green-500/30 transition-all duration-300 text-center">
+                            <img src="assets/images/tech-logos/nodejs.svg" alt="Node.js" class="w-12 h-12 mx-auto mb-2">
+                            <p class="text-sm text-gray-300">Node.js</p>
+                        </div>
+                        <div class="tech-badge bg-gray-800 p-6 rounded-xl border border-gray-700 hover:border-yellow-400 hover:shadow-lg hover:shadow-yellow-400/30 transition-all duration-300 text-center">
+                            <img src="assets/images/tech-logos/python.svg" alt="Python" class="w-12 h-12 mx-auto mb-2">
+                            <p class="text-sm text-gray-300">Python</p>
+                        </div>
+                        <div class="tech-badge bg-gray-800 p-6 rounded-xl border border-gray-700 hover:border-blue-400 hover:shadow-lg hover:shadow-blue-400/30 transition-all duration-300 text-center">
+                            <img src="assets/images/tech-logos/postgresql.svg" alt="PostgreSQL" class="w-12 h-12 mx-auto mb-2">
+                            <p class="text-sm text-gray-300">PostgreSQL</p>
+                        </div>
+                        <div class="tech-badge bg-gray-800 p-6 rounded-xl border border-gray-700 hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/30 transition-all duration-300 text-center">
+                            <img src="assets/images/tech-logos/docker.svg" alt="Docker" class="w-12 h-12 mx-auto mb-2">
+                            <p class="text-sm text-gray-300">Docker</p>
+                        </div>
+                        <div class="tech-badge bg-gray-800 p-6 rounded-xl border border-gray-700 hover:border-orange-400 hover:shadow-lg hover:shadow-orange-400/30 transition-all duration-300 text-center">
+                            <img src="assets/images/tech-logos/aws.svg" alt="AWS" class="w-12 h-12 mx-auto mb-2">
+                            <p class="text-sm text-gray-300">AWS</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <custom-footer></custom-footer>
+    </div>
+    <!-- End Main Content Wrapper -->
+
+    <script src="components/navbar.js"></script>
+    <script src="components/footer.js"></script>
+    <script src="script.js"></script>
+    <script>
+        feather.replace();
+        
+        // Initialize Vanta.js - Full Page Background
+        VANTA.GLOBE({
+            el: "#vanta-bg",
+            mouseControls: true,
+            touchControls: true,
+            gyroControls: false,
+            minHeight: 200.00,
+            minWidth: 200.00,
+            scale: 1.00,
+            scaleMobile: 1.00,
+            color: 0x8b5cf6, // Purple
+            color2: 0x3b82f6, // Blue
+            backgroundColor: 0x111827,
+            size: 1.2,
+            spacing: 15.00
+        });
+        
+        // Initialize Floating Particles
+        initFloatingParticles();
+        
+        function initFloatingParticles() {
+            const particlesContainer = document.getElementById('particles-overlay');
+            const particleCount = 30;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'floating-particle';
+                
+                const size = Math.random() * 4 + 2;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.top = `${Math.random() * 100}%`;
+                
+                particle.style.animationDelay = `${Math.random() * 10}s`;
+                particle.style.animationDuration = `${Math.random() * 20 + 20}s`;
+                particle.style.opacity = Math.random() * 0.3 + 0.1;
+                
+                const tx = (Math.random() - 0.5) * 200;
+                const ty = (Math.random() - 0.5) * 200;
+                particle.style.setProperty('--tx', `${tx}vw`);
+                particle.style.setProperty('--ty', `${ty}vh`);
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Animate team cards on scroll
+        const teamObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.2 });
+
+        document.querySelectorAll('.team-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+            teamObserver.observe(card);
+        });
+
+        // Animate tech badges
+        const techObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'scale(1)';
+                    }, index * 50);
+                }
+            });
+        }, { threshold: 0.3 });
+
+        document.querySelectorAll('.tech-badge').forEach(badge => {
+            badge.style.opacity = '0';
+            badge.style.transform = 'scale(0.8)';
+            badge.style.transition = 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+            techObserver.observe(badge);
+        });
+    </script>
+</body>
+</html>
