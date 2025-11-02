@@ -1,3 +1,5 @@
+// Navbar Component v2.0 - Updated with Team link
+// Version: 2025-11-02-23:05
 class CustomNavbar extends HTMLElement {
     connectedCallback() {
         // Clear any cached component
