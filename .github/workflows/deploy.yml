@@ -146,14 +146,16 @@ jobs:
             --cache-control "public, max-age=31536000" \
             --delete \
             --exclude "*.html" \
-            --exclude "*.json"
+            --exclude "*.json" \
+            --exclude "components/navbar.js"
 
-      - name: Upload HTML (short cache)
+      - name: Upload HTML and navbar.js (short cache)
         if: steps.check.outputs.skip != 'true'
         run: |
           aws s3 sync . s3://${{ secrets.S3_BUCKET_NAME }} \
             --exclude "*" \
             --include "*.html" \
+            --include "components/navbar.js" \
             --cache-control "public, max-age=3600" \
             --delete
 
