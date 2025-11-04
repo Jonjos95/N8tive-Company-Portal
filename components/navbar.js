@@ -1,5 +1,4 @@
-// Navbar Component v2.0 - Updated with Team link
-// Version: 2025-11-02-23:05
+// Navbar Component
 class CustomNavbar extends HTMLElement {
     connectedCallback() {
         // Clear any cached component
@@ -115,6 +114,7 @@ class CustomNavbar extends HTMLElement {
                     <a href="pricing.html" class="nav-link">Pricing</a>
                     <a href="index.html#mission" class="nav-link">Mission</a>
                     <a href="team.html" class="nav-link">Team</a>
+                    <a href="../N8tive-TechnicalPortfolio/index.html" class="nav-link" target="_blank">View Portfolio</a>
                     <a href="login.html" class="login-btn">Login</a>
                 </div>
                 <button class="mobile-menu-btn">
