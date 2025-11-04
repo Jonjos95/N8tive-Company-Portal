@@ -111,8 +111,6 @@ class CustomNavbar extends HTMLElement {
                 </a>
                 <div class="nav-links">
                     <a href="index.html" class="nav-link">Home</a>
-                    <a href="index.html#about" class="nav-link">About</a>
-                    <a href="index.html#demo" class="nav-link">Demo</a>
                     <a href="products.html" class="nav-link">Products</a>
                     <a href="pricing.html" class="nav-link">Pricing</a>
                     <a href="index.html#mission" class="nav-link">Mission</a>
