@@ -1081,88 +1081,93 @@ window.closeWaitlistModal = closeWaitlistModal;
 window.handleWaitlistSubmit = handleWaitlistSubmit;
 
 // Attach event listeners to all "Join Waitlist" buttons
-(function initWaitlistButtons() {
-    function attachWaitlistHandler(button) {
-        if (button.hasAttribute('data-waitlist-attached')) {
-            return; // Already attached
-        }
-        button.setAttribute('data-waitlist-attached', 'true');
+function attachWaitlistHandler(button) {
+    if (button.hasAttribute('data-waitlist-attached')) {
+        return; // Already attached
+    }
+    button.setAttribute('data-waitlist-attached', 'true');
+    
+    // Remove onclick if it exists
+    if (button.hasAttribute('onclick')) {
+        button.removeAttribute('onclick');
+    }
+    
+    button.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('Join Waitlist button clicked', button);
         
-        // Remove onclick if it exists
-        if (button.hasAttribute('onclick')) {
-            button.removeAttribute('onclick');
-        }
+        // Get product from data attribute if present
+        const product = button.getAttribute('data-product') || '';
         
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            console.log('Join Waitlist button clicked');
-            
-            // Get product from data attribute if present
-            const product = button.getAttribute('data-product') || '';
-            
-            if (typeof window.openWaitlistModal === 'function') {
-                window.openWaitlistModal(product);
-            } else {
-                console.error('openWaitlistModal is not a function, trying direct modal access');
-                // Fallback: open modal directly
-                const modal = document.getElementById('waitlist-modal');
-                if (modal) {
-                    modal.classList.add('active');
-                    document.body.style.overflow = 'hidden';
-                    const form = document.getElementById('waitlist-form');
-                    const success = document.getElementById('waitlist-success');
-                    const productSelect = document.getElementById('waitlist-product');
-                    if (form) {
-                        form.style.display = 'block';
-                        form.reset();
-                    }
-                    if (success) success.style.display = 'none';
-                    if (product && productSelect) {
-                        productSelect.value = product;
-                    }
-                    if (typeof feather !== 'undefined') {
-                        feather.replace();
-                    }
-                } else {
-                    console.error('Waitlist modal element not found');
+        if (typeof window.openWaitlistModal === 'function') {
+            console.log('Calling openWaitlistModal with product:', product);
+            window.openWaitlistModal(product);
+        } else {
+            console.error('openWaitlistModal is not a function, trying direct modal access');
+            // Fallback: open modal directly
+            const modal = document.getElementById('waitlist-modal');
+            if (modal) {
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+                const form = document.getElementById('waitlist-form');
+                const success = document.getElementById('waitlist-success');
+                const productSelect = document.getElementById('waitlist-product');
+                if (form) {
+                    form.style.display = 'block';
+                    form.reset();
                 }
+                if (success) success.style.display = 'none';
+                if (product && productSelect) {
+                    productSelect.value = product;
+                }
+                if (typeof feather !== 'undefined') {
+                    feather.replace();
+                }
+            } else {
+                console.error('Waitlist modal element not found');
             }
-            return false;
-        });
-    }
-    
-    // Attach handlers when DOM is ready
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', function() {
-            initWaitlistButtons();
-        });
-    } else {
-        // DOM already loaded
-        setTimeout(initWaitlistButtons, 100);
-    }
-    
-    function initWaitlistButtons() {
-        // Find by ID
-        const btnById = document.getElementById('join-waitlist-btn');
-        if (btnById) {
-            attachWaitlistHandler(btnById);
         }
-        
-        // Find by onclick attribute
-        document.querySelectorAll('button[onclick*="openWaitlistModal"]').forEach(attachWaitlistHandler);
-        
-        // Find by text content
-        document.querySelectorAll('button').forEach(button => {
-            const text = button.textContent.trim();
-            if (text.includes('Join Waitlist')) {
-                attachWaitlistHandler(button);
-            }
-        });
+        return false;
+    });
+}
+
+function initWaitlistButtons() {
+    console.log('Initializing waitlist buttons...');
+    
+    // Find by ID
+    const btnById = document.getElementById('join-waitlist-btn');
+    if (btnById) {
+        console.log('Found button by ID:', btnById);
+        attachWaitlistHandler(btnById);
     }
     
-    // Also run immediately in case DOM is already loaded
-    if (document.readyState !== 'loading') {
-        setTimeout(initWaitlistButtons, 50);
-    }
-})();
+    // Find by onclick attribute
+    document.querySelectorAll('button[onclick*="openWaitlistModal"]').forEach(btn => {
+        console.log('Found button by onclick:', btn);
+        attachWaitlistHandler(btn);
+    });
+    
+    // Find by text content
+    document.querySelectorAll('button').forEach(button => {
+        const text = button.textContent.trim();
+        if (text.includes('Join Waitlist')) {
+            console.log('Found button by text:', button);
+            attachWaitlistHandler(button);
+        }
+    });
+    
+    console.log('Waitlist buttons initialized');
+}
+
+// Initialize when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initWaitlistButtons);
+} else {
+    // DOM already loaded
+    initWaitlistButtons();
+}
+
+// Also try again after a short delay to catch dynamically added buttons
+setTimeout(initWaitlistButtons, 500);
+setTimeout(initWaitlistButtons, 1000);
