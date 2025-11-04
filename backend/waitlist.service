@@ -1,0 +1,15 @@
+[Unit]
+Description=N8tive Waitlist API Server
+After=network.target
+
+[Service]
+Type=simple
+User=ec2-user
+WorkingDirectory=/var/www/n8tive/backend
+Environment="PATH=/var/www/n8tive/backend/venv/bin"
+ExecStart=/var/www/n8tive/backend/venv/bin/python3 /var/www/n8tive/backend/waitlist_api.py
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

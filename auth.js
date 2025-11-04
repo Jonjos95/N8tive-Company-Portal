@@ -1,5 +1,4 @@
 // Authentication Handler for n8tive.io
-// Ready for AWS Cognito Integration
 
 class AuthManager {
     constructor() {
@@ -113,8 +112,8 @@ class AuthManager {
                 localStorage.setItem('authToken', result.token);
                 localStorage.setItem('user', JSON.stringify(result.user));
                 
-                // Redirect to dashboard or home
-                window.location.href = '/dashboard.html';
+                // Redirect to home page
+                window.location.href = '/';
             } else {
                 this.showError('login-error', result.message || 'Invalid email or password');
             }
@@ -196,16 +195,7 @@ class AuthManager {
         const button = e.currentTarget;
         const provider = button.textContent.trim();
         
-        console.log(`Social login with ${provider} clicked`);
-        
         // TODO: Implement AWS Cognito Federated Identity
-        // Example AWS Cognito Federated code (to be implemented):
-        // if (provider === 'Google') {
-        //     await this.signInWithGoogle();
-        // } else if (provider === 'GitHub') {
-        //     await this.signInWithGitHub();
-        // }
-        
         alert(`${provider} authentication will be available soon!`);
     }
 
@@ -293,109 +283,11 @@ class AuthManager {
         };
     }
 
-    // ===== AWS COGNITO INTEGRATION PLACEHOLDER =====
-    // Uncomment and configure when ready to integrate AWS Cognito
-    
-    /*
-    async signInWithCognito(email, password) {
-        // TODO: Import AWS SDK
-        // import { CognitoUserPool, CognitoUser, AuthenticationDetails } from 'amazon-cognito-identity-js';
-        
-        const authenticationData = {
-            Username: email,
-            Password: password,
-        };
-        
-        const authenticationDetails = new AuthenticationDetails(authenticationData);
-        
-        const poolData = {
-            UserPoolId: 'YOUR_USER_POOL_ID',
-            ClientId: 'YOUR_CLIENT_ID'
-        };
-        
-        const userPool = new CognitoUserPool(poolData);
-        
-        const userData = {
-            Username: email,
-            Pool: userPool,
-        };
-        
-        const cognitoUser = new CognitoUser(userData);
-        
-        return new Promise((resolve, reject) => {
-            cognitoUser.authenticateUser(authenticationDetails, {
-                onSuccess: (result) => {
-                    const accessToken = result.getAccessToken().getJwtToken();
-                    resolve({
-                        success: true,
-                        token: accessToken,
-                        user: {
-                            email: email,
-                            // Add more user attributes as needed
-                        }
-                    });
-                },
-                onFailure: (err) => {
-                    reject(err);
-                },
-            });
-        });
-    }
-    
-    async signUpWithCognito(email, password, name) {
-        // TODO: Implement AWS Cognito signup
-        const poolData = {
-            UserPoolId: 'YOUR_USER_POOL_ID',
-            ClientId: 'YOUR_CLIENT_ID'
-        };
-        
-        const userPool = new CognitoUserPool(poolData);
-        
-        const attributeList = [
-            new CognitoUserAttribute({
-                Name: 'email',
-                Value: email
-            }),
-            new CognitoUserAttribute({
-                Name: 'name',
-                Value: name
-            })
-        ];
-        
-        return new Promise((resolve, reject) => {
-            userPool.signUp(email, password, attributeList, null, (err, result) => {
-                if (err) {
-                    reject(err);
-                    return;
-                }
-                resolve({
-                    success: true,
-                    user: result.user
-                });
-            });
-        });
-    }
-    
-    async signInWithGoogle() {
-        // TODO: Implement Google Sign-In with AWS Cognito Federated Identity
-        // Use AWS Amplify for easier integration:
-        // Auth.federatedSignIn({ provider: 'Google' });
-    }
-    
-    async signInWithGitHub() {
-        // TODO: Implement GitHub Sign-In with AWS Cognito Federated Identity
-        // Auth.federatedSignIn({ provider: 'GitHub' });
-    }
-    */
+
 }
 
 // Initialize auth manager when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     new AuthManager();
 });
-
-// Export for use in other modules if needed
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = AuthManager;
-}
 
