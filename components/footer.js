@@ -124,7 +124,7 @@ class CustomFooter extends HTMLElement {
                         </div>
                     </div>
                     <div>
-                        <h3 class="footer-heading">Products</h3>
+                        <h3 class="footer-heading">Services</h3>
                         <div class="footer-links">
                             <a href="#" class="footer-link">Project Manager</a>
                             <a href="#" class="footer-link">SkyTracker Pro</a>
