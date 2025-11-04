@@ -1,4 +1,4 @@
-name: Deploy (HF + optional AWS)
+name: Deploy to Live Site (EC2 + AWS)
 
 on:
   push:
@@ -172,4 +172,141 @@ jobs:
           echo "✅ Deployed to S3 bucket: ${{ secrets.S3_BUCKET_NAME }}"
           echo "🧊 CloudFront distribution invalidated: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}"
           echo "🌐 Your AWS site will reflect changes within a few minutes"
+
+  ec2:
+    name: Deploy to EC2
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Check EC2 secrets present
+        id: check_ec2
+        run: |
+          missing=0
+          if [ -z "${{ secrets.EC2_HOST }}" ]; then
+            echo "⚠️  Missing secret: EC2_HOST"; missing=$((missing+1));
+          fi
+          if [ -z "${{ secrets.EC2_SSH_KEY }}" ]; then
+            echo "⚠️  Missing secret: EC2_SSH_KEY"; missing=$((missing+1));
+          fi
+          if [ $missing -gt 0 ]; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Skip if secrets missing
+        if: steps.check_ec2.outputs.skip == 'true'
+        run: |
+          echo "ℹ️  EC2 secrets not fully configured. Skipping EC2 deployment."
+          exit 0
+
+      - name: Setup SSH key
+        if: steps.check_ec2.outputs.skip != 'true'
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/ec2_key
+          chmod 600 ~/.ssh/ec2_key
+          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Prepare files for deployment
+        if: steps.check_ec2.outputs.skip != 'true'
+        run: |
+          echo "📦 Preparing files for deployment..."
+          FILES_TO_DEPLOY=(
+            "index.html"
+            "style.css"
+            "script.js"
+            "auth.js"
+            "login.html"
+            "pricing.html"
+            "products.html"
+            "team.html"
+            "components/"
+            "assets/"
+            "analytics-demo.html"
+            "automation-demo.html"
+          )
+          
+          mkdir -p deploy_temp
+          for item in "${FILES_TO_DEPLOY[@]}"; do
+            if [ -e "$item" ]; then
+              echo "  ✓ Including $item"
+              cp -r "$item" deploy_temp/
+            fi
+          done
+
+      - name: Upload files to EC2
+        if: steps.check_ec2.outputs.skip != 'true'
+        run: |
+          EC2_USER="${{ secrets.EC2_USER || 'ubuntu' }}"
+          EC2_HOST="${{ secrets.EC2_HOST }}"
+          DEPLOY_DIR="${{ secrets.EC2_DEPLOY_DIR || '/var/www/n8tive' }}"
+          
+          echo "📤 Uploading to EC2..."
+          ssh -i ~/.ssh/ec2_key -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST \
+            "sudo mkdir -p $DEPLOY_DIR && sudo chown -R \$USER:\$USER $DEPLOY_DIR"
+          
+          scp -i ~/.ssh/ec2_key -o StrictHostKeyChecking=no -r deploy_temp/* \
+            $EC2_USER@$EC2_HOST:$DEPLOY_DIR/
+
+      - name: Configure Nginx
+        if: steps.check_ec2.outputs.skip != 'true'
+        run: |
+          EC2_USER="${{ secrets.EC2_USER || 'ubuntu' }}"
+          EC2_HOST="${{ secrets.EC2_HOST }}"
+          DEPLOY_DIR="${{ secrets.EC2_DEPLOY_DIR || '/var/www/n8tive' }}"
+          
+          echo "🔧 Configuring Nginx..."
+          ssh -i ~/.ssh/ec2_key -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST << EOF
+          sudo tee /etc/nginx/sites-available/n8tive > /dev/null << NGINX
+          server {
+              listen 80;
+              server_name _;
+              
+              root $DEPLOY_DIR;
+              index index.html;
+              
+              # Single Page App routing
+              location / {
+                  try_files \$uri \$uri/ /index.html;
+              }
+              
+              # Static asset caching
+              location ~* \.(js|css|png|jpg|jpeg|gif|svg|ico|webp|woff2?)$ {
+                  expires 30d;
+                  add_header Cache-Control "public, max-age=2592000";
+                  try_files \$uri =404;
+              }
+              
+              # Security headers
+              add_header X-Frame-Options "SAMEORIGIN" always;
+              add_header X-Content-Type-Options "nosniff" always;
+              add_header X-XSS-Protection "1; mode=block" always;
+          }
+          NGINX
+          
+          # Enable site
+          sudo ln -sf /etc/nginx/sites-available/n8tive /etc/nginx/sites-enabled/
+          sudo rm -f /etc/nginx/sites-enabled/default
+          
+          # Test and reload
+          sudo nginx -t && sudo systemctl reload nginx
+          
+          echo "✅ Nginx configured successfully"
+          EOF
+
+      - name: Cleanup
+        if: steps.check_ec2.outputs.skip != 'true'
+        run: |
+          rm -rf deploy_temp
+          rm -f ~/.ssh/ec2_key
+
+      - name: EC2 Deployment Status
+        if: steps.check_ec2.outputs.skip != 'true'
+        run: |
+          echo "✅ Deployed to EC2: ${{ secrets.EC2_HOST }}"
+          echo "🌐 Your EC2 site is now live and updated"
 
