@@ -3,8 +3,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // Smooth scrolling for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
+            const href = this.getAttribute('href');
+            // Skip if href is just "#" (no valid target)
+            if (href === '#') {
+                return;
+            }
             e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
+            const target = document.querySelector(href);
             if (target) {
                 target.scrollIntoView({
                     behavior: 'smooth',
@@ -1010,32 +1015,30 @@ function handleWaitlistSubmit(event) {
         timestamp: new Date().toISOString()
     };
     
-    // Simulate API call (replace with actual endpoint)
-    // For now, we'll store in localStorage and show success
-    setTimeout(() => {
-        // Store in localStorage (you can replace this with actual API call)
-        const waitlist = JSON.parse(localStorage.getItem('n8tive_waitlist') || '[]');
-        waitlist.push(data);
-        localStorage.setItem('n8tive_waitlist', JSON.stringify(waitlist));
-        
-        // TODO: Replace with actual API endpoint
-        // fetch('/api/waitlist', {
-        //     method: 'POST',
-        //     headers: { 'Content-Type': 'application/json' },
-        //     body: JSON.stringify(data)
-        // })
-        // .then(response => response.json())
-        // .then(result => {
-        //     showWaitlistSuccess();
-        // })
-        // .catch(error => {
-        //     console.error('Error:', error);
-        //     alert('Something went wrong. Please try again.');
-        //     resetSubmitButton();
-        // });
-        
-        showWaitlistSuccess();
-    }, 1000);
+    // Send data to API endpoint
+    fetch('/api/waitlist', {
+        method: 'POST',
+        headers: { 
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.success || result.id) {
+            showWaitlistSuccess();
+        } else {
+            // Handle duplicate email or other errors
+            const errorMsg = result.error || 'Something went wrong. Please try again.';
+            alert(errorMsg);
+            resetSubmitButton();
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Unable to connect to server. Please check your connection and try again.');
+        resetSubmitButton();
+    });
 }
 
 function showWaitlistSuccess() {
