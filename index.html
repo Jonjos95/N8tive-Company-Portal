@@ -58,7 +58,7 @@
                     <a href="products.html" class="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg font-medium hover:shadow-lg hover:shadow-blue-500/30 transition-all duration-300">
                         Explore Apps
                     </a>
-                    <button id="join-waitlist-btn" onclick="if(typeof openWaitlistModal === 'function') { openWaitlistModal(); } else { console.error('openWaitlistModal not available'); }" class="px-6 py-3 bg-gray-800 border border-gray-700 rounded-lg font-medium hover:bg-gray-700 transition-all duration-300 cursor-pointer">
+                    <button id="join-waitlist-btn" onclick="console.log('Button clicked!'); console.log('openWaitlistModal type:', typeof openWaitlistModal); if(typeof openWaitlistModal === 'function') { console.log('Calling openWaitlistModal'); openWaitlistModal(); } else { console.error('openWaitlistModal not available, checking window:', typeof window.openWaitlistModal); } return false;" class="px-6 py-3 bg-gray-800 border border-gray-700 rounded-lg font-medium hover:bg-gray-700 transition-all duration-300 cursor-pointer">
                         Join Waitlist
                     </button>
                 </div>
