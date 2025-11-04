@@ -972,8 +972,11 @@ function openWaitlistModal(product = '') {
     const productSelect = document.getElementById('waitlist-product');
     
     modal.classList.add('active');
+    modal.style.display = 'flex'; // Force display
+    modal.style.zIndex = '99999'; // Ensure it's on top
     document.body.style.overflow = 'hidden';
     console.log('Modal opened, class active added');
+    console.log('Modal computed style:', window.getComputedStyle(modal).display);
     
     // Pre-select product if provided
     if (product && productSelect) {
