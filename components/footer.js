@@ -94,16 +94,16 @@ class CustomFooter extends HTMLElement {
                             Building intuitive web tools for the modern digital landscape.
                         </p>
                         <div class="social-links">
-                            <a href="#" class="social-link">
+                            <a href="https://github.com/n8tive" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="GitHub">
                                 <i data-feather="github"></i>
                             </a>
-                            <a href="#" class="social-link">
+                            <a href="https://linkedin.com/company/n8tive" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="LinkedIn">
                                 <i data-feather="linkedin"></i>
                             </a>
-                            <a href="#" class="social-link">
+                            <a href="https://youtube.com/@n8tive" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="YouTube">
                                 <i data-feather="youtube"></i>
                             </a>
-                            <a href="#" class="social-link">
+                            <a href="https://twitter.com/n8tive" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Twitter">
                                 <i data-feather="twitter"></i>
                             </a>
                         </div>
