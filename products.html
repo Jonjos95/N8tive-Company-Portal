@@ -155,7 +155,7 @@
                                     
                                     <!-- Action buttons -->
                                     <div class="flex gap-2">
-                                        <button class="btn-primary flex-1 px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-600 rounded-lg font-medium hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300">
+                                        <button onclick="openWaitlistModal('project-manager')" class="btn-primary flex-1 px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-600 rounded-lg font-medium hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300 cursor-pointer">
                                             Join Waitlist
                                         </button>
                                         <button class="btn-secondary px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-all duration-300">
@@ -218,7 +218,7 @@
                                     
                                     <!-- Action buttons -->
                                     <div class="flex gap-2">
-                                        <button class="btn-primary flex-1 px-4 py-2 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-lg font-medium hover:shadow-lg hover:shadow-cyan-500/50 transition-all duration-300">
+                                        <button onclick="openWaitlistModal('ai-nexus')" class="btn-primary flex-1 px-4 py-2 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-lg font-medium hover:shadow-lg hover:shadow-cyan-500/50 transition-all duration-300 cursor-pointer">
                                             Join Waitlist
                                         </button>
                                         <button class="btn-secondary px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-all duration-300">
@@ -236,6 +236,50 @@
         <custom-footer></custom-footer>
     </div>
     <!-- End Main Content Wrapper -->
+
+    <!-- Waitlist Modal -->
+    <div id="waitlist-modal" class="waitlist-modal">
+        <div class="waitlist-modal-overlay" onclick="closeWaitlistModal()"></div>
+        <div class="waitlist-modal-content">
+            <button class="waitlist-modal-close" onclick="closeWaitlistModal()" aria-label="Close">
+                <i data-feather="x"></i>
+            </button>
+            <div class="waitlist-modal-header">
+                <h2 class="waitlist-modal-title">Join the Waitlist</h2>
+                <p class="waitlist-modal-subtitle">Be the first to know when we launch</p>
+            </div>
+            <form id="waitlist-form" class="waitlist-form" onsubmit="handleWaitlistSubmit(event)">
+                <div class="waitlist-form-group">
+                    <label for="waitlist-name" class="waitlist-label">Name</label>
+                    <input type="text" id="waitlist-name" name="name" class="waitlist-input" required placeholder="Your name">
+                </div>
+                <div class="waitlist-form-group">
+                    <label for="waitlist-email" class="waitlist-label">Email</label>
+                    <input type="email" id="waitlist-email" name="email" class="waitlist-input" required placeholder="your.email@example.com">
+                </div>
+                <div class="waitlist-form-group">
+                    <label for="waitlist-product" class="waitlist-label">Product Interest (Optional)</label>
+                    <select id="waitlist-product" name="product" class="waitlist-input">
+                        <option value="">Select a product...</option>
+                        <option value="project-manager">Project Manager</option>
+                        <option value="ai-nexus">AI Nexus</option>
+                        <option value="all">All Products</option>
+                    </select>
+                </div>
+                <button type="submit" class="waitlist-submit-btn">
+                    <span class="waitlist-submit-text">Join Waitlist</span>
+                    <span class="waitlist-submit-loading" style="display: none;">
+                        <i data-feather="loader"></i> Submitting...
+                    </span>
+                </button>
+            </form>
+            <div id="waitlist-success" class="waitlist-success" style="display: none;">
+                <i data-feather="check-circle"></i>
+                <h3>You're on the list!</h3>
+                <p>We'll notify you when we launch.</p>
+            </div>
+        </div>
+    </div>
 
     <script src="components/navbar.js?v=1730712000"></script>
     <script src="components/footer.js"></script>

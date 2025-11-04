@@ -1,8 +1,5 @@
 // Shared functionality
 document.addEventListener('DOMContentLoaded', () => {
-    // Mobile menu toggle functionality will be added here if needed
-    console.log('n8tive.io portal loaded');
-    
     // Smooth scrolling for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
@@ -952,3 +949,130 @@ document.addEventListener('DOMContentLoaded', () => {
     
     animate();
 });
+
+// ===== WAITLIST MODAL FUNCTIONALITY =====
+function openWaitlistModal(product = '') {
+    const modal = document.getElementById('waitlist-modal');
+    const form = document.getElementById('waitlist-form');
+    const success = document.getElementById('waitlist-success');
+    const productSelect = document.getElementById('waitlist-product');
+    
+    if (modal) {
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        
+        // Pre-select product if provided
+        if (product && productSelect) {
+            productSelect.value = product;
+        }
+        
+        // Reset form
+        if (form) {
+            form.style.display = 'block';
+            form.reset();
+        }
+        if (success) {
+            success.style.display = 'none';
+        }
+        
+        // Reinitialize feather icons
+        feather.replace();
+    }
+}
+
+function closeWaitlistModal() {
+    const modal = document.getElementById('waitlist-modal');
+    if (modal) {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+}
+
+function handleWaitlistSubmit(event) {
+    event.preventDefault();
+    
+    const form = event.target;
+    const submitBtn = form.querySelector('.waitlist-submit-btn');
+    const submitText = submitBtn.querySelector('.waitlist-submit-text');
+    const submitLoading = submitBtn.querySelector('.waitlist-submit-loading');
+    const formData = new FormData(form);
+    
+    // Show loading state
+    submitText.style.display = 'none';
+    submitLoading.style.display = 'flex';
+    submitBtn.disabled = true;
+    
+    // Get form values
+    const data = {
+        name: formData.get('name'),
+        email: formData.get('email'),
+        product: formData.get('product') || 'all',
+        timestamp: new Date().toISOString()
+    };
+    
+    // Simulate API call (replace with actual endpoint)
+    // For now, we'll store in localStorage and show success
+    setTimeout(() => {
+        // Store in localStorage (you can replace this with actual API call)
+        const waitlist = JSON.parse(localStorage.getItem('n8tive_waitlist') || '[]');
+        waitlist.push(data);
+        localStorage.setItem('n8tive_waitlist', JSON.stringify(waitlist));
+        
+        // TODO: Replace with actual API endpoint
+        // fetch('/api/waitlist', {
+        //     method: 'POST',
+        //     headers: { 'Content-Type': 'application/json' },
+        //     body: JSON.stringify(data)
+        // })
+        // .then(response => response.json())
+        // .then(result => {
+        //     showWaitlistSuccess();
+        // })
+        // .catch(error => {
+        //     console.error('Error:', error);
+        //     alert('Something went wrong. Please try again.');
+        //     resetSubmitButton();
+        // });
+        
+        showWaitlistSuccess();
+    }, 1000);
+}
+
+function showWaitlistSuccess() {
+    const form = document.getElementById('waitlist-form');
+    const success = document.getElementById('waitlist-success');
+    
+    if (form) form.style.display = 'none';
+    if (success) {
+        success.style.display = 'block';
+        feather.replace();
+    }
+    
+    // Auto-close after 3 seconds
+    setTimeout(() => {
+        closeWaitlistModal();
+        resetSubmitButton();
+    }, 3000);
+}
+
+function resetSubmitButton() {
+    const submitBtn = document.querySelector('.waitlist-submit-btn');
+    const submitText = submitBtn?.querySelector('.waitlist-submit-text');
+    const submitLoading = submitBtn?.querySelector('.waitlist-submit-loading');
+    
+    if (submitBtn) submitBtn.disabled = false;
+    if (submitText) submitText.style.display = 'inline';
+    if (submitLoading) submitLoading.style.display = 'none';
+}
+
+// Close modal on Escape key
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        closeWaitlistModal();
+    }
+});
+
+// Make functions globally available
+window.openWaitlistModal = openWaitlistModal;
+window.closeWaitlistModal = closeWaitlistModal;
+window.handleWaitlistSubmit = handleWaitlistSubmit;
