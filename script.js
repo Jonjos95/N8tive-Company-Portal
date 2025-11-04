@@ -957,30 +957,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ===== WAITLIST MODAL FUNCTIONALITY =====
 function openWaitlistModal(product = '') {
+    console.log('openWaitlistModal called with product:', product);
     const modal = document.getElementById('waitlist-modal');
+    console.log('Modal element:', modal);
+    
+    if (!modal) {
+        console.error('Waitlist modal not found in DOM!');
+        return;
+    }
+    
     const form = document.getElementById('waitlist-form');
     const success = document.getElementById('waitlist-success');
     const productSelect = document.getElementById('waitlist-product');
     
-    if (modal) {
-        modal.classList.add('active');
-        document.body.style.overflow = 'hidden';
-        
-        // Pre-select product if provided
-        if (product && productSelect) {
-            productSelect.value = product;
-        }
-        
-        // Reset form
-        if (form) {
-            form.style.display = 'block';
-            form.reset();
-        }
-        if (success) {
-            success.style.display = 'none';
-        }
-        
-        // Reinitialize feather icons
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    console.log('Modal opened, class active added');
+    
+    // Pre-select product if provided
+    if (product && productSelect) {
+        productSelect.value = product;
+        console.log('Product pre-selected:', product);
+    }
+    
+    // Reset form
+    if (form) {
+        form.style.display = 'block';
+        form.reset();
+    }
+    if (success) {
+        success.style.display = 'none';
+    }
+    
+    // Reinitialize feather icons
+    if (typeof feather !== 'undefined') {
         feather.replace();
     }
 }
