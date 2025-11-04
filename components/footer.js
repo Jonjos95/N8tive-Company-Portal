@@ -128,7 +128,7 @@ class CustomFooter extends HTMLElement {
                         <div class="footer-links">
                             <a href="#" class="footer-link">Project Manager</a>
                             <a href="#" class="footer-link">SkyTracker Pro</a>
-                            <a href="#" class="footer-link">Codefolio Nexus</a>
+                            <a href="#" class="footer-link">Spreadsheet App</a>
                             <a href="#" class="footer-link">Automate Flow</a>
                         </div>
                     </div>
