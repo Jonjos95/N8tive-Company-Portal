@@ -1075,7 +1075,32 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-// Make functions globally available
+// Make functions globally available immediately
 window.openWaitlistModal = openWaitlistModal;
 window.closeWaitlistModal = closeWaitlistModal;
 window.handleWaitlistSubmit = handleWaitlistSubmit;
+
+// Also attach event listeners to buttons as backup (even if onclick is set)
+document.addEventListener('DOMContentLoaded', () => {
+    // Find all "Join Waitlist" buttons and ensure they work
+    document.querySelectorAll('button').forEach(button => {
+        const text = button.textContent.trim();
+        if (text.includes('Join Waitlist')) {
+            // Store original onclick if it exists
+            const originalOnclick = button.onclick;
+            button.addEventListener('click', (e) => {
+                // If onclick didn't work, try our function
+                if (typeof window.openWaitlistModal === 'function') {
+                    // Small delay to check if onclick executed
+                    setTimeout(() => {
+                        const modal = document.getElementById('waitlist-modal');
+                        if (!modal || !modal.classList.contains('active')) {
+                            // Modal didn't open, try our function
+                            window.openWaitlistModal();
+                        }
+                    }, 100);
+                }
+            });
+        }
+    });
+});
