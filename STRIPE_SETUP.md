@@ -55,7 +55,7 @@ const STRIPE_PUBLISHABLE_KEY = 'pk_live_your_publishable_key'; // Or pk_test_ fo
 2. Click **Add endpoint**
 3. Endpoint URL: `https://yourdomain.com/api/subscription/webhook`
    - **Important**: Replace `yourdomain.com` with your actual domain
-   - For testing, you can use: `https://54.158.1.37/api/subscription/webhook` (if accessible)
+   - For testing, you can use your EC2 IP address: `https://YOUR_EC2_IP/api/subscription/webhook` (if accessible)
 4. Select events to listen to:
    - `checkout.session.completed`
    - `customer.subscription.created`
@@ -68,12 +68,12 @@ const STRIPE_PUBLISHABLE_KEY = 'pk_live_your_publishable_key'; // Or pk_test_ fo
 
 **Option 1: Use the setup script (recommended)**
 ```bash
-./setup-stripe-webhook.sh 54.158.1.37 ec2-user /path/to/key.pem whsec_your_webhook_secret
+./setup-stripe-webhook.sh YOUR_EC2_IP ec2-user /path/to/key.pem whsec_your_webhook_secret
 ```
 
 **Option 2: Manual configuration**
 ```bash
-ssh ec2-user@54.158.1.37
+ssh ec2-user@YOUR_EC2_IP
 sudo nano /etc/systemd/system/waitlist.service
 # Replace: STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret
 sudo systemctl daemon-reload
