@@ -1925,20 +1925,22 @@ section.visible {
 }
 
 .waitlist-modal-content {
-    position: relative;
+    position: relative !important;
     background: linear-gradient(135deg, #1f2937 0%, #111827 100%) !important;
-    border: 1px solid rgba(139, 92, 246, 0.3);
-    border-radius: 1rem;
-    padding: 2rem;
-    max-width: 500px;
-    width: 90%;
-    max-height: 90vh;
-    overflow-y: auto;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(139, 92, 246, 0.3) !important;
+    border-radius: 1rem !important;
+    padding: 2rem !important;
+    max-width: 500px !important;
+    width: 90% !important;
+    max-height: 90vh !important;
+    overflow-y: auto !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
     animation: slideInUp 0.3s ease-out;
     z-index: 100000 !important;
     visibility: visible !important;
     opacity: 1 !important;
+    display: block !important;
+    color: white !important;
 }
 
 .waitlist-modal-close {

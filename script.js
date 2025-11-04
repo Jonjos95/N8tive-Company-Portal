@@ -1127,12 +1127,23 @@ function attachWaitlistHandler(button) {
             
             if (modal) {
                 console.log('✅ Modal found, opening...');
+                
+                // Force modal visibility
                 modal.classList.add('active');
-                modal.style.display = 'flex';
-                modal.style.visibility = 'visible';
-                modal.style.opacity = '1';
-                modal.style.zIndex = '99999';
+                modal.style.cssText = 'display: flex !important; visibility: visible !important; opacity: 1 !important; z-index: 99999 !important; position: fixed !important; top: 0 !important; left: 0 !important; width: 100% !important; height: 100% !important; align-items: center !important; justify-content: center !important;';
                 document.body.style.overflow = 'hidden';
+                
+                // Ensure content is visible
+                const content = modal.querySelector('.waitlist-modal-content');
+                if (content) {
+                    content.style.cssText = 'position: relative !important; z-index: 100000 !important; visibility: visible !important; opacity: 1 !important; display: block !important;';
+                    console.log('✅ Content div styled');
+                }
+                
+                const overlay = modal.querySelector('.waitlist-modal-overlay');
+                if (overlay) {
+                    overlay.style.cssText = 'position: absolute !important; top: 0 !important; left: 0 !important; width: 100% !important; height: 100% !important; background: rgba(0, 0, 0, 0.8) !important; z-index: 99999 !important;';
+                }
                 
                 const form = document.getElementById('waitlist-form');
                 const success = document.getElementById('waitlist-success');
@@ -1140,7 +1151,9 @@ function attachWaitlistHandler(button) {
                 
                 if (form) {
                     form.style.display = 'block';
+                    form.style.visibility = 'visible';
                     form.reset();
+                    console.log('✅ Form found and reset');
                 }
                 if (success) {
                     success.style.display = 'none';
@@ -1152,6 +1165,8 @@ function attachWaitlistHandler(button) {
                     feather.replace();
                 }
                 console.log('✅ Modal should be visible now');
+                console.log('Modal computed display:', window.getComputedStyle(modal).display);
+                console.log('Content element:', content);
             } else {
                 console.error('❌ Waitlist modal element not found in DOM!');
             }
