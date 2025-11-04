@@ -27,19 +27,19 @@ PLANS = {
         'currency': 'usd'
     },
     'pro': {
-        'stripe_price_id': os.environ.get('STRIPE_PRO_PRICE_ID', ''),
+        'stripe_price_id': os.environ.get('STRIPE_PRO_PRICE_ID', 'price_1SPlRyBTJt2ybYLKPxnE2bKY'),
         'name': 'Pro',
         'price': 9.99,
         'currency': 'usd'
     },
     'business': {
-        'stripe_price_id': os.environ.get('STRIPE_BUSINESS_PRICE_ID', ''),
+        'stripe_price_id': os.environ.get('STRIPE_BUSINESS_PRICE_ID', 'price_1SPlSrBTJt2ybYLKzrlEToNK'),
         'name': 'Business',
         'price': 29.99,
         'currency': 'usd'
     },
     'enterprise': {
-        'stripe_price_id': os.environ.get('STRIPE_ENTERPRISE_PRICE_ID', ''),
+        'stripe_price_id': os.environ.get('STRIPE_ENTERPRISE_PRICE_ID', 'price_1SPlTXBTJt2ybYLKlMMyEwdb'),
         'name': 'Enterprise',
         'price': 99.99,
         'currency': 'usd'
