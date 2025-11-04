@@ -577,7 +577,7 @@
     <div id="waitlist-modal" class="waitlist-modal">
         <div class="waitlist-modal-overlay" onclick="closeWaitlistModal()"></div>
         <div class="waitlist-modal-content">
-            <button class="waitlist-modal-close" onclick="closeWaitlistModal()" aria-label="Close">
+            <button class="waitlist-modal-close" onclick="if(typeof closeWaitlistModal === 'function') { closeWaitlistModal(); } else { console.error('closeWaitlistModal not available'); }" aria-label="Close" type="button">
                 <i data-feather="x"></i>
             </button>
             <div class="waitlist-modal-header">

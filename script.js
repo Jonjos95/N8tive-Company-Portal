@@ -1000,10 +1000,22 @@ function openWaitlistModal(product = '') {
 }
 
 function closeWaitlistModal() {
+    console.log('🔴 Close button clicked');
     const modal = document.getElementById('waitlist-modal');
     if (modal) {
         modal.classList.remove('active');
+        modal.style.cssText = 'display: none !important; visibility: hidden !important; opacity: 0 !important;';
         document.body.style.overflow = '';
+        
+        // Reset form
+        const form = document.getElementById('waitlist-form');
+        const success = document.getElementById('waitlist-success');
+        if (form) form.style.display = 'block';
+        if (success) success.style.display = 'none';
+        
+        console.log('✅ Modal closed');
+    } else {
+        console.error('❌ Modal not found for closing');
     }
 }
 
@@ -1164,6 +1176,27 @@ function attachWaitlistHandler(button) {
                 if (typeof feather !== 'undefined') {
                     feather.replace();
                 }
+                
+                // Attach close button handlers
+                const closeBtn = modal.querySelector('.waitlist-modal-close');
+                if (closeBtn) {
+                    closeBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        closeWaitlistModal();
+                    });
+                    console.log('✅ Close button handler attached');
+                }
+                
+                // Close on overlay click
+                if (overlay) {
+                    overlay.addEventListener('click', function(e) {
+                        if (e.target === overlay) {
+                            closeWaitlistModal();
+                        }
+                    });
+                }
+                
                 console.log('✅ Modal should be visible now');
                 console.log('Modal computed display:', window.getComputedStyle(modal).display);
                 console.log('Content element:', content);
