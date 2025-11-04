@@ -74,6 +74,7 @@ FILES_TO_DEPLOY=(
     "assets/"
     "analytics-demo.html"
     "automation-demo.html"
+    "backend/"
 )
 
 echo "📦 Preparing files for deployment..."
@@ -124,16 +125,26 @@ server {
     root $DEPLOY_DIR;
     index index.html;
 
+    # API proxy for waitlist
+    location /api/ {
+        proxy_pass http://127.0.0.1:5000/api/;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+        proxy_redirect off;
+    }
+
     # Single Page App routing
     location / {
-        try_files $uri $uri/ /index.html;
+        try_files \$uri \$uri/ /index.html;
     }
 
     # Static asset caching
     location ~* \.(js|css|png|jpg|jpeg|gif|svg|ico|webp|woff2?)$ {
         expires 30d;
         add_header Cache-Control "public, max-age=2592000";
-        try_files $uri =404;
+        try_files \$uri =404;
     }
 
     # Security headers
@@ -151,6 +162,18 @@ sudo rm -f /etc/nginx/sites-enabled/default
 sudo nginx -t && sudo systemctl reload nginx
 
 echo "✅ Nginx configured successfully"
+
+# Setup backend if not already done
+if [ -d "$DEPLOY_DIR/backend" ]; then
+    echo "🔧 Setting up backend API..."
+    cd $DEPLOY_DIR/backend
+    chmod +x setup_backend.sh start_server.sh 2>/dev/null || true
+    
+    # Run setup if requirements.txt exists
+    if [ -f "requirements.txt" ]; then
+        bash setup_backend.sh || echo "⚠️  Backend setup may need manual intervention"
+    fi
+fi
 EOF
 
 # Cleanup
