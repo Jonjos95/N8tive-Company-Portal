@@ -134,6 +134,20 @@ server {
         proxy_set_header X-Forwarded-Proto \$scheme;
         proxy_redirect off;
     }
+    
+    # Stripe webhook needs raw body (no modification)
+    location /api/subscription/webhook {
+        proxy_pass http://127.0.0.1:5000/api/subscription/webhook;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+        proxy_set_header Content-Type application/json;
+        proxy_pass_request_body on;
+        proxy_pass_request_headers on;
+        proxy_redirect off;
+        client_max_body_size 100k;
+    }
 
     # Single Page App routing
     location / {

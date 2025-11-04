@@ -11,6 +11,7 @@
     <script src="https://unpkg.com/feather-icons"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.globe.min.js"></script>
+    <script src="https://js.stripe.com/v3/"></script>
 </head>
 <body class="bg-gray-900 text-gray-100 font-inter">
     <!-- Full Page Vanta Background -->
@@ -84,9 +85,9 @@
                                 <span class="text-gray-300">100MB storage</span>
                             </li>
                         </ul>
-                        <a href="login.html" class="block w-full py-3 px-6 bg-green-600 hover:bg-green-500 text-white text-center rounded-lg font-medium transition-all duration-300 hover:shadow-lg hover:shadow-green-500/30">
+                        <button onclick="handleSubscription('free')" class="w-full py-3 px-6 bg-green-600 hover:bg-green-500 text-white text-center rounded-lg font-medium transition-all duration-300 hover:shadow-lg hover:shadow-green-500/30">
                             Get Started
-                        </a>
+                        </button>
                     </div>
 
                     <!-- Pro Plan (Popular) -->
@@ -136,9 +137,9 @@
                                 <span class="text-gray-300">File attachments (1GB)</span>
                             </li>
                         </ul>
-                        <a href="login.html" class="block w-full py-3 px-6 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white text-center rounded-lg font-medium transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/50">
-                            Get Started
-                        </a>
+                        <button onclick="handleSubscription('pro')" class="w-full py-3 px-6 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white text-center rounded-lg font-medium transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/50">
+                            Subscribe Now
+                        </button>
                     </div>
 
                     <!-- Business Plan -->
@@ -187,9 +188,9 @@
                                 <span class="text-gray-300">File attachments (10GB)</span>
                             </li>
                         </ul>
-                        <a href="login.html" class="block w-full py-3 px-6 bg-blue-600 hover:bg-blue-500 text-white text-center rounded-lg font-medium transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/30">
-                            Get Started
-                        </a>
+                        <button onclick="handleSubscription('business')" class="w-full py-3 px-6 bg-blue-600 hover:bg-blue-500 text-white text-center rounded-lg font-medium transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/30">
+                            Subscribe Now
+                        </button>
                     </div>
 
                     <!-- Enterprise Plan -->
@@ -234,9 +235,9 @@
                                 <span class="text-gray-300">Unlimited storage</span>
                             </li>
                         </ul>
-                        <a href="login.html" class="block w-full py-3 px-6 bg-purple-600 hover:bg-purple-500 text-white text-center rounded-lg font-medium transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/30">
-                            Get Started
-                        </a>
+                        <button onclick="handleSubscription('enterprise')" class="w-full py-3 px-6 bg-purple-600 hover:bg-purple-500 text-white text-center rounded-lg font-medium transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/30">
+                            Subscribe Now
+                        </button>
                     </div>
                 </div>
                 <div class="text-center mt-12">
@@ -303,6 +304,92 @@
                 particlesContainer.appendChild(particle);
             }
         }
+    </script>
+
+    <!-- Subscription Checkout Script -->
+    <script>
+        // Initialize Stripe (configure via environment or set here)
+        // Get publishable key from backend or set directly
+        const STRIPE_PUBLISHABLE_KEY = 'pk_test_your_stripe_publishable_key'; // Replace with your Stripe publishable key
+        const stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
+        
+        async function handleSubscription(planName) {
+            // Get user email (from localStorage or prompt)
+            let email = localStorage.getItem('userEmail') || '';
+            
+            if (!email) {
+                email = prompt('Please enter your email address to continue:');
+                if (!email) {
+                    return;
+                }
+                // Basic email validation
+                if (!email.includes('@')) {
+                    alert('Please enter a valid email address');
+                    return;
+                }
+                localStorage.setItem('userEmail', email);
+            }
+            
+            // Free plan - just redirect to login
+            if (planName === 'free') {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Show loading state
+            const button = event.target;
+            const originalText = button.textContent;
+            button.textContent = 'Processing...';
+            button.disabled = true;
+            
+            try {
+                // Create checkout session
+                const response = await fetch('/api/subscription/create-checkout-session', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        plan: planName
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success && data.sessionId) {
+                    // Redirect to Stripe Checkout
+                    const result = await stripe.redirectToCheckout({
+                        sessionId: data.sessionId
+                    });
+                    
+                    if (result.error) {
+                        alert(result.error.message);
+                        button.textContent = originalText;
+                        button.disabled = false;
+                    }
+                } else {
+                    alert(data.error || 'Failed to create checkout session');
+                    button.textContent = originalText;
+                    button.disabled = false;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+                button.textContent = originalText;
+                button.disabled = false;
+            }
+        }
+        
+        // Check for success/cancel parameters in URL
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('success') === 'true') {
+                alert('Subscription successful! Welcome to n8tive.io');
+            } else if (urlParams.get('canceled') === 'true') {
+                alert('Checkout was canceled. You can try again anytime.');
+            }
+        });
     </script>
 </body>
 </html>
