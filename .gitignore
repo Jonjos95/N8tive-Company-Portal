@@ -45,6 +45,12 @@ tmp/
 temp/
 *.tmp
 
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+backend/waitlist.db
+
 # Deployment (optional - uncomment if you don't want to track deploy script changes)
 # deploy.sh
 # deploy-*.sh
