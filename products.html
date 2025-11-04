@@ -155,7 +155,7 @@
                                     
                                     <!-- Action buttons -->
                                     <div class="flex gap-2">
-                                        <button data-product="project-manager" class="btn-primary flex-1 px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-600 rounded-lg font-medium hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300 cursor-pointer">
+                                        <button data-product="project-manager" onclick="if(typeof openWaitlistModal === 'function') { openWaitlistModal('project-manager'); } else { console.error('openWaitlistModal not available'); }" class="btn-primary flex-1 px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-600 rounded-lg font-medium hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300 cursor-pointer">
                                             Join Waitlist
                                         </button>
                                         <button class="btn-secondary px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-all duration-300">
@@ -218,7 +218,7 @@
                                     
                                     <!-- Action buttons -->
                                     <div class="flex gap-2">
-                                        <button data-product="ai-nexus" class="btn-primary flex-1 px-4 py-2 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-lg font-medium hover:shadow-lg hover:shadow-cyan-500/50 transition-all duration-300 cursor-pointer">
+                                        <button data-product="ai-nexus" onclick="if(typeof openWaitlistModal === 'function') { openWaitlistModal('ai-nexus'); } else { console.error('openWaitlistModal not available'); }" class="btn-primary flex-1 px-4 py-2 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-lg font-medium hover:shadow-lg hover:shadow-cyan-500/50 transition-all duration-300 cursor-pointer">
                                             Join Waitlist
                                         </button>
                                         <button class="btn-secondary px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-all duration-300">
@@ -283,7 +283,7 @@
 
     <script src="components/navbar.js?v=1730712000"></script>
     <script src="components/footer.js?v=1730714000"></script>
-    <script src="script.js?v=1730717000"></script>
+    <script src="script.js?v=1730718000"></script>
     <script>
         feather.replace();
         

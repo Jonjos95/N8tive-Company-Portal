@@ -956,6 +956,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ===== WAITLIST MODAL FUNCTIONALITY =====
+// Define function before making it global
 function openWaitlistModal(product = '') {
     console.log('openWaitlistModal called with product:', product);
     const modal = document.getElementById('waitlist-modal');
@@ -1085,10 +1086,17 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-// Make functions globally available immediately
+// Make functions globally available immediately (before DOM is ready)
 window.openWaitlistModal = openWaitlistModal;
 window.closeWaitlistModal = closeWaitlistModal;
 window.handleWaitlistSubmit = handleWaitlistSubmit;
+
+// Also attach to window directly for maximum compatibility
+if (typeof window !== 'undefined') {
+    window.openWaitlistModal = window.openWaitlistModal || openWaitlistModal;
+    window.closeWaitlistModal = window.closeWaitlistModal || closeWaitlistModal;
+    window.handleWaitlistSubmit = window.handleWaitlistSubmit || handleWaitlistSubmit;
+}
 
 // Attach event listeners to all "Join Waitlist" buttons
 function attachWaitlistHandler(button) {
