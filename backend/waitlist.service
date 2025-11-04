@@ -7,7 +7,7 @@ Type=simple
 User=ec2-user
 WorkingDirectory=/var/www/n8tive/backend
 Environment="PATH=/var/www/n8tive/backend/venv/bin"
-Environment="STRIPE_SECRET_KEY=sk_test_your_stripe_secret_key"
+Environment="STRIPE_SECRET_KEY=sk_live_your_secret_key_here"
 Environment="STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret"
 Environment="STRIPE_PRO_PRICE_ID=price_1SPlRyBTJt2ybYLKPxnE2bKY"
 Environment="STRIPE_BUSINESS_PRICE_ID=price_1SPlSrBTJt2ybYLKzrlEToNK"
