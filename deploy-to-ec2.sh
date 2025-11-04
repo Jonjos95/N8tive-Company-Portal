@@ -1,17 +1,56 @@
 #!/bin/bash
 # Deployment script for N8tive Company Portal to EC2
-# Usage: ./deploy-to-ec2.sh [EC2_IP_OR_DOMAIN] [SSH_USER] [PEM_PATH]
+# Usage: n8tive-deploy [PROJECT_DIR] [EC2_IP_OR_DOMAIN] [SSH_USER] [PEM_PATH]
+# 
+# Can be run from anywhere:
+#   n8tive-deploy                              # Uses current directory
+#   n8tive-deploy /path/to/project             # Specify project directory
+#   n8tive-deploy . 54.158.1.37 ec2-user      # Override with args
+# 
+# Configuration priority:
+# 1. Command line arguments (override)
+# 2. Local ec2-config.sh file (in project directory)
+# 3. ~/.n8tive-ec2-config (global config)
 
 set -e
 
-EC2_HOST="${1:-}"
-SSH_USER="${2:-ubuntu}"
-PEM_PATH="${3:-}"
+# Get project directory (first arg or current directory)
+PROJECT_DIR="${1:-$PWD}"
+# If first arg looks like an IP/domain, treat it as EC2_HOST instead
+if [[ "$1" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]] || [[ "$1" == *.* ]]; then
+    PROJECT_DIR="$PWD"
+else
+    PROJECT_DIR="${1:-$PWD}"
+    shift
+fi
+
+cd "$PROJECT_DIR" || { echo "❌ Error: Cannot access directory: $PROJECT_DIR"; exit 1; }
+
+# Load config from local file if exists
+if [ -f "ec2-config.sh" ]; then
+    source ec2-config.sh
+fi
+
+# Load config from global location if exists
+if [ -f "$HOME/.n8tive-ec2-config" ]; then
+    source "$HOME/.n8tive-ec2-config"
+fi
+
+# Override with command line arguments (shifted if PROJECT_DIR was provided)
+EC2_HOST="${1:-$EC2_HOST}"
+SSH_USER="${2:-${EC2_USER:-ubuntu}}"
+PEM_PATH="${3:-$EC2_KEY_PATH}"
+DEPLOY_DIR="${EC2_DEPLOY_DIR:-/var/www/n8tive}"
 
 if [ -z "$EC2_HOST" ]; then
     echo "❌ Error: EC2 host required"
-    echo "Usage: ./deploy-to-ec2.sh [EC2_IP_OR_DOMAIN] [SSH_USER]"
+    echo ""
+    echo "Usage: ./deploy-to-ec2.sh [EC2_IP_OR_DOMAIN] [SSH_USER] [PEM_PATH]"
     echo "Example: ./deploy-to-ec2.sh 54.123.45.67 ubuntu"
+    echo ""
+    echo "Or configure in one of these files:"
+    echo "  - Local: ./ec2-config.sh"
+    echo "  - Global: ~/.n8tive-ec2-config"
     exit 1
 fi
 
@@ -30,6 +69,7 @@ FILES_TO_DEPLOY=(
     "login.html"
     "pricing.html"
     "products.html"
+    "team.html"
     "components/"
     "assets/"
     "analytics-demo.html"
@@ -66,22 +106,22 @@ if [ -n "$PEM_PATH" ]; then
   SCP_CMD+=( -i "$PEM_PATH" )
 fi
 
-"${SSH_CMD[@]}" "$SSH_USER@$EC2_HOST" "sudo mkdir -p /var/www/n8tive && sudo chown -R \$USER:\$USER /var/www/n8tive"
+"${SSH_CMD[@]}" "$SSH_USER@$EC2_HOST" "sudo mkdir -p $DEPLOY_DIR && sudo chown -R \$USER:\$USER $DEPLOY_DIR"
 
 # Upload files
-"${SCP_CMD[@]}" -r "$DEPLOY_DIR"/* "$SSH_USER@$EC2_HOST:/var/www/n8tive/"
+"${SCP_CMD[@]}" -r "$DEPLOY_DIR"/* "$SSH_USER@$EC2_HOST:$DEPLOY_DIR/"
 
 echo ""
 echo "🔧 Configuring Nginx..."
 
 # Nginx config
-"${SSH_CMD[@]}" "$SSH_USER@$EC2_HOST" << 'EOF'
-sudo tee /etc/nginx/sites-available/n8tive > /dev/null << 'NGINX'
+"${SSH_CMD[@]}" "$SSH_USER@$EC2_HOST" << EOF
+sudo tee /etc/nginx/sites-available/n8tive > /dev/null << NGINX
 server {
     listen 80;
     server_name _;
 
-    root /var/www/n8tive;
+    root $DEPLOY_DIR;
     index index.html;
 
     # Single Page App routing
