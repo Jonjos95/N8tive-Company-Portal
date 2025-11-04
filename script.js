@@ -1113,6 +1113,11 @@ if (typeof window !== 'undefined') {
     window.handleWaitlistSubmit = window.handleWaitlistSubmit || handleWaitlistSubmit;
 }
 
+// Ensure close function is available on modal open
+document.addEventListener('DOMContentLoaded', () => {
+    window.closeWaitlistModal = closeWaitlistModal;
+});
+
 // Attach event listeners to all "Join Waitlist" buttons
 function attachWaitlistHandler(button) {
     if (button.hasAttribute('data-waitlist-attached')) {
