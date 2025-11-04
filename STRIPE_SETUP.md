@@ -23,25 +23,22 @@ This guide will help you set up Stripe for subscription payments on n8tive.io.
 
 ## Step 2: Configure Environment Variables
 
-On your EC2 server, set these environment variables:
+✅ **Already Configured:**
+- Price IDs: Pro, Business, Enterprise (already set in code)
+- Secret Key: Configured on EC2 (not in git for security)
+- Publishable Key: Added to pricing.html
 
-```bash
-export STRIPE_SECRET_KEY="sk_live_your_secret_key"  # Or sk_test_ for testing
-export STRIPE_WEBHOOK_SECRET="whsec_your_webhook_secret"
-export STRIPE_PRO_PRICE_ID="price_xxxxx"
-export STRIPE_BUSINESS_PRICE_ID="price_xxxxx"
-export STRIPE_ENTERPRISE_PRICE_ID="price_xxxxx"
-```
+**Still Need to Configure:**
+- Webhook Secret: See Step 4 below
 
-Or add them to your systemd service file at `/etc/systemd/system/waitlist.service`:
-
+The environment variables are set in `/etc/systemd/system/waitlist.service` on your EC2 server:
 ```ini
 [Service]
-Environment="STRIPE_SECRET_KEY=sk_live_your_key"
-Environment="STRIPE_WEBHOOK_SECRET=whsec_your_secret"
-Environment="STRIPE_PRO_PRICE_ID=price_xxxxx"
-Environment="STRIPE_BUSINESS_PRICE_ID=price_xxxxx"
-Environment="STRIPE_ENTERPRISE_PRICE_ID=price_xxxxx"
+Environment="STRIPE_SECRET_KEY=sk_live_..."  # Already configured
+Environment="STRIPE_WEBHOOK_SECRET=whsec_..."  # Need to add this
+Environment="STRIPE_PRO_PRICE_ID=price_1SPlRyBTJt2ybYLKPxnE2bKY"
+Environment="STRIPE_BUSINESS_PRICE_ID=price_1SPlSrBTJt2ybYLKzrlEToNK"
+Environment="STRIPE_ENTERPRISE_PRICE_ID=price_1SPlTXBTJt2ybYLKlMMyEwdb"
 ```
 
 ## Step 3: Configure Stripe Publishable Key
@@ -57,13 +54,31 @@ const STRIPE_PUBLISHABLE_KEY = 'pk_live_your_publishable_key'; // Or pk_test_ fo
 1. Go to Stripe Dashboard → **Developers** → **Webhooks**
 2. Click **Add endpoint**
 3. Endpoint URL: `https://yourdomain.com/api/subscription/webhook`
+   - **Important**: Replace `yourdomain.com` with your actual domain
+   - For testing, you can use: `https://54.158.1.37/api/subscription/webhook` (if accessible)
 4. Select events to listen to:
    - `checkout.session.completed`
    - `customer.subscription.created`
    - `customer.subscription.updated`
    - `customer.subscription.deleted`
-5. Copy the **Signing secret** (starts with `whsec_...`)
-6. Add it to your environment variables as `STRIPE_WEBHOOK_SECRET`
+5. Click **Add endpoint**
+6. Copy the **Signing secret** (starts with `whsec_...`)
+
+### Configure Webhook Secret on EC2
+
+**Option 1: Use the setup script (recommended)**
+```bash
+./setup-stripe-webhook.sh 54.158.1.37 ec2-user /path/to/key.pem whsec_your_webhook_secret
+```
+
+**Option 2: Manual configuration**
+```bash
+ssh ec2-user@54.158.1.37
+sudo nano /etc/systemd/system/waitlist.service
+# Replace: STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret
+sudo systemctl daemon-reload
+sudo systemctl restart waitlist
+```
 
 ## Step 5: Test the Integration
 
