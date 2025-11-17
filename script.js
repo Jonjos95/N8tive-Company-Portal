@@ -1019,7 +1019,7 @@ function closeWaitlistModal() {
     }
 }
 
-function handleWaitlistSubmit(event) {
+async function handleWaitlistSubmit(event) {
     event.preventDefault();
     
     const form = event.target;
@@ -1040,6 +1040,19 @@ function handleWaitlistSubmit(event) {
         product: formData.get('product') || 'all',
         timestamp: new Date().toISOString()
     };
+    
+    // Add Cognito user ID if user is authenticated
+    if (window.authManager) {
+        try {
+            const user = await window.authManager.getCurrentUser();
+            if (user && user.id) {
+                data.cognito_user_id = user.id;
+            }
+        } catch (error) {
+            // User not authenticated, continue without cognito_user_id
+            console.log('User not authenticated, submitting waitlist without linking');
+        }
+    }
     
     // Send data to API endpoint
     fetch('/api/waitlist', {

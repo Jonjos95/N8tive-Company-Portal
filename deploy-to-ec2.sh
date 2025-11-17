@@ -60,7 +60,7 @@ if [ -n "$PEM_PATH" ]; then
   echo "🔑 Using key: $PEM_PATH"
 fi
 
-# Files to deploy (excluding deployment files)
+# Files to deploy (excluding deployment files and documentation)
 FILES_TO_DEPLOY=(
     "index.html"
     "style.css"
@@ -74,7 +74,19 @@ FILES_TO_DEPLOY=(
     "assets/"
     "analytics-demo.html"
     "automation-demo.html"
+    "cognito-config.js"
+    "create-dev-account.js"
     "backend/"
+)
+
+# Exclude markdown documentation files
+EXCLUDE_PATTERNS=(
+    "*.md"
+    "COGNITO_SETUP.md"
+    "DEV_ACCOUNT_*.md"
+    "SSO_*.md"
+    "STRIPE_SETUP.md"
+    "README.md"
 )
 
 echo "📦 Preparing files for deployment..."
@@ -85,15 +97,30 @@ DEPLOY_DIR="$TEMP_DIR/n8tive-portal"
 
 mkdir -p "$DEPLOY_DIR"
 
-# Copy files
+# Copy files (excluding markdown documentation)
 for item in "${FILES_TO_DEPLOY[@]}"; do
     if [ -e "$item" ]; then
-        echo "  ✓ Copying $item"
-        cp -r "$item" "$DEPLOY_DIR/"
+        # Skip markdown files
+        if [[ "$item" == *.md ]]; then
+            echo "  ⊘ Skipping documentation: $item"
+            continue
+        fi
+        
+        # For directories, exclude markdown files
+        if [ -d "$item" ]; then
+            echo "  ✓ Copying $item (excluding .md files)"
+            rsync -av --exclude='*.md' "$item" "$DEPLOY_DIR/"
+        else
+            echo "  ✓ Copying $item"
+            cp "$item" "$DEPLOY_DIR/"
+        fi
     else
         echo "  ⚠ Warning: $item not found, skipping"
     fi
 done
+
+# Explicitly exclude any markdown files that might have been copied
+find "$DEPLOY_DIR" -name "*.md" -type f -delete 2>/dev/null || true
 
 echo ""
 echo "📤 Uploading to EC2..."

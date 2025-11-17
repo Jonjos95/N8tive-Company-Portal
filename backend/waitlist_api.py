@@ -54,22 +54,25 @@ def init_db():
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     
-    # Waitlist table
+    # Waitlist table (linked to users)
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS waitlist (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER,
             name TEXT NOT NULL,
             email TEXT NOT NULL,
             product TEXT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL,
             UNIQUE(email)
         )
     ''')
     
-    # Subscriptions table
+    # Subscriptions table (linked to users)
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS subscriptions (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER,
             user_email TEXT NOT NULL,
             stripe_customer_id TEXT,
             stripe_subscription_id TEXT,
@@ -80,7 +83,39 @@ def init_db():
             current_period_end TIMESTAMP,
             cancel_at_period_end INTEGER DEFAULT 0,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+        )
+    ''')
+    
+    # Users table (for syncing Cognito users)
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            cognito_user_id TEXT NOT NULL UNIQUE,
+            email TEXT NOT NULL,
+            name TEXT,
+            auth_provider TEXT,
+            role TEXT DEFAULT 'user',
+            is_dev_account INTEGER DEFAULT 0,
+            subscription_tier TEXT DEFAULT 'free',
+            subscription_override INTEGER DEFAULT 0,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            last_login TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+    
+    # User roles/permissions table
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS user_permissions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            permission TEXT NOT NULL,
+            resource TEXT,
+            granted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+            UNIQUE(user_id, permission, resource)
         )
     ''')
     
@@ -97,7 +132,7 @@ def get_db_connection():
 @app.route('/api/waitlist', methods=['POST'])
 @app.route('/api/waitlist/', methods=['POST'])
 def submit_waitlist():
-    """Handle waitlist form submission"""
+    """Handle waitlist form submission (with optional Cognito user linking)"""
     try:
         data = request.get_json()
         
@@ -108,6 +143,7 @@ def submit_waitlist():
         name = data.get('name', '').strip()
         email = data.get('email', '').strip().lower()
         product = data.get('product', 'all').strip()
+        cognito_user_id = data.get('cognito_user_id')  # Optional: link to authenticated user
         
         if not name:
             return jsonify({'error': 'Name is required'}), 400
@@ -119,15 +155,26 @@ def submit_waitlist():
         if '@' not in email or '.' not in email.split('@')[1]:
             return jsonify({'error': 'Invalid email format'}), 400
         
+        # Get user_id if cognito_user_id is provided
+        user_id = None
+        if cognito_user_id:
+            conn = get_db_connection()
+            cursor = conn.cursor()
+            cursor.execute('SELECT id FROM users WHERE cognito_user_id = ?', (cognito_user_id,))
+            user_row = cursor.fetchone()
+            if user_row:
+                user_id = user_row[0]
+            conn.close()
+        
         # Insert into database
         conn = get_db_connection()
         cursor = conn.cursor()
         
         try:
             cursor.execute('''
-                INSERT INTO waitlist (name, email, product)
-                VALUES (?, ?, ?)
-            ''', (name, email, product))
+                INSERT INTO waitlist (user_id, name, email, product)
+                VALUES (?, ?, ?, ?)
+            ''', (user_id, name, email, product))
             conn.commit()
             waitlist_id = cursor.lastrowid
             conn.close()
@@ -135,7 +182,8 @@ def submit_waitlist():
             return jsonify({
                 'success': True,
                 'message': 'Successfully added to waitlist',
-                'id': waitlist_id
+                'id': waitlist_id,
+                'linked_to_user': user_id is not None
             }), 201
             
         except sqlite3.IntegrityError:
@@ -352,10 +400,17 @@ def handle_subscription_deleted(subscription):
         print(f"Error handling subscription deleted: {str(e)}")
 
 def save_subscription(email, customer_id, subscription):
-    """Save or update subscription in database"""
+    """Save or update subscription in database (linked to users table)"""
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
+        
+        # Get user_id from email (link to users table)
+        user_id = None
+        cursor.execute('SELECT id FROM users WHERE email = ?', (email,))
+        user_row = cursor.fetchone()
+        if user_row:
+            user_id = user_row[0]
         
         # Get plan name from price ID
         price_id = subscription['items']['data'][0]['price']['id']
@@ -375,16 +430,18 @@ def save_subscription(email, customer_id, subscription):
         existing = cursor.fetchone()
         
         if existing:
-            # Update existing
+            # Update existing (also update user_id if it changed)
             cursor.execute('''
                 UPDATE subscriptions
-                SET status = ?,
+                SET user_id = ?,
+                    status = ?,
                     current_period_start = ?,
                     current_period_end = ?,
                     cancel_at_period_end = ?,
                     updated_at = CURRENT_TIMESTAMP
                 WHERE stripe_subscription_id = ?
             ''', (
+                user_id,
                 subscription.status,
                 datetime.fromtimestamp(subscription.current_period_start).isoformat(),
                 datetime.fromtimestamp(subscription.current_period_end).isoformat(),
@@ -395,9 +452,10 @@ def save_subscription(email, customer_id, subscription):
             # Insert new
             cursor.execute('''
                 INSERT INTO subscriptions 
-                (user_email, stripe_customer_id, stripe_subscription_id, stripe_price_id, plan_name, status, current_period_start, current_period_end)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                (user_id, user_email, stripe_customer_id, stripe_subscription_id, stripe_price_id, plan_name, status, current_period_start, current_period_end)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             ''', (
+                user_id,
                 email,
                 customer_id,
                 subscription.id,
@@ -415,22 +473,47 @@ def save_subscription(email, customer_id, subscription):
 
 @app.route('/api/subscription/status', methods=['GET'])
 def get_subscription_status():
-    """Get subscription status for a user"""
+    """Get subscription status for a user (by email or cognito_user_id)"""
     try:
         email = request.args.get('email', '').strip().lower()
+        cognito_user_id = request.args.get('cognito_user_id')
         
-        if not email:
-            return jsonify({'error': 'Email is required'}), 400
+        if not email and not cognito_user_id:
+            return jsonify({'error': 'Email or cognito_user_id is required'}), 400
         
         conn = get_db_connection()
         cursor = conn.cursor()
         
-        cursor.execute('''
-            SELECT * FROM subscriptions
-            WHERE user_email = ?
-            ORDER BY created_at DESC
-            LIMIT 1
-        ''', (email,))
+        # If cognito_user_id provided, get user_id first
+        if cognito_user_id:
+            cursor.execute('SELECT id FROM users WHERE cognito_user_id = ?', (cognito_user_id,))
+            user_row = cursor.fetchone()
+            if user_row:
+                user_id = user_row[0]
+                cursor.execute('''
+                    SELECT * FROM subscriptions
+                    WHERE user_id = ?
+                    ORDER BY created_at DESC
+                    LIMIT 1
+                ''', (user_id,))
+            else:
+                # User not found in database, return no subscription
+                conn.close()
+                return jsonify({
+                    'success': True,
+                    'subscription': {
+                        'plan': 'free',
+                        'status': 'none'
+                    }
+                }), 200
+        else:
+            # Use email to find subscription
+            cursor.execute('''
+                SELECT * FROM subscriptions
+                WHERE user_email = ?
+                ORDER BY created_at DESC
+                LIMIT 1
+            ''', (email,))
         
         row = cursor.fetchone()
         conn.close()
@@ -463,9 +546,463 @@ def health_check():
     """Health check endpoint"""
     return jsonify({'status': 'healthy'}), 200
 
+def sync_cognito_user(cognito_user_id, email, name=None, auth_provider=None):
+    """
+    Sync a Cognito user to the local database
+    This can be called from your frontend after successful authentication
+    Automatically upgrades to dev account if email matches dev account
+    """
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Check if user already exists
+        cursor.execute('SELECT id, is_dev_account FROM users WHERE cognito_user_id = ?', (cognito_user_id,))
+        existing = cursor.fetchone()
+        
+        # Check if this email should be a dev account
+        cursor.execute('SELECT id, is_dev_account FROM users WHERE email = ?', (email,))
+        email_match = cursor.fetchone()
+        
+        is_dev = False
+        if email_match and email_match[1] == 1:
+            is_dev = True
+        
+        if existing:
+            user_id = existing[0]
+            # Update last login and sync dev status
+            cursor.execute('''
+                UPDATE users 
+                SET last_login = CURRENT_TIMESTAMP, 
+                    updated_at = CURRENT_TIMESTAMP,
+                    email = ?,
+                    name = COALESCE(?, name),
+                    is_dev_account = ?,
+                    role = CASE WHEN ? = 1 THEN 'admin' ELSE role END
+                WHERE cognito_user_id = ?
+            ''', (email, name, is_dev, is_dev, cognito_user_id))
+        elif email_match:
+            # User exists with this email but different cognito_user_id - update it
+            user_id = email_match[0]
+            cursor.execute('''
+                UPDATE users 
+                SET cognito_user_id = ?,
+                    last_login = CURRENT_TIMESTAMP,
+                    updated_at = CURRENT_TIMESTAMP,
+                    name = COALESCE(?, name),
+                    auth_provider = ?
+                WHERE id = ?
+            ''', (cognito_user_id, name, auth_provider, user_id))
+        else:
+            # Insert new user
+            cursor.execute('''
+                INSERT INTO users (cognito_user_id, email, name, auth_provider, last_login, is_dev_account, role)
+                VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP, ?, CASE WHEN ? = 1 THEN 'admin' ELSE 'user' END)
+            ''', (cognito_user_id, email, name, auth_provider, is_dev, is_dev))
+            user_id = cursor.lastrowid
+        
+        # If dev account, ensure permissions are set
+        if is_dev:
+            permissions = [
+                ('admin', 'all'),
+                ('read', 'all'),
+                ('write', 'all'),
+                ('delete', 'all'),
+                ('manage_subscriptions', 'all'),
+                ('manage_users', 'all'),
+                ('toggle_tiers', 'all'),
+                ('access_rls', 'all')
+            ]
+            for permission, resource in permissions:
+                cursor.execute('''
+                    INSERT OR IGNORE INTO user_permissions (user_id, permission, resource)
+                    VALUES (?, ?, ?)
+                ''', (user_id, permission, resource))
+        
+        conn.commit()
+        conn.close()
+        return True
+    except Exception as e:
+        print(f"Error syncing Cognito user: {str(e)}")
+        return False
+
+@app.route('/api/users/sync', methods=['POST'])
+def sync_user():
+    """
+    Endpoint to sync a Cognito user to the database
+    Called from frontend after successful authentication
+    """
+    try:
+        data = request.get_json()
+        
+        # Validate required fields
+        if not data:
+            return jsonify({'error': 'No data provided'}), 400
+        
+        cognito_user_id = data.get('cognito_user_id')
+        email = data.get('email')
+        
+        if not cognito_user_id or not email:
+            return jsonify({'error': 'cognito_user_id and email are required'}), 400
+        
+        name = data.get('name')
+        auth_provider = data.get('auth_provider')  # 'Google', 'GitHub', 'Cognito'
+        
+        success = sync_cognito_user(cognito_user_id, email, name, auth_provider)
+        
+        if success:
+            return jsonify({
+                'success': True,
+                'message': 'User synced successfully'
+            }), 200
+        else:
+            return jsonify({'error': 'Failed to sync user'}), 500
+            
+    except Exception as e:
+        print(f"Error in sync_user endpoint: {str(e)}")
+        return jsonify({'error': 'Internal server error'}), 500
+
+@app.route('/api/users', methods=['GET'])
+def get_users():
+    """
+    Get all users from the database
+    Requires authentication token in header
+    """
+    try:
+        # TODO: Add authentication check here
+        # token = request.headers.get('Authorization')
+        # if not verify_cognito_token(token):
+        #     return jsonify({'error': 'Unauthorized'}), 401
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute('''
+            SELECT id, cognito_user_id, email, name, auth_provider, 
+                   created_at, last_login
+            FROM users
+            ORDER BY created_at DESC
+        ''')
+        
+        users = []
+        for row in cursor.fetchall():
+            users.append({
+                'id': row[0],
+                'cognito_user_id': row[1],
+                'email': row[2],
+                'name': row[3],
+                'auth_provider': row[4],
+                'created_at': row[5],
+                'last_login': row[6]
+            })
+        
+        conn.close()
+        return jsonify({'users': users}), 200
+        
+    except Exception as e:
+        print(f"Error getting users: {str(e)}")
+        return jsonify({'error': 'Internal server error'}), 500
+
+# ===== DEV ACCOUNT & ADMIN FUNCTIONS =====
+
+def create_dev_account(email, name, cognito_user_id=None):
+    """Create a dev account with admin privileges"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Check if user already exists
+        if cognito_user_id:
+            cursor.execute('SELECT id FROM users WHERE cognito_user_id = ?', (cognito_user_id,))
+        else:
+            cursor.execute('SELECT id FROM users WHERE email = ?', (email,))
+        
+        existing = cursor.fetchone()
+        
+        if existing:
+            # Update existing user to dev account
+            user_id = existing[0]
+            cursor.execute('''
+                UPDATE users 
+                SET role = 'admin',
+                    is_dev_account = 1,
+                    subscription_tier = 'enterprise',
+                    subscription_override = 1,
+                    updated_at = CURRENT_TIMESTAMP
+                WHERE id = ?
+            ''', (user_id,))
+        else:
+            # Create new dev account
+            cursor.execute('''
+                INSERT INTO users (
+                    cognito_user_id, email, name, role, is_dev_account, 
+                    subscription_tier, subscription_override
+                )
+                VALUES (?, ?, ?, 'admin', 1, 'enterprise', 1)
+            ''', (cognito_user_id or f'dev_{email}', email, name))
+            user_id = cursor.lastrowid
+        
+        # Grant all permissions
+        permissions = [
+            ('admin', 'all'),
+            ('read', 'all'),
+            ('write', 'all'),
+            ('delete', 'all'),
+            ('manage_subscriptions', 'all'),
+            ('manage_users', 'all'),
+            ('toggle_tiers', 'all'),
+            ('access_rls', 'all')
+        ]
+        
+        for permission, resource in permissions:
+            cursor.execute('''
+                INSERT OR IGNORE INTO user_permissions (user_id, permission, resource)
+                VALUES (?, ?, ?)
+            ''', (user_id, permission, resource))
+        
+        conn.commit()
+        conn.close()
+        
+        return {
+            'success': True,
+            'user_id': user_id,
+            'message': 'Dev account created/updated successfully'
+        }
+    except Exception as e:
+        print(f"Error creating dev account: {str(e)}")
+        return {
+            'success': False,
+            'error': str(e)
+        }
+
+@app.route('/api/admin/create-dev-account', methods=['POST'])
+def create_dev_account_endpoint():
+    """Create a dev account (admin only)"""
+    try:
+        data = request.get_json()
+        
+        # For security, you might want to add authentication here
+        # For now, allowing direct creation for dev setup
+        
+        email = data.get('email', '').strip().lower()
+        name = data.get('name', 'Dev Account').strip()
+        cognito_user_id = data.get('cognito_user_id')
+        
+        if not email:
+            return jsonify({'error': 'Email is required'}), 400
+        
+        result = create_dev_account(email, name, cognito_user_id)
+        
+        if result['success']:
+            return jsonify(result), 201
+        else:
+            return jsonify(result), 500
+            
+    except Exception as e:
+        print(f"Error in create_dev_account_endpoint: {str(e)}")
+        return jsonify({'error': 'Internal server error'}), 500
+
+@app.route('/api/admin/toggle-subscription', methods=['POST'])
+def toggle_subscription_tier():
+    """Toggle subscription tier for a user (dev/admin only)"""
+    try:
+        data = request.get_json()
+        
+        email = data.get('email', '').strip().lower()
+        cognito_user_id = data.get('cognito_user_id')
+        tier = data.get('tier', 'free')  # free, pro, business, enterprise
+        
+        if tier not in ['free', 'pro', 'business', 'enterprise']:
+            return jsonify({'error': 'Invalid tier. Must be: free, pro, business, enterprise'}), 400
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Find user
+        if cognito_user_id:
+            cursor.execute('SELECT id, is_dev_account FROM users WHERE cognito_user_id = ?', (cognito_user_id,))
+        else:
+            cursor.execute('SELECT id, is_dev_account FROM users WHERE email = ?', (email,))
+        
+        user = cursor.fetchone()
+        
+        if not user:
+            conn.close()
+            return jsonify({'error': 'User not found'}), 404
+        
+        user_id = user[0]
+        is_dev = user[1]
+        
+        # Only allow for dev accounts or if explicitly allowed
+        if not is_dev:
+            conn.close()
+            return jsonify({'error': 'Only dev accounts can toggle subscription tiers'}), 403
+        
+        # Update subscription tier
+        cursor.execute('''
+            UPDATE users 
+            SET subscription_tier = ?,
+                subscription_override = 1,
+                updated_at = CURRENT_TIMESTAMP
+            WHERE id = ?
+        ''', (tier, user_id))
+        
+        # Also update or create subscription record
+        cursor.execute('''
+            SELECT id FROM subscriptions WHERE user_id = ?
+        ''', (user_id,))
+        sub = cursor.fetchone()
+        
+        if sub:
+            cursor.execute('''
+                UPDATE subscriptions
+                SET plan_name = ?,
+                    status = 'active',
+                    updated_at = CURRENT_TIMESTAMP
+                WHERE user_id = ?
+            ''', (tier, user_id))
+        else:
+            cursor.execute('''
+                INSERT INTO subscriptions (
+                    user_id, user_email, plan_name, status
+                )
+                SELECT id, email, ?, 'active'
+                FROM users WHERE id = ?
+            ''', (tier, user_id))
+        
+        conn.commit()
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'message': f'Subscription tier updated to {tier}',
+            'tier': tier
+        }), 200
+        
+    except Exception as e:
+        print(f"Error toggling subscription: {str(e)}")
+        return jsonify({'error': 'Internal server error'}), 500
+
+@app.route('/api/admin/user-info', methods=['GET'])
+def get_user_info():
+    """Get user information including roles and permissions"""
+    try:
+        email = request.args.get('email', '').strip().lower()
+        cognito_user_id = request.args.get('cognito_user_id')
+        
+        if not email and not cognito_user_id:
+            return jsonify({'error': 'Email or cognito_user_id is required'}), 400
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Get user info
+        if cognito_user_id:
+            cursor.execute('''
+                SELECT id, cognito_user_id, email, name, role, is_dev_account, 
+                       subscription_tier, subscription_override, created_at, last_login
+                FROM users WHERE cognito_user_id = ?
+            ''', (cognito_user_id,))
+        else:
+            cursor.execute('''
+                SELECT id, cognito_user_id, email, name, role, is_dev_account, 
+                       subscription_tier, subscription_override, created_at, last_login
+                FROM users WHERE email = ?
+            ''', (email,))
+        
+        user = cursor.fetchone()
+        
+        if not user:
+            conn.close()
+            return jsonify({'error': 'User not found'}), 404
+        
+        # Get permissions
+        cursor.execute('''
+            SELECT permission, resource FROM user_permissions
+            WHERE user_id = ?
+        ''', (user[0],))
+        
+        permissions = [{'permission': row[0], 'resource': row[1]} for row in cursor.fetchall()]
+        
+        # Get subscription info
+        cursor.execute('''
+            SELECT plan_name, status, current_period_start, current_period_end
+            FROM subscriptions WHERE user_id = ?
+            ORDER BY created_at DESC LIMIT 1
+        ''', (user[0],))
+        
+        sub = cursor.fetchone()
+        subscription = None
+        if sub:
+            subscription = {
+                'plan': sub[0],
+                'status': sub[1],
+                'current_period_start': sub[2],
+                'current_period_end': sub[3]
+            }
+        
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'user': {
+                'id': user[0],
+                'cognito_user_id': user[1],
+                'email': user[2],
+                'name': user[3],
+                'role': user[4],
+                'is_dev_account': bool(user[5]),
+                'subscription_tier': user[6],
+                'subscription_override': bool(user[7]),
+                'created_at': user[8],
+                'last_login': user[9],
+                'permissions': permissions,
+                'subscription': subscription
+            }
+        }), 200
+        
+    except Exception as e:
+        print(f"Error getting user info: {str(e)}")
+        return jsonify({'error': 'Internal server error'}), 500
+
+def check_user_permission(user_id, permission, resource='all'):
+    """Check if user has a specific permission (RLS helper)"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Check if user is admin/dev account
+        cursor.execute('SELECT role, is_dev_account FROM users WHERE id = ?', (user_id,))
+        user = cursor.fetchone()
+        
+        if user and (user[0] == 'admin' or user[1] == 1):
+            conn.close()
+            return True  # Dev accounts have all permissions
+        
+        # Check specific permission
+        cursor.execute('''
+            SELECT id FROM user_permissions
+            WHERE user_id = ? AND permission = ? 
+            AND (resource = ? OR resource = 'all')
+        ''', (user_id, permission, resource))
+        
+        has_permission = cursor.fetchone() is not None
+        conn.close()
+        
+        return has_permission
+    except Exception as e:
+        print(f"Error checking permission: {str(e)}")
+        return False
+
 if __name__ == '__main__':
     # Initialize database
     init_db()
+    
+    # Create default dev account if it doesn't exist
+    # You can customize this email
+    default_dev_email = 'dev@n8tive.io'
+    print(f"Creating default dev account: {default_dev_email}")
+    create_dev_account(default_dev_email, 'Dev Account')
     
     # Run Flask app
     app.run(host='0.0.0.0', port=5000, debug=False)

@@ -51,6 +51,10 @@ temp/
 *.sqlite3
 backend/waitlist.db
 
+# Documentation files (not deployed)
+*.md
+!README.md
+
 # Deployment (optional - uncomment if you don't want to track deploy script changes)
 # deploy.sh
 # deploy-*.sh
