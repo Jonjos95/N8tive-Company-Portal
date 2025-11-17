@@ -6,6 +6,7 @@ A modern software studio portal showcasing our products and services.
 
 - **Modern UI** - Dark theme with animated backgrounds
 - **Responsive Design** - Works on all devices
+- **Authentication** - AWS Cognito integration with Google and GitHub OAuth
 - **Waitlist System** - Collect user interest with backend API
 - **Automated Deployment** - GitHub Actions deployment to EC2
 
@@ -20,6 +21,7 @@ A modern software studio portal showcasing our products and services.
 ├── style.css           # Main stylesheet
 ├── script.js           # Main JavaScript
 ├── auth.js             # Authentication handler
+├── cognito-config.js   # AWS Cognito configuration
 ├── components/         # Web components (navbar, footer)
 ├── assets/             # Images and static assets
 ├── backend/            # Flask API for waitlist
@@ -53,6 +55,15 @@ Database location: `/var/www/n8tive/backend/waitlist.db`
 
 ## Configuration
 
+- **AWS Cognito Authentication**: 
+  - **Quick Start**: See `COGNITO_STEP_BY_STEP.md` for detailed step-by-step guide
+  - **Full Guide**: See `COGNITO_SETUP.md` for comprehensive setup instructions
+  - Configure `cognito-config.js` with your AWS Cognito settings
+  - Supports Google and GitHub OAuth authentication
+  - Use `./configure-cognito.sh` for interactive configuration
+- **Dev Account**: See `DEV_ACCOUNT_CREDENTIALS.md` for dev account login credentials
+  - Default dev account: `dev@n8tive.io` (any password 8+ chars)
+  - Full admin access, subscription tier testing, RLS bypass
 - AWS deployment: Configured via GitHub Actions secrets
 - EC2 deployment: Uses `deploy-to-ec2.sh` script
 - Backend service: Managed via systemd (`waitlist.service`)
