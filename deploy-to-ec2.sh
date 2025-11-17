@@ -176,13 +176,25 @@ server {
         client_max_body_size 100k;
     }
 
-    # Single Page App routing
+    # Serve HTML files directly (don't fallback to index.html for existing HTML files)
+    location ~ \.html$ {
+        try_files \$uri =404;
+    }
+
+    # Single Page App routing for root and non-HTML paths
     location / {
         try_files \$uri \$uri/ /index.html;
     }
 
-    # Static asset caching
-    location ~* \.(js|css|png|jpg|jpeg|gif|svg|ico|webp|woff2?)$ {
+    # Static asset caching - shorter cache for JS files to allow updates
+    location ~* \.(js)$ {
+        expires 1h;
+        add_header Cache-Control "public, max-age=3600";
+        try_files \$uri =404;
+    }
+
+    # Static asset caching for other assets
+    location ~* \.(css|png|jpg|jpeg|gif|svg|ico|webp|woff2?)$ {
         expires 30d;
         add_header Cache-Control "public, max-age=2592000";
         try_files \$uri =404;
