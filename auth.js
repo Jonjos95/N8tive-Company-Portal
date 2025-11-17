@@ -447,7 +447,11 @@ class AuthManager {
                 setTimeout(() => {
                     button.disabled = false;
                     button.innerHTML = originalText;
-                    alert(`${provider.charAt(0).toUpperCase() + provider.slice(1)} authentication requires AWS Cognito configuration. Please see the setup documentation.`);
+                    feather.replace();
+                    
+                    // Show a better error message instead of alert
+                    const errorId = document.getElementById('login-error') ? 'login-error' : 'signup-error';
+                    this.showError(errorId, `${provider.charAt(0).toUpperCase() + provider.slice(1)} authentication requires AWS Cognito configuration. Please configure Cognito or use email/password sign-in.`);
                 }, 500);
                 return;
             }
