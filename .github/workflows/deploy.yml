@@ -220,6 +220,7 @@ jobs:
             "style.css"
             "script.js"
             "auth.js"
+            "cognito-config.js"
             "login.html"
             "pricing.html"
             "products.html"
