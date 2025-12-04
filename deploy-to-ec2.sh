@@ -68,6 +68,8 @@ FILES_TO_DEPLOY=(
     "script.js"
     "auth.js"
     "login.html"
+    "oauth-callback.html"
+    "error.html"
     "pricing.html"
     "products.html"
     "team.html"
@@ -77,6 +79,7 @@ FILES_TO_DEPLOY=(
     "automation-demo.html"
     "cognito-config.js"
     "create-dev-account.js"
+    "oauth2/"
     "backend/"
 )
 
@@ -157,6 +160,39 @@ server {
     default_type text/html;
     charset UTF-8;
 
+    # CRITICAL: Handle Cognito error redirects FIRST - prevent downloads
+    # These must come before the general location / block
+    # Use rewrite to preserve query parameters and serve error.html
+    location = /error {
+        rewrite ^ /error.html?$args? last;
+    }
+    
+    location = /oauth2/error {
+        rewrite ^ /oauth2/error.html?$args? last;
+    }
+    
+    # OAuth callback - NO CACHING, must always return fresh HTML
+    location = /api/oauth/callback {
+        proxy_pass http://127.0.0.1:5000/api/oauth/callback;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+        proxy_redirect off;
+        # CRITICAL: Remove any Content-Disposition headers that trigger downloads
+        proxy_hide_header Content-Disposition;
+        proxy_hide_header Content-Transfer-Encoding;
+        # CRITICAL: Force HTML Content-Type and prevent caching
+        add_header Content-Type "text/html; charset=UTF-8" always;
+        add_header Cache-Control "no-cache, no-store, must-revalidate, max-age=0" always;
+        add_header Pragma "no-cache" always;
+        add_header Expires "0" always;
+        add_header X-Content-Type-Options "nosniff" always;
+        # Disable all caching
+        proxy_cache off;
+        proxy_buffering off;
+    }
+    
     # API proxy for waitlist
     location /api/ {
         proxy_pass http://127.0.0.1:5000/api/;
@@ -165,6 +201,11 @@ server {
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto \$scheme;
         proxy_redirect off;
+        # CRITICAL: Preserve Content-Type from backend to prevent Safari download detection
+        proxy_pass_header Content-Type;
+        proxy_hide_header Content-Disposition;
+        # Ensure no download headers are added
+        add_header Content-Disposition "" always;
     }
     
     # Stripe webhook needs raw body (no modification)
@@ -180,7 +221,7 @@ server {
         proxy_redirect off;
         client_max_body_size 100k;
     }
-
+    
     # Serve HTML files directly with proper headers to prevent Safari download detection
     location ~ \.html$ {
         try_files \$uri =404;
