@@ -14,15 +14,17 @@ const CognitoConfig = {
     clientId: '5ba94tcr4rv5q1a0rafm73qldo',
     
     // Cognito Hosted UI Domain (found in User Pool > App Integration > Domain)
-    // Format: https://YOUR_DOMAIN.auth.REGION.amazoncognito.com
-    oauthDomain: 'us-east-1e1ckf1qih.auth.us-east-1.amazoncognito.com',
+    // Using custom domain: auth.n8tiveio.app
+    oauthDomain: 'auth.n8tiveio.app',
     
     // OAuth Scopes - what information to request from the identity provider
     oauthScopes: ['openid', 'email', 'profile'],
     
     // Redirect URI - where users are sent after authentication
     // This should match the callback URL configured in your Cognito User Pool
-    redirectUri: window.location.origin + '/login.html'
+    // CRITICAL: Use server-side handler to avoid Safari download issues
+    // Server returns proper HTML instead of redirect, preventing Safari download detection
+    redirectUri: (window.location.protocol + '//' + window.location.host + '/api/oauth/callback')
 };
 
 // Note: If CognitoConfig is not properly configured, the app will fall back to mock authentication

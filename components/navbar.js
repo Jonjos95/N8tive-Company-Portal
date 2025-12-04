@@ -86,6 +86,38 @@ class CustomNavbar extends HTMLElement {
                     box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3);
                     transform: translateY(-1px);
                 }
+                .user-info {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.75rem;
+                    padding: 0.5rem 1rem;
+                    background: rgba(59, 130, 246, 0.1);
+                    border: 1px solid rgba(59, 130, 246, 0.3);
+                    border-radius: 0.5rem;
+                    cursor: pointer;
+                    transition: all 0.3s;
+                }
+                .user-info:hover {
+                    background: rgba(59, 130, 246, 0.2);
+                    border-color: rgba(59, 130, 246, 0.5);
+                }
+                .user-avatar {
+                    width: 2rem;
+                    height: 2rem;
+                    border-radius: 50%;
+                    background: linear-gradient(to right, #3b82f6, #8b5cf6);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: white;
+                    font-weight: 600;
+                    font-size: 0.875rem;
+                }
+                .user-name {
+                    color: rgba(255, 255, 255, 0.9);
+                    font-weight: 500;
+                    font-size: 0.875rem;
+                }
                 .mobile-menu-btn {
                     display: none;
                     background: none;
@@ -114,7 +146,10 @@ class CustomNavbar extends HTMLElement {
                     <a href="pricing.html" class="nav-link">Pricing</a>
                     <a href="index.html#mission" class="nav-link">Mission</a>
                     <a href="team.html" class="nav-link">Team</a>
-                    <a href="login.html" class="login-btn">Login</a>
+                    <div id="auth-section">
+                        <!-- Will be populated by JavaScript -->
+                        <a href="login.html" class="login-btn" onclick="sessionStorage.setItem('wantsToLogin', 'true')">Login</a>
+                    </div>
                 </div>
                 <button class="mobile-menu-btn">
                     <i data-feather="menu"></i>
@@ -129,6 +164,62 @@ class CustomNavbar extends HTMLElement {
         
         // Initialize Three.js 3D Cube Logo
         this.initNavCube();
+        
+        // Update user info in navbar
+        this.updateUserInfo();
+        
+        // Listen for storage changes (when user logs in/out)
+        window.addEventListener('storage', () => {
+            this.updateUserInfo();
+        });
+        
+        // Also check periodically (for same-tab updates)
+        setInterval(() => {
+            this.updateUserInfo();
+        }, 1000);
+    }
+    
+    // Update user info in navbar
+    updateUserInfo() {
+        const authSection = this.shadowRoot.getElementById('auth-section');
+        if (!authSection) return;
+        
+        try {
+            const userStr = localStorage.getItem('user');
+            if (userStr) {
+                const user = JSON.parse(userStr);
+                if (user && user.email) {
+                    // User is logged in - show user info
+                    const name = user.name || user.email.split('@')[0];
+                    const initials = this.getInitials(name);
+                    
+                    authSection.innerHTML = `
+                        <div class="user-info" onclick="if(window.authManager) window.authManager.signOut()">
+                            <div class="user-avatar">${initials}</div>
+                            <span class="user-name">${name}</span>
+                        </div>
+                    `;
+                    return;
+                }
+            }
+        } catch (e) {
+            console.error('Error parsing user data:', e);
+        }
+        
+        // User not logged in - show login button
+        authSection.innerHTML = `
+            <a href="login.html" class="login-btn" onclick="sessionStorage.setItem('wantsToLogin', 'true')">Login</a>
+        `;
+    }
+    
+    // Get user initials from name
+    getInitials(name) {
+        if (!name) return 'U';
+        const parts = name.trim().split(/\s+/);
+        if (parts.length >= 2) {
+            return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+        }
+        return name.substring(0, 2).toUpperCase();
     }
     
     initNavCube() {

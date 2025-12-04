@@ -151,6 +151,10 @@ server {
 
     root $DEPLOY_DIR;
     index index.html;
+    
+    # CRITICAL: Set default Content-Type for all responses to prevent Safari download detection
+    default_type text/html;
+    charset UTF-8;
 
     # API proxy for waitlist
     location /api/ {
@@ -176,9 +180,20 @@ server {
         client_max_body_size 100k;
     }
 
-    # Serve HTML files directly (don't fallback to index.html for existing HTML files)
+    # Serve HTML files directly with proper headers to prevent Safari download detection
     location ~ \.html$ {
         try_files \$uri =404;
+        # CRITICAL: Set proper Content-Type to prevent Safari from thinking it's a download
+        add_header Content-Type "text/html; charset=UTF-8" always;
+        # Remove any Content-Disposition headers that might trigger downloads
+        add_header Content-Disposition "" always;
+        # Security headers
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header X-Frame-Options "SAMEORIGIN" always;
+        # Cache control
+        add_header Cache-Control "no-cache, no-store, must-revalidate" always;
+        add_header Pragma "no-cache" always;
+        add_header Expires "0" always;
     }
 
     # Single Page App routing for root and non-HTML paths

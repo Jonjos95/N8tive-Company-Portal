@@ -4,19 +4,25 @@ Waitlist API Server
 Handles waitlist form submissions and stores data in SQLite database
 """
 
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template_string
 from flask_cors import CORS
 import sqlite3
 import os
 from datetime import datetime
-import stripe
+try:
+    import stripe
+except ImportError:
+    stripe = None  # Stripe is optional
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 
-# Stripe configuration
-stripe.api_key = os.environ.get('STRIPE_SECRET_KEY', '')
-STRIPE_WEBHOOK_SECRET = os.environ.get('STRIPE_WEBHOOK_SECRET', '')
+# Stripe configuration (optional)
+if stripe:
+    stripe.api_key = os.environ.get('STRIPE_SECRET_KEY', '')
+    STRIPE_WEBHOOK_SECRET = os.environ.get('STRIPE_WEBHOOK_SECRET', '')
+else:
+    STRIPE_WEBHOOK_SECRET = ''
 
 # Subscription plans (price IDs from Stripe)
 PLANS = {
@@ -310,6 +316,151 @@ def create_checkout_session():
     except Exception as e:
         print(f"Error processing checkout: {str(e)}")
         return jsonify({'error': 'Internal server error'}), 500
+
+@app.route('/api/oauth/callback', methods=['GET'])
+def oauth_callback():
+    """
+    Server-side OAuth callback handler to prevent Safari download prompts.
+    Returns HTML page that completes OAuth flow via JavaScript.
+    This endpoint MUST work even if other dependencies fail.
+    CRITICAL: Always returns text/html Content-Type to prevent Safari download detection.
+    """
+    
+    # Get OAuth parameters from query string
+    code = request.args.get('code')
+    error = request.args.get('error')
+    error_description = request.args.get('error_description', '')
+    state = request.args.get('state')
+    
+    # Log callback received for debugging
+    print(f"[OAUTH CALLBACK] Received callback - code: {'present' if code else 'missing'}, error: {error}, state: {'present' if state else 'missing'}")
+    print(f"[OAUTH CALLBACK] Request URL: {request.url}")
+    print(f"[OAUTH CALLBACK] Request headers: {dict(request.headers)}")
+    
+    # HTML template that handles OAuth callback client-side
+    # This prevents Safari from seeing a redirect, which triggers download prompts
+    # CRITICAL: Store params in sessionStorage/localStorage instead of URL params
+    html_template = '''
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-Content-Type-Options" content="nosniff">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>Completing Sign In...</title>
+        <style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                margin: 0;
+                background: #0a0a0a;
+                color: #fff;
+            }
+            .container {
+                text-align: center;
+            }
+            .spinner {
+                border: 3px solid #333;
+                border-top: 3px solid #8b5cf6;
+                border-radius: 50%;
+                width: 40px;
+                height: 40px;
+                animation: spin 1s linear infinite;
+                margin: 0 auto 20px;
+            }
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="spinner"></div>
+            <p>Completing sign in...</p>
+        </div>
+        <script>
+            console.log('[OAUTH CALLBACK] Starting callback processing...');
+            
+            // Extract OAuth parameters from URL BEFORE cleaning
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+            const error = urlParams.get('error');
+            const errorDescription = urlParams.get('error_description') || '';
+            const state = urlParams.get('state');
+            
+            console.log('[OAUTH CALLBACK] Extracted params:', { 
+                hasCode: !!code, 
+                hasError: !!error, 
+                hasState: !!state,
+                error: error,
+                errorDescription: errorDescription
+            });
+            
+            // CRITICAL: Immediately clean URL to prevent Safari download detection
+            // This must happen BEFORE any async operations
+            window.history.replaceState({}, document.title, window.location.pathname);
+            console.log('[OAUTH CALLBACK] URL cleaned, redirecting...');
+            
+            if (error) {
+                // Handle OAuth error - store in sessionStorage to avoid URL params
+                const decodedError = decodeURIComponent(errorDescription.replace(/\\+/g, ' '));
+                console.error('[OAUTH CALLBACK] OAuth error:', error, decodedError);
+                
+                // Store error in sessionStorage instead of URL
+                sessionStorage.setItem('oauth_error', error);
+                sessionStorage.setItem('oauth_error_description', decodedError);
+                
+                // Redirect to login page WITHOUT query params
+                setTimeout(() => {
+                    window.location.replace('/login.html');
+                }, 100);
+            } else if (code) {
+                // Store OAuth code and state in localStorage/sessionStorage
+                // This avoids passing params in URL which Safari might misinterpret
+                console.log('[OAUTH CALLBACK] Storing OAuth code and redirecting...');
+                
+                if (state) {
+                    sessionStorage.setItem('oauth_state', state);
+                }
+                localStorage.setItem('oauthCode', code);
+                localStorage.setItem('oauthCodeTimestamp', Date.now().toString());
+                
+                // Set a flag to indicate callback was received
+                sessionStorage.setItem('oauth_callback_received', 'true');
+                
+                // Redirect to login page WITHOUT query params
+                // The login page will check localStorage for the code
+                setTimeout(() => {
+                    window.location.replace('/login.html');
+                }, 100);
+            } else {
+                // No code or error - redirect to login
+                console.warn('[OAUTH CALLBACK] No code or error found, redirecting to login');
+                setTimeout(() => {
+                    window.location.replace('/login.html');
+                }, 100);
+            }
+        </script>
+    </body>
+    </html>
+    '''
+    
+    # CRITICAL: Explicitly set Content-Type to text/html
+    # This prevents Safari from misinterpreting the response as a download
+    response = render_template_string(html_template)
+    response.headers['Content-Type'] = 'text/html; charset=UTF-8'
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    
+    print(f"[OAUTH CALLBACK] Returning HTML response with Content-Type: text/html")
+    return response, 200
 
 @app.route('/api/subscription/webhook', methods=['POST'])
 def stripe_webhook():
