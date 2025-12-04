@@ -19,8 +19,9 @@ PROJECT_DIR="${1:-$PWD}"
 # If first arg looks like an IP/domain, treat it as EC2_HOST instead
 if [[ "$1" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]] || [[ "$1" == *.* ]]; then
     PROJECT_DIR="$PWD"
-else
-    PROJECT_DIR="${1:-$PWD}"
+    shift
+elif [ -n "$1" ]; then
+    PROJECT_DIR="${1}"
     shift
 fi
 
